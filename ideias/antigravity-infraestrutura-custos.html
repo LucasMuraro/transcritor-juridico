@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AntiGravity — Infraestrutura & Análise de Custos</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    :root {
+      --verde:      #0A6E3F;
+      --verde-c:    #12a05c;
+      --verde-light:#d1fae5;
+      --cinza-dk:   #1a1a2e;
+      --roxo:       #5B21B6;
+      --azul:       #1D4ED8;
+      --laranja:    #C2410C;
+      --vermelho:   #B91C1C;
+      --amarelo:    #D97706;
+      --bg:         #f4f6fb;
+      --borda:      #e2e8f0;
+      --txt:        #1a1a2e;
+      --txt-l:      #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--txt); line-height: 1.65; }
+
+    header {
+      background: linear-gradient(135deg, #0A6E3F 0%, #12a05c 60%, #064e2e 100%);
+      color: white;
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+    }
+    header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    header h1 { font-size: 2.1rem; font-weight: 800; margin-bottom: 6px; }
+    header p  { font-size: 0.95rem; opacity: 0.85; }
+
+    nav {
+      background: white;
+      border-bottom: 2px solid var(--borda);
+      position: sticky; top: 0; z-index: 100;
+      padding: 0.6rem 1.5rem;
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+    }
+    nav a {
+      font-size: 0.78rem; font-weight: 700;
+      color: var(--verde); text-decoration: none;
+      padding: 5px 12px; border-radius: 20px;
+      border: 1px solid var(--borda); transition: .2s;
+    }
+    nav a:hover { background: var(--verde); color: white; }
+
+    .container { max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .section-title {
+      font-size: 1.4rem; font-weight: 800;
+      color: var(--verde);
+      border-left: 5px solid var(--verde);
+      padding-left: 14px;
+      margin-bottom: 1.5rem; margin-top: 2.5rem;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    /* CARDS RESUMO */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .card-stat {
+      background: white; border-radius: 14px;
+      padding: 1.3rem 1rem;
+      border: 1px solid var(--borda);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+    .card-stat .num  { font-size: 2rem; font-weight: 900; color: var(--verde); }
+    .card-stat .label { font-size: 0.78rem; color: var(--txt-l); margin-top: 4px; }
+    .card-stat .num.warn  { color: var(--laranja); }
+    .card-stat .num.green { color: var(--verde-c); }
+
+    /* LAYERS */
+    .layers { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+    .layer { border-radius: 14px; border: 1px solid var(--borda); overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .layer-header { padding: 0.9rem 1.2rem; font-weight: 800; font-size: 0.88rem; letter-spacing: 0.5px; text-transform: uppercase; color: white; display: flex; align-items: center; gap: 8px; }
+    .layer-body { background: white; padding: 1rem 1.2rem; display: flex; flex-wrap: wrap; gap: 0.7rem; }
+    .tech-pill {
+      background: var(--bg);
+      border: 1px solid var(--borda);
+      border-radius: 10px; padding: 7px 14px;
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--txt); display: flex; align-items: center; gap: 6px;
+    }
+    .tech-pill .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .layer-ui    .layer-header { background: var(--verde); }
+    .layer-bff   .layer-header { background: var(--verde-c); }
+    .layer-db    .layer-header { background: #374151; }
+    .layer-ai    .layer-header { background: var(--roxo); }
+    .layer-pay   .layer-header { background: var(--azul); }
+    .layer-infra .layer-header { background: var(--laranja); }
+
+    /* COST TABLES */
+    .cost-section { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media(max-width: 900px) { .cost-section { grid-template-columns: 1fr; } }
+
+    .cost-card { background: white; border-radius: 14px; border: 1px solid var(--borda); overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .cost-card-header { padding: 1rem 1.2rem; color: white; font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+    .cost-card-header.verde   { background: var(--verde); }
+    .cost-card-header.roxo    { background: var(--roxo); }
+    .cost-card-header.azul    { background: var(--azul); }
+    .cost-card-header.laranja { background: var(--laranja); }
+    .cost-card-header.cinza   { background: #374151; }
+    .cost-card-header.amarelo { background: var(--amarelo); }
+
+    table.cost-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+    table.cost-table th {
+      background: var(--bg); padding: 8px 12px;
+      text-align: left; font-weight: 700;
+      color: var(--txt-l); font-size: 0.75rem;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    table.cost-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--borda);
+      vertical-align: top;
+    }
+    table.cost-table tr:last-child td { border-bottom: none; }
+    table.cost-table .total-row td {
+      background: #f0fdf4; font-weight: 900;
+      color: var(--verde); font-size: 0.95rem;
+    }
+    table.cost-table .val { text-align: right; font-weight: 700; white-space: nowrap; color: var(--verde); }
+    table.cost-table .val.free { color: var(--verde-c); }
+    table.cost-table .val.warn { color: var(--laranja); }
+    .nota { font-size: 0.75rem; color: var(--txt-l); padding: 8px 12px; background: #fffbf0; border-top: 1px solid #fde68a; }
+
+    /* SCENARIOS */
+    .scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .scenario-card { background: white; border-radius: 14px; border: 2px solid var(--borda); overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .scenario-card.highlight { border-color: var(--verde-c); }
+    .scenario-header { padding: 1rem 1.2rem; color: white; font-weight: 800; }
+    .scenario-header.s1 { background: #374151; }
+    .scenario-header.s2 { background: var(--verde); }
+    .scenario-header.s3 { background: var(--roxo); }
+    .scenario-body { padding: 1.1rem; }
+    .scenario-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--bg); font-size: 0.85rem; }
+    .scenario-row:last-child { border-bottom: none; }
+    .scenario-row .key { color: var(--txt-l); }
+    .scenario-row .val-s { font-weight: 800; }
+    .val-s.green { color: var(--verde-c); }
+    .val-s.warn  { color: var(--laranja); }
+    .scenario-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 2px 10px; border-radius: 20px; margin-top: 8px; }
+    .badge-free  { background: #dcfce7; color: #14532d; }
+    .badge-paid  { background: #dbeafe; color: #1e3a8a; }
+    .badge-scale { background: #ede9fe; color: #4c1d95; }
+
+    /* SAVINGS */
+    .savings-box {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      border: 1px solid #6ee7b7;
+      border-radius: 14px; padding: 1.5rem; margin-top: 1.5rem;
+    }
+    .savings-box h3 { color: var(--verde); font-size: 1.1rem; margin-bottom: 0.8rem; font-weight: 800; }
+    .savings-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #6ee7b7; font-size: 0.9rem; }
+    .savings-row:last-child { border-bottom: none; font-weight: 900; font-size: 1rem; color: var(--verde); }
+    .savings-row .neg { color: var(--vermelho); font-weight: 700; }
+    .savings-row .pos { color: var(--verde); font-weight: 700; }
+
+    /* ROADMAP */
+    .roadmap { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+    .phase { background: white; border-radius: 14px; border: 1px solid var(--borda); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .phase-header { padding: 0.9rem 1rem; color: white; font-weight: 800; font-size: 0.9rem; }
+    .phase-header.p1 { background: #374151; }
+    .phase-header.p2 { background: var(--verde); }
+    .phase-header.p3 { background: var(--roxo); }
+    .phase-header.p4 { background: var(--azul); }
+    .phase-body { padding: 0.9rem 1rem; }
+    .phase-item { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; font-size: 0.84rem; border-bottom: 1px solid var(--bg); }
+    .phase-item:last-child { border-bottom: none; }
+    .phase-item::before { content: "›"; color: var(--verde); font-weight: 900; font-size: 1rem; flex-shrink: 0; }
+
+    /* ALERT */
+    .alert { border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; font-size: 0.88rem; display: flex; gap: 10px; align-items: flex-start; }
+    .alert-verde  { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
+    .alert-warn   { background: #fff7ed; border: 1px solid #fed7aa; color: #7c2d12; }
+    .alert-info   { background: #eff6ff; border: 1px solid #93c5fd; color: #1e3a8a; }
+    .alert .icon  { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+    .flow-wrap { background: white; border-radius: 14px; border: 1px solid var(--borda); padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow-x: auto; }
+    .flow-wrap .mermaid { min-width: 700px; }
+
+    footer { background: var(--cinza-dk); color: rgba(255,255,255,0.6); text-align: center; padding: 1.2rem; font-size: 0.8rem; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { curve: 'basis' } });</script>
+
+<header>
+  <div class="badge">🎙️ Micro-SaaS · WhatsApp Transcription</div>
+  <h1>AntiGravity — Infraestrutura & Custos</h1>
+  <p>Análise de Custos · Cenários de Escala · Stack Tecnológico · Roadmap MVP</p>
+</header>
+
+<nav>
+  <a href="#resumo">📊 Resumo</a>
+  <a href="#stack">⚙️ Stack</a>
+  <a href="#custos">💰 Custos por Áudio</a>
+  <a href="#cenarios">📈 Cenários</a>
+  <a href="#gateways">💳 Gateways</a>
+  <a href="#roadmap">🗺️ Roadmap</a>
+  <a href="#lgpd">🔐 LGPD</a>
+</nav>
+
+<div class="container">
+
+  <!-- RESUMO -->
+  <h2 class="section-title" id="resumo">📊 Visão Geral do Projeto</h2>
+  <div class="cards-grid">
+    <div class="card-stat">
+      <div class="num free">R$0</div>
+      <div class="label">Custo MVP Local (hoje)</div>
+    </div>
+    <div class="card-stat">
+      <div class="num">R$0,05</div>
+      <div class="label">Custo estimado por áudio (cloud)</div>
+    </div>
+    <div class="card-stat">
+      <div class="num green">R$2,00</div>
+      <div class="label">Preço cobrado por áudio</div>
+    </div>
+    <div class="card-stat">
+      <div class="num green">97%</div>
+      <div class="label">Margem bruta (cenário cloud)</div>
+    </div>
+    <div class="card-stat">
+      <div class="num">1</div>
+      <div class="label">Único arquivo de entrada (.zip)</div>
+    </div>
+    <div class="card-stat">
+      <div class="num">5</div>
+      <div class="label">Etapas do pipeline de IA</div>
+    </div>
+    <div class="card-stat">
+      <div class="num warn">0</div>
+      <div class="label">Clientes mínimos p/ break-even</div>
+    </div>
+    <div class="card-stat">
+      <div class="num green">∞</div>
+      <div class="label">Transcrições/mês (local, custo $0)</div>
+    </div>
+  </div>
+
+  <div class="alert alert-verde">
+    <div class="icon">✅</div>
+    <div><strong>Estado atual:</strong> O sistema já roda localmente no seu Mac, usando Whisper local (modelo <code>small</code>) + Flask web UI. Custo zero de infra. O próximo passo é transformar isso em um SaaS web com pagamento — sem alterar o motor de IA.</div>
+  </div>
+
+  <!-- STACK -->
+  <h2 class="section-title" id="stack">⚙️ Stack Tecnológico por Camada</h2>
+  <div class="layers">
+    <div class="layer layer-ui">
+      <div class="layer-header">🎨 Camada UI — Interface Web (Frontend)</div>
+      <div class="layer-body">
+        <div class="tech-pill"><div class="dot" style="background:#22c55e"></div> Flask + Jinja2 Templates (atual)</div>
+        <div class="tech-pill"><div class="dot" style="background:#3b82f6"></div> HTML5 / CSS3 / JS Vanilla</div>
+        <div class="tech-pill"><div class="dot" style="background:#a855f7"></div> Dark Mode + Glassmorphism</div>
+        <div class="tech-pill"><div class="dot" style="background:#f59e0b"></div> Drag & Drop Upload Zone</div>
+        <div class="tech-pill"><div class="dot" style="background:#06b6d4"></div> Barra de progresso em tempo real (SSE)</div>
+        <div class="tech-pill"><div class="dot" style="background:#10b981"></div> Seletor de datas da conversa</div>
+      </div>
+    </div>
+    <div class="layer layer-bff">
+      <div class="layer-header">⚡ Camada Backend — Motor da Aplicação</div>
+      <div class="layer-body">
+        <div class="tech-pill"><div class="dot" style="background:#22c55e"></div> Python 3.11+</div>
+        <div class="tech-pill"><div class="dot" style="background:#10b981"></div> Flask (servidor web local)</div>
+        <div class="tech-pill"><div class="dot" style="background:#f59e0b"></div> whatsapp_local.py (parser de conversas)</div>
+        <div class="tech-pill"><div class="dot" style="background:#3b82f6"></div> zipfile (extração do .zip)</div>
+        <div class="tech-pill"><div class="dot" style="background:#a855f7"></div> re / datetime (filtro por datas)</div>
+        <div class="tech-pill"><div class="dot" style="background:#ef4444"></div> threading (processamento async)</div>
+      </div>
+    </div>
+    <div class="layer layer-ai">
+      <div class="layer-header">🤖 Camada IA — Motor de Transcrição</div>
+      <div class="layer-body">
+        <div class="tech-pill"><div class="dot" style="background:#8b5cf6"></div> Whisper (OpenAI, open-source, local)</div>
+        <div class="tech-pill"><div class="dot" style="background:#6366f1"></div> Modelo: small / medium / large</div>
+        <div class="tech-pill"><div class="dot" style="background:#22c55e"></div> imageio-ffmpeg (conversão .opus → wav)</div>
+        <div class="tech-pill"><div class="dot" style="background:#f59e0b"></div> Futura opção: Whisper API (OpenAI cloud)</div>
+        <div class="tech-pill"><div class="dot" style="background:#06b6d4"></div> Futura opção: Groq API (mais barato)</div>
+        <div class="tech-pill"><div class="dot" style="background:#ec4899"></div> Futura opção: gpt-4o-mini (resumo/LLM)</div>
+      </div>
+    </div>
+    <div class="layer layer-db">
+      <div class="layer-header">📁 Camada de Armazenamento — Arquivos & Output</div>
+      <div class="layer-body">
+        <div class="tech-pill"><div class="dot" style="background:#6b7280"></div> Sistema de arquivos local (macOS)</div>
+        <div class="tech-pill"><div class="dot" style="background:#6b7280"></div> Pasta uploads/ (temporário)</div>
+        <div class="tech-pill"><div class="dot" style="background:#6b7280"></div> Pasta casos/ (saída por caso)</div>
+        <div class="tech-pill"><div class="dot" style="background:#6b7280"></div> Subpastas: 01_zip, 02_extraido, 03_audios, 04_transcricoes, 05_consolidado</div>
+        <div class="tech-pill"><div class="dot" style="background:#10b981"></div> Futuro: Supabase Storage (cloud)</div>
+        <div class="tech-pill"><div class="dot" style="background:#10b981"></div> Futuro: S3 / R2 Cloudflare (escala)</div>
+      </div>
+    </div>
+    <div class="layer layer-pay">
+      <div class="layer-header">💳 Camada de Pagamento — Gateway PIX</div>
+      <div class="layer-body">
+        <div class="tech-pill"><div class="dot" style="background:#3b82f6"></div> Mercado Pago (PIX dinâmico)</div>
+        <div class="tech-pill"><div class="dot" style="background:#3b82f6"></div> Asaas (alternativa BR)</div>
+        <div class="tech-pill"><div class="dot" style="background:#6366f1"></div> Stripe Checkout (internacional)</div>
+        <div class="tech-pill"><div class="dot" style="background:#f59e0b"></div> Webhook → libera processamento após confirmação</div>
+        <div class="tech-pill"><div class="dot" style="background:#22c55e"></div> Modelo: Pay-as-you-go por áudio</div>
+      </div>
+    </div>
+    <div class="layer layer-infra">
+      <div class="layer-header">☁️ Camada de Infraestrutura — Deploy & Hosting</div>
+      <div class="layer-body">
+        <div class="tech-pill"><div class="dot" style="background:#f97316"></div> macOS local (atual — custo zero)</div>
+        <div class="tech-pill"><div class="dot" style="background:#f97316"></div> Railway (MVP cloud — free tier)</div>
+        <div class="tech-pill"><div class="dot" style="background:#f97316"></div> Render.com (alternativa free tier)</div>
+        <div class="tech-pill"><div class="dot" style="background:#f97316"></div> VPS Ubuntu (escala — ~R$40/mês)</div>
+        <div class="tech-pill"><div class="dot" style="background:#f97316"></div> Start_AntiGravity.command (launcher macOS)</div>
+        <div class="tech-pill"><div class="dot" style="background:#f97316"></div> GitHub (versionamento)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOS POR ÁUDIO -->
+  <h2 class="section-title" id="custos">💰 Custos Detalhados por Áudio</h2>
+  <div class="cost-section">
+
+    <div class="cost-card">
+      <div class="cost-card-header verde">🏠 Cenário Local (Atual) — Seu Mac</div>
+      <table class="cost-table">
+        <thead><tr><th>Componente</th><th>Detalhe</th><th class="val">Custo</th></tr></thead>
+        <tbody>
+          <tr><td>Whisper (local)</td><td>Modelo small — roda no seu Mac</td><td class="val free">R$ 0,00</td></tr>
+          <tr><td>FFmpeg (local)</td><td>imageio-ffmpeg embutido no app</td><td class="val free">R$ 0,00</td></tr>
+          <tr><td>Flask servidor</td><td>Python local, porta 5000</td><td class="val free">R$ 0,00</td></tr>
+          <tr><td>Armazenamento</td><td>HD do seu computador</td><td class="val free">R$ 0,00</td></tr>
+          <tr><td>Eletricidade/hw</td><td>MacBook em processamento (~5min)</td><td class="val">~R$ 0,01</td></tr>
+          <tr class="total-row"><td colspan="2"><strong>Total por áudio</strong></td><td class="val">~R$ 0,01</td></tr>
+        </tbody>
+      </table>
+      <div class="nota">⚡ Custo praticamente zero. A limitação é escala: apenas 1 usuário por vez (seu Mac).</div>
+    </div>
+
+    <div class="cost-card">
+      <div class="cost-card-header roxo">☁️ Cenário Cloud — APIs Pagas</div>
+      <table class="cost-table">
+        <thead><tr><th>Componente</th><th>Detalhe</th><th class="val">Custo</th></tr></thead>
+        <tbody>
+          <tr><td>Whisper API (OpenAI)</td><td>$0.006/min · ~2min médio por áudio</td><td class="val warn">R$ 0,06</td></tr>
+          <tr><td>gpt-4o-mini (resumo)</td><td>~800 tokens por áudio transcrito</td><td class="val">R$ 0,001</td></tr>
+          <tr><td>Gateway PIX (MP)</td><td>0.99% de R$2,00 = R$0,02</td><td class="val">R$ 0,02</td></tr>
+          <tr><td>Hosting (Railway)</td><td>Rateado por transação (100/mês)</td><td class="val">R$ 0,05</td></tr>
+          <tr><td>Armazenamento temp.</td><td>S3/R2 — arquivo deletado após download</td><td class="val">R$ 0,001</td></tr>
+          <tr class="total-row"><td colspan="2"><strong>Total por áudio</strong></td><td class="val">~R$ 0,13</td></tr>
+        </tbody>
+      </table>
+      <div class="nota">💡 Sobre R$2,00 cobrado: margem bruta de <strong>~93%</strong>. Totalmente viável.</div>
+    </div>
+
+    <div class="cost-card">
+      <div class="cost-card-header azul">🚀 Cenário Híbrido — Groq + Local (Recomendado)</div>
+      <table class="cost-table">
+        <thead><tr><th>Componente</th><th>Detalhe</th><th class="val">Custo</th></tr></thead>
+        <tbody>
+          <tr><td>Groq Whisper API</td><td>~10x mais rápido, ~60% mais barato</td><td class="val">R$ 0,02</td></tr>
+          <tr><td>Llama 3 (Groq LLM)</td><td>Free tier / muito barato</td><td class="val free">~R$ 0,00</td></tr>
+          <tr><td>Gateway PIX (Asaas)</td><td>Taxa fixa R$0,01 por PIX</td><td class="val">R$ 0,01</td></tr>
+          <tr><td>Hosting (Render free)</td><td>Free tier para low traffic</td><td class="val free">R$ 0,00</td></tr>
+          <tr><td>CDN / Domínio</td><td>Cloudflare + Registro.br ~R$50/ano</td><td class="val">R$ 0,01</td></tr>
+          <tr class="total-row"><td colspan="2"><strong>Total por áudio</strong></td><td class="val">~R$ 0,04</td></tr>
+        </tbody>
+      </table>
+      <div class="nota">🏆 Melhor custo-benefício. Margem de <strong>~98%</strong>. Groq tem free tier generoso para testes.</div>
+    </div>
+
+    <div class="cost-card">
+      <div class="cost-card-header laranja">🏗️ Infraestrutura Mensal (100 usuários/mês)</div>
+      <table class="cost-table">
+        <thead><tr><th>Serviço</th><th>Plano</th><th class="val">R$/mês</th></tr></thead>
+        <tbody>
+          <tr><td>Railway / Render</td><td>Starter (~500MB RAM)</td><td class="val">R$ 20</td></tr>
+          <tr><td>Domínio (.com.br)</td><td>Registro.br — anual</td><td class="val">R$ 4</td></tr>
+          <tr><td>Cloudflare</td><td>Free (CDN + SSL)</td><td class="val free">R$ 0</td></tr>
+          <tr><td>APIs de IA</td><td>Groq (pago por uso)</td><td class="val">R$ 10</td></tr>
+          <tr><td>Gateway PIX</td><td>Descontado da receita</td><td class="val">R$ 1</td></tr>
+          <tr><td>GitHub</td><td>Free tier</td><td class="val free">R$ 0</td></tr>
+          <tr class="total-row"><td colspan="2"><strong>Infra mensal total</strong></td><td class="val">R$ 35</td></tr>
+        </tbody>
+      </table>
+      <div class="nota">📌 Com 18 transcrições de R$2,00 já paga toda a infraestrutura do mês.</div>
+    </div>
+
+  </div>
+
+  <!-- SAVINGS -->
+  <div class="savings-box">
+    <h3>💸 Análise de Rentabilidade — 100 áudios/mês</h3>
+    <div class="savings-row"><span>Receita bruta (100 × R$2,00)</span><span class="pos">+ R$ 200,00</span></div>
+    <div class="savings-row"><span>Custo das APIs de IA (100 × R$0,04)</span><span class="neg">- R$ 4,00</span></div>
+    <div class="savings-row"><span>Taxa de gateway PIX (100 × R$0,01)</span><span class="neg">- R$ 1,00</span></div>
+    <div class="savings-row"><span>Hosting mensal (Railway)</span><span class="neg">- R$ 20,00</span></div>
+    <div class="savings-row"><span>Domínio + misc.</span><span class="neg">- R$ 5,00</span></div>
+    <div class="savings-row"><span>🏆 Lucro líquido estimado</span><span class="pos">R$ 170,00 / mês</span></div>
+  </div>
+
+  <!-- CENÁRIOS -->
+  <h2 class="section-title" id="cenarios">📈 Cenários de Escala</h2>
+  <div class="scenario-grid">
+    <div class="scenario-card">
+      <div class="scenario-header s1">🏠 Fase 0 — MVP Local (Agora)</div>
+      <div class="scenario-body">
+        <div class="scenario-row"><span class="key">Usuários</span><span class="val-s">Apenas você</span></div>
+        <div class="scenario-row"><span class="key">Custo infra</span><span class="val-s green">R$ 0</span></div>
+        <div class="scenario-row"><span class="key">Capacidade</span><span class="val-s">1 zip por vez</span></div>
+        <div class="scenario-row"><span class="key">Pagamento</span><span class="val-s">Nenhum (uso próprio)</span></div>
+        <div class="scenario-row"><span class="key">Deploy</span><span class="val-s">Mac local, porta 5000</span></div>
+        <div class="scenario-row"><span class="key">IA</span><span class="val-s">Whisper small local</span></div>
+        <span class="scenario-badge badge-free">✅ Funcional agora</span>
+      </div>
+    </div>
+    <div class="scenario-card highlight">
+      <div class="scenario-header s2">🚀 Fase 1 — MVP Web (Próximo passo)</div>
+      <div class="scenario-body">
+        <div class="scenario-row"><span class="key">Usuários</span><span class="val-s">10–50/mês</span></div>
+        <div class="scenario-row"><span class="key">Custo infra</span><span class="val-s warn">R$ 35/mês</span></div>
+        <div class="scenario-row"><span class="key">Receita est.</span><span class="val-s green">R$ 100–500/mês</span></div>
+        <div class="scenario-row"><span class="key">Pagamento</span><span class="val-s">PIX via Mercado Pago</span></div>
+        <div class="scenario-row"><span class="key">Deploy</span><span class="val-s">Railway / Render</span></div>
+        <div class="scenario-row"><span class="key">IA</span><span class="val-s">Groq Whisper API</span></div>
+        <span class="scenario-badge badge-paid">🔧 3–4 semanas de dev</span>
+      </div>
+    </div>
+    <div class="scenario-card">
+      <div class="scenario-header s3">🌐 Fase 2 — SaaS Escalado</div>
+      <div class="scenario-body">
+        <div class="scenario-row"><span class="key">Usuários</span><span class="val-s">500–2000/mês</span></div>
+        <div class="scenario-row"><span class="key">Custo infra</span><span class="val-s warn">R$ 150–400/mês</span></div>
+        <div class="scenario-row"><span class="key">Receita est.</span><span class="val-s green">R$ 1k–4k/mês</span></div>
+        <div class="scenario-row"><span class="key">Pagamento</span><span class="val-s">PIX + Cartão</span></div>
+        <div class="scenario-row"><span class="key">Deploy</span><span class="val-s">VPS + Docker</span></div>
+        <div class="scenario-row"><span class="key">IA</span><span class="val-s">Whisper cloud + fila</span></div>
+        <span class="scenario-badge badge-scale">📊 Pós validação do mercado</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GATEWAYS -->
+  <h2 class="section-title" id="gateways">💳 Comparativo de Gateways de Pagamento</h2>
+  <div class="cost-card" style="margin-bottom:2rem;">
+    <div class="cost-card-header cinza">🏦 Gateways — PIX para Brasil</div>
+    <table class="cost-table">
+      <thead><tr><th>Gateway</th><th>Taxa PIX</th><th>Setup</th><th>Integração</th><th>Recomendação</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Mercado Pago</strong></td>
+          <td>0,99% + R$0,00 fixo</td>
+          <td>Grátis</td>
+          <td>Python SDK disponível</td>
+          <td>⭐⭐⭐⭐⭐ Melhor para BR</td>
+        </tr>
+        <tr>
+          <td><strong>Asaas</strong></td>
+          <td>R$0,01 fixo por PIX</td>
+          <td>Grátis</td>
+          <td>REST API simples</td>
+          <td>⭐⭐⭐⭐⭐ Mais barato (fixo)</td>
+        </tr>
+        <tr>
+          <td><strong>Pagar.me</strong></td>
+          <td>0,85% + R$0,09</td>
+          <td>Grátis</td>
+          <td>SDK Python</td>
+          <td>⭐⭐⭐⭐ Boa opção</td>
+        </tr>
+        <tr>
+          <td><strong>Stripe</strong></td>
+          <td>2,9% + $0,30</td>
+          <td>Grátis</td>
+          <td>Melhor SDK do mundo</td>
+          <td>⭐⭐⭐ Só se internacionalizar</td>
+        </tr>
+        <tr>
+          <td><strong>PicPay Biz</strong></td>
+          <td>Taxa negociável</td>
+          <td>Grátis</td>
+          <td>API simples</td>
+          <td>⭐⭐⭐ Alternativa</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="nota">💡 Recomendação: começar com <strong>Asaas</strong> (R$0,01 fixo — o mais barato para tickets baixos como R$2,00) ou <strong>Mercado Pago</strong> (mais conhecido e fácil de integrar).</div>
+  </div>
+
+  <!-- ROADMAP -->
+  <h2 class="section-title" id="roadmap">🗺️ Roadmap de Desenvolvimento</h2>
+  <div class="roadmap">
+    <div class="phase">
+      <div class="phase-header p1">⚡ Fase 0 — Já Feito (Atual)</div>
+      <div class="phase-body">
+        <div class="phase-item">Script Python whatsapp_local.py</div>
+        <div class="phase-item">Parser de arquivos .txt do WhatsApp</div>
+        <div class="phase-item">Extração de áudios .opus do .zip</div>
+        <div class="phase-item">Whisper local (modelo small)</div>
+        <div class="phase-item">Web UI Flask com drag & drop</div>
+        <div class="phase-item">Saída cronológica em .txt</div>
+        <div class="phase-item">Launcher Start_AntiGravity.command</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-header p2">🔧 Fase 1 — MVP Web (2–4 semanas)</div>
+      <div class="phase-body">
+        <div class="phase-item">Corrigir erro ffmpeg definitivamente</div>
+        <div class="phase-item">Integrar Groq API como fallback de nuvem</div>
+        <div class="phase-item">Adicionar seletor de período (hoje/semana/custom)</div>
+        <div class="phase-item">Integrar gateway PIX (Asaas ou MP)</div>
+        <div class="phase-item">Webhook de confirmação de pagamento</div>
+        <div class="phase-item">Deploy no Railway / Render</div>
+        <div class="phase-item">Domínio personalizado (antigravity.app)</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-header p3">📊 Fase 2 — Produto Polido (1–2 meses)</div>
+      <div class="phase-body">
+        <div class="phase-item">Visualização da cronologia na web</div>
+        <div class="phase-item">Download em PDF formatado</div>
+        <div class="phase-item">Resumo executivo com gpt-4o-mini</div>
+        <div class="phase-item">Histórico de casos do usuário</div>
+        <div class="phase-item">Sistema de login (Supabase Auth)</div>
+        <div class="phase-item">Dashboard de uso e créditos</div>
+        <div class="phase-item">Pacotes de créditos (R$10, R$20, R$50)</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-header p4">🌐 Fase 3 — Escala & Nichos</div>
+      <div class="phase-body">
+        <div class="phase-item">Foco em escritórios de advocacia</div>
+        <div class="phase-item">Foco em peritos judiciais</div>
+        <div class="phase-item">Exportação para formato jurídico</div>
+        <div class="phase-item">API pública para integrações</div>
+        <div class="phase-item">Planos mensais por volume</div>
+        <div class="phase-item">Suporte a Telegram e outros apps</div>
+        <div class="phase-item">Modelo white-label para escritórios</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LGPD -->
+  <h2 class="section-title" id="lgpd">🔐 LGPD & Segurança de Dados</h2>
+  <div class="cost-section">
+    <div class="cost-card">
+      <div class="cost-card-header amarelo">⚠️ Riscos & Obrigações Legais</div>
+      <table class="cost-table">
+        <thead><tr><th>Item</th><th>Detalhe</th></tr></thead>
+        <tbody>
+          <tr><td>📋 Conteúdo sensível</td><td>Conversas de WhatsApp podem conter dados pessoais de terceiros</td></tr>
+          <tr><td>🗑️ Retenção zero</td><td>Deletar todos os arquivos imediatamente após o download</td></tr>
+          <tr><td>🔒 Transmissão segura</td><td>Usar HTTPS obrigatoriamente em qualquer deploy</td></tr>
+          <tr><td>📜 Termos de uso</td><td>Exibir aviso claro sobre finalidade e retenção dos dados</td></tr>
+          <tr><td>🚫 Sem logging de conteúdo</td><td>Não salvar o conteúdo transcrito em logs ou BD</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cost-card">
+      <div class="cost-card-header verde">✅ Boas Práticas Implementadas</div>
+      <table class="cost-table">
+        <thead><tr><th>Prática</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Processamento 100% local (fase 0)</td><td class="val free">✅ Implementado</td></tr>
+          <tr><td>Nenhum dado enviado a servidores terceiros</td><td class="val free">✅ Fase 0</td></tr>
+          <tr><td>Arquivos temporários em /uploads</td><td class="val free">✅ Implementado</td></tr>
+          <tr><td>Output salvo apenas localmente</td><td class="val free">✅ Implementado</td></tr>
+          <tr><td>Auto-deleção pós download (cloud)</td><td class="val warn">🔧 A implementar</td></tr>
+          <tr><td>HTTPS + certificado SSL</td><td class="val warn">🔧 A implementar</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  AntiGravity · WhatsApp Transcription MVP · Desenvolvido com Claude · Atualizado em 02/04/2026
+</footer>
+
+</body>
+</html>

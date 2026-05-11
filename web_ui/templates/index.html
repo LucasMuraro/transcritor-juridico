@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiGravity | Inteligência Jurídica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-plane-up"></i>
+            <h1>AntiGravity</h1>
+        </div>
+        <p class="tagline">Transcrição Inteligente e Extração de Provas em Ambiente Local e Privado.</p>
+    </header>
+
+    <div class="main-container">
+        <!-- GLOBAL CONFIG BAR -->
+        <div class="top-bar">
+            <div class="field-group" style="flex: 2;">
+                <label>Identificação do Caso</label>
+                <input type="text" id="case_name" placeholder="Ex: Processo Silva X Mendes" value="Caso_Legal">
+            </div>
+            <div class="field-group" style="flex: 1;">
+                <label>Precisão da IA (Whisper)</label>
+                <select id="model">
+                    <option value="tiny">Ultrarrápido</option>
+                    <option value="base">Rápido</option>
+                    <option value="small" selected>Recomendado (Elevada Precisão + Timestamps exatos)</option>
+                    <option value="medium">Excelente</option>
+                    <option value="large">Máxima</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            
+            <!-- CARD 1: VÍDEO -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-video" style="color: #ef4444;"></i>
+                    <h2>Audiências & Vídeos</h2>
+                </div>
+                <p class="card-desc">Transcreva arquivos MP4, MOV, MKV na íntegra. A IA extrairá as falas e estampará o minuto/segundo exato de início e fim no relatório.</p>
+                
+                <div class="input-row">
+                    <div class="field-group">
+                        <label>Início (ex: 00:00:00)</label>
+                        <input type="text" id="start_time" placeholder="00:00:00">
+                    </div>
+                    <div class="field-group">
+                        <label>Fim (opcional)</label>
+                        <input type="text" id="end_time" placeholder="00:01:30">
+                    </div>
+                </div>
+
+                <div class="dropzone" id="dz-video">
+                    <i class="fa-solid fa-film"></i>
+                    <p>Arraste seu Vídeo Aqui</p>
+                    <span>Upload Máximo: 1.5GB</span>
+                    <input type="file" id="file_video" hidden>
+                </div>
+                <button class="btn btn-video" id="btn-video">Transcrever Vídeo</button>
+            </div>
+
+            <!-- CARD 2: WHATSAPP FULL -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i>
+                    <h2>Backups do WhatsApp</h2>
+                </div>
+                <p class="card-desc">Gere Atas de histórico contextual intercalando PTTs/Áudios originais com formato de digitação.</p>
+                
+                <div class="input-row">
+                    <div class="field-group">
+                        <label>Data Início (LImite Opcional)</label>
+                        <input type="datetime-local" id="wpp_start">
+                    </div>
+                    <div class="field-group">
+                        <label>Data Fim (Limite Opcional)</label>
+                        <input type="datetime-local" id="wpp_end">
+                    </div>
+                </div>
+
+                <div class="dropzone" id="dz-wpp">
+                    <i class="fa-solid fa-comments"></i>
+                    <p>Arraste o .zip do Chat Aqui</p>
+                    <span>Upload Máximo: 1GB</span>
+                    <input type="file" id="file_wpp" hidden>
+                </div>
+                <button class="btn btn-wpp" id="btn-wpp">Decodificar WhatsApp</button>
+            </div>
+
+            <!-- CARD 3: EXTRATOR PROVAS -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-magnifying-glass-chart" style="color: #334155;"></i>
+                    <h2>Extrair somente arquivos</h2>
+                </div>
+                <p class="card-desc">Extração automática de mídias anexas (Imagens, PDF, docs) do WhatsApp sem transcrever nada.</p>
+                
+                <div class="media-checks">
+                    <label class="check-item"><input type="checkbox" id="ex_imgs" checked> 🖼️ Imagens</label>
+                    <label class="check-item"><input type="checkbox" id="ex_docs" checked> 📄 Documentos</label>
+                    <label class="check-item"><input type="checkbox" id="ex_auds"> 🎙️ Áudios Puros</label>
+                </div>
+
+                <div class="dropzone" id="dz-extractor">
+                    <i class="fa-solid fa-folder-tree"></i>
+                    <p>Arraste o .zip Aqui</p>
+                    <span>Ideal para limpeza de provas</span>
+                    <input type="file" id="file_extractor" hidden>
+                </div>
+                <button class="btn btn-extra" id="btn-extractor">Extrair Provas Rápidas</button>
+            </div>
+
+            <!-- CARD 4: ÁUDIOS SOLTOS -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-microphone-lines" style="color: #8b5cf6;"></i>
+                    <h2>Áudios Individuais</h2>
+                </div>
+                <p class="card-desc">Transcreva arquivos de áudio isolados (.mp3, .wav, .m4a) de gravadores ou mensagens encaminhadas.</p>
+                
+                <div style="height: 57px;"></div> <!-- Spacer para alinhar com os outros cards que tem inputs -->
+
+                <div class="dropzone" id="dz-audio">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <p>Arraste seu Áudio Aqui</p>
+                    <span>MP3, WAV, M4A — Até 200MB</span>
+                    <input type="file" id="file_audio" hidden>
+                </div>
+                <button class="btn btn-audio" id="btn-audio">Transcrever Áudio</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TERMINAL DE STATUS -->
+    <div id="status-overlay" class="status-box">
+        <div class="status-head">
+            <span>Terminal AntiGravity</span>
+            <span id="close-status" style="cursor: pointer; opacity: 0.6;">✖</span>
+        </div>
+        <div id="terminal" class="status-log"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

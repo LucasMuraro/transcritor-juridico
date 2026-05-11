@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AntiGravity — Estrutura & Módulos do Software</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    :root {
+      --verde:      #0A6E3F;
+      --verde-c:    #12a05c;
+      --cinza-dk:   #1a1a2e;
+      --roxo:       #5B21B6;
+      --azul:       #1D4ED8;
+      --laranja:    #C2410C;
+      --vermelho:   #B91C1C;
+      --amarelo:    #D97706;
+      --bg:         #f4f6fb;
+      --borda:      #e2e8f0;
+      --txt:        #1a1a2e;
+      --txt-l:      #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--txt); line-height: 1.65; }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, var(--roxo) 60%, var(--verde) 100%);
+      color: white; padding: 2.5rem 2rem 2rem; text-align: center;
+    }
+    header .badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+    header h1 { font-size: 2.1rem; font-weight: 900; margin-bottom: 6px; }
+    header p  { font-size: 0.95rem; opacity: 0.85; }
+
+    nav { background: white; border-bottom: 2px solid var(--borda); position: sticky; top: 0; z-index: 100; padding: 0.6rem 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    nav a { font-size: 0.78rem; font-weight: 700; color: var(--verde); text-decoration: none; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--borda); transition: .2s; }
+    nav a:hover { background: var(--verde); color: white; }
+
+    .container { max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .section-title { font-size: 1.4rem; font-weight: 800; color: var(--verde); border-left: 5px solid var(--verde); padding-left: 14px; margin-bottom: 1.5rem; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; }
+
+    /* MODULE GRID */
+    .mod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .mod-card { background: white; border-radius: 14px; border: 1px solid var(--borda); overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .mod-head { padding: 0.9rem 1rem; color: white; font-weight: 800; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    .mod-body { padding: 1rem; }
+    .mod-body p { font-size: 0.83rem; color: var(--txt-l); margin-bottom: 0.5rem; }
+    .sub-list { list-style: none; margin-top: 0.5rem; }
+    .sub-list li { font-size: 0.81rem; padding: 4px 0; border-bottom: 1px solid #f1f5f9; display: flex; align-items: flex-start; gap: 6px; line-height: 1.4; }
+    .sub-list li:last-child { border: none; }
+    .sub-list li::before { content: "›"; color: var(--verde); font-weight: 900; flex-shrink: 0; font-size: 1rem; }
+    .mod-head.verde   { background: var(--verde); }
+    .mod-head.verde-c { background: var(--verde-c); }
+    .mod-head.roxo    { background: var(--roxo); }
+    .mod-head.azul    { background: var(--azul); }
+    .mod-head.laranja { background: var(--laranja); }
+    .mod-head.cinza   { background: #374151; }
+    .mod-head.amarelo { background: var(--amarelo); }
+
+    .badge-ok     { background: #dcfce7; color: #14532d; font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 4px; }
+    .badge-todo   { background: #fef9c3; color: #854d0e; font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 4px; }
+    .badge-future { background: #ede9fe; color: #6d28d9; font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 4px; }
+
+    /* FILE TREE */
+    .file-tree { background: #1e1e2e; border-radius: 14px; padding: 1.5rem; font-family: 'Courier New', Courier, monospace; font-size: 0.83rem; line-height: 1.8; margin-bottom: 2rem; overflow-x: auto; }
+    .ft-folder  { color: #89b4fa; font-weight: 700; }
+    .ft-file    { color: #a6e3a1; }
+    .ft-file-py { color: #f38ba8; }
+    .ft-file-js { color: #f9e2af; }
+    .ft-file-html { color: #89dceb; }
+    .ft-comment { color: #6c7086; font-style: italic; }
+    .ft-indent  { display: inline-block; width: 20px; }
+    .ft-key     { color: #cba6f7; }
+
+    /* TECH CARDS */
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .tech-card { background: white; border-radius: 14px; border: 1px solid var(--borda); overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .tech-card-head { padding: 1rem 1.2rem; color: white; font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+    .tech-card-body { padding: 1.2rem; }
+    .tech-card-body p { font-size: 0.85rem; color: var(--txt-l); margin-bottom: 0.6rem; }
+    .tech-card-body .role { font-size: 0.82rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 12px; color: var(--verde); font-weight: 600; margin-top: 0.5rem; }
+    .tech-card-body .code-ex { background: #1e1e2e; border-radius: 8px; padding: 10px 14px; margin-top: 0.7rem; font-family: Courier, monospace; font-size: 0.78rem; color: #cdd6f4; overflow-x: auto; line-height: 1.7; }
+    .kw  { color: #89b4fa; }
+    .str { color: #a6e3a1; }
+    .fn  { color: #f38ba8; }
+    .cm  { color: #6c7086; }
+    .num { color: #fab387; }
+
+    /* DB SCHEMA */
+    .db-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .db-card { background: white; border-radius: 12px; border: 1px solid var(--borda); overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+    .db-head { padding: 0.7rem 1rem; font-weight: 800; font-size: 0.83rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+    .db-head .count { font-size: 0.72rem; opacity: 0.8; font-weight: 400; }
+    table.tbl { width: 100%; border-collapse: collapse; font-size: 0.79rem; }
+    table.tbl th { background: #f8fafc; padding: 6px 10px; text-align: left; font-weight: 700; color: var(--txt-l); font-size: 0.73rem; text-transform: uppercase; border-bottom: 1px solid var(--borda); }
+    table.tbl td { padding: 6px 10px; border-bottom: 1px solid #f1f5f9; }
+    table.tbl tr:last-child td { border: none; }
+    .pk  { color: #ea580c; font-weight: 700; }
+    .fk  { color: #7c3aed; font-weight: 700; }
+    .uk  { color: #16a34a; font-weight: 700; }
+
+    /* FLOW */
+    .flow-wrap { background: white; border-radius: 14px; border: 1px solid var(--borda); padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow-x: auto; margin-bottom: 1.5rem; }
+    .flow-wrap .mermaid { min-width: 800px; }
+    .flow-wrap h3 { font-size: 1rem; font-weight: 700; color: var(--verde); margin-bottom: 1.2rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--bg); }
+
+    .alert { border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; font-size: 0.88rem; display: flex; gap: 10px; align-items: flex-start; }
+    .alert-verde { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
+    .alert-info  { background: #eff6ff; border: 1px solid #93c5fd; color: #1e3a8a; }
+    .alert-warn  { background: #fff7ed; border: 1px solid #fed7aa; color: #7c2d12; }
+    .alert .icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* COMPARE TABLE */
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 2rem; }
+    .compare-table th { background: var(--roxo); color: white; padding: 10px 14px; text-align: left; }
+    .compare-table td { padding: 9px 14px; border-bottom: 1px solid var(--borda); }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: #f8faff; }
+    .ck { color: #16a34a; font-weight: 800; }
+    .cx { color: #dc2626; font-weight: 700; }
+    .cp { color: #d97706; font-weight: 700; }
+
+    footer { background: var(--cinza-dk); color: rgba(255,255,255,0.6); text-align: center; padding: 1.2rem; font-size: 0.8rem; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { curve: 'basis' }, securityLevel: 'loose' });</script>
+
+<header>
+  <div class="badge">🏗️ Arquitetura de Software · AntiGravity</div>
+  <h1>AntiGravity — Estrutura & Módulos</h1>
+  <p>Módulos do Sistema · Estrutura de Arquivos · Tech Stack · Schema de Dados · Evolução MVP → SaaS</p>
+</header>
+
+<nav>
+  <a href="#modulos">📦 Módulos</a>
+  <a href="#arquivos">📁 Arquivos</a>
+  <a href="#tecnologias">🔧 Tecnologias</a>
+  <a href="#schema">🗄️ Schema</a>
+  <a href="#arquitetura">🏛️ Arquitetura</a>
+  <a href="#evolucao">🚀 Evolução</a>
+</nav>
+
+<div class="container">
+
+  <!-- MÓDULOS -->
+  <h2 class="section-title" id="modulos">📦 Módulos do Sistema</h2>
+  <div class="mod-grid">
+
+    <div class="mod-card">
+      <div class="mod-head verde">🎨 Módulo 01 — Interface Web (UI)</div>
+      <div class="mod-body">
+        <p>Frontend do sistema, responsável por receber o arquivo e apresentar resultados ao usuário.</p>
+        <ul class="sub-list">
+          <li>Drag & drop para upload de .zip <span class="badge-ok">✅ Feito</span></li>
+          <li>Campo "Nome do Caso" <span class="badge-ok">✅ Feito</span></li>
+          <li>Seletor de modelo Whisper (velocidade/precisão) <span class="badge-ok">✅ Feito</span></li>
+          <li>Terminal verde de progresso em tempo real <span class="badge-ok">✅ Feito</span></li>
+          <li>Seletor de período (hoje/semana/custom) <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Exibição de QR Code PIX <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Visualização da cronologia no browser <span class="badge-future">🔮 Futuro</span></li>
+          <li>Design responsivo (mobile) <span class="badge-future">🔮 Futuro</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-head verde-c">⚙️ Módulo 02 — Parser de Conversas</div>
+      <div class="mod-body">
+        <p>Núcleo do sistema — interpreta o arquivo de texto do WhatsApp e organiza os dados.</p>
+        <ul class="sub-list">
+          <li>Regex para detectar mensagens de texto <span class="badge-ok">✅ Feito</span></li>
+          <li>Identificação de remetentes <span class="badge-ok">✅ Feito</span></li>
+          <li>Extração de nomes de arquivos de áudio <span class="badge-ok">✅ Feito</span></li>
+          <li>Parsing de datas no formato BR e EN <span class="badge-ok">✅ Feito</span></li>
+          <li>Filtro por período selecionado <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Suporte a grupos (múltiplos remetentes) <span class="badge-ok">✅ Feito</span></li>
+          <li>Detecção de mensagens apagadas <span class="badge-ok">✅ Feito</span></li>
+          <li>Suporte a stickers e outros mídias <span class="badge-future">🔮 Futuro</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-head roxo">🤖 Módulo 03 — Motor de Transcrição IA</div>
+      <div class="mod-body">
+        <p>Responsável por converter os áudios .opus em texto usando Whisper.</p>
+        <ul class="sub-list">
+          <li>Conversão .opus → .wav (imageio-ffmpeg) <span class="badge-ok">✅ Feito</span></li>
+          <li>Whisper local (modelo tiny/base/small/medium) <span class="badge-ok">✅ Feito</span></li>
+          <li>Auto-detecção de idioma <span class="badge-ok">✅ Feito</span></li>
+          <li>Transcrição em lote (todos os áudios) <span class="badge-ok">✅ Feito</span></li>
+          <li>Integração Groq API (cloud rápido) <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Integração Whisper API OpenAI (fallback) <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Resumo executivo com LLM (gpt-4o-mini) <span class="badge-future">🔮 Futuro</span></li>
+          <li>Identificação de speakers (diarization) <span class="badge-future">🔮 Futuro</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-head azul">💳 Módulo 04 — Gateway de Pagamento</div>
+      <div class="mod-body">
+        <p>Gerencia o fluxo de cobrança PIX antes de liberar o processamento.</p>
+        <ul class="sub-list">
+          <li>Contagem de áudios no período <span class="badge-ok">✅ Parcial</span></li>
+          <li>Cálculo do valor (qtd × R$2,00) <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Criação de cobrança PIX dinâmico <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Exibição de QR Code na interface <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Webhook de confirmação de pagamento <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Token de session vinculado ao pagamento <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Planos mensais com créditos <span class="badge-future">🔮 Futuro</span></li>
+          <li>Histórico de cobranças <span class="badge-future">🔮 Futuro</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-head laranja">📋 Módulo 05 — Consolidação e Output</div>
+      <div class="mod-body">
+        <p>Monta a cronologia final cruzando o texto original com as transcrições dos áudios.</p>
+        <ul class="sub-list">
+          <li>Merge cronológico texto + áudio transcrito <span class="badge-ok">✅ Feito</span></li>
+          <li>Exportação em .txt formatado <span class="badge-ok">✅ Feito</span></li>
+          <li>Cabeçalho com metadados do caso <span class="badge-ok">✅ Feito</span></li>
+          <li>Abertura automática da pasta no Finder <span class="badge-ok">✅ Feito</span></li>
+          <li>Exportação em PDF com layout <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Link de download temporário (cloud) <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Visualização web da cronologia <span class="badge-future">🔮 Futuro</span></li>
+          <li>Formato jurídico padronizado <span class="badge-future">🔮 Futuro</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-head cinza">🔐 Módulo 06 — Segurança & LGPD</div>
+      <div class="mod-body">
+        <p>Garante privacidade dos dados e conformidade com a legislação brasileira.</p>
+        <ul class="sub-list">
+          <li>Arquivos processados apenas em memória temporária <span class="badge-ok">✅ Feito</span></li>
+          <li>Nenhum envio a APIs externas (fase local) <span class="badge-ok">✅ Feito</span></li>
+          <li>Deleção automática pós-download <span class="badge-todo">🔧 Próximo</span></li>
+          <li>HTTPS obrigatório no deploy cloud <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Token de download de uso único <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Sem log de conteúdo transcrito <span class="badge-todo">🔧 Próximo</span></li>
+          <li>Política de privacidade na interface <span class="badge-future">🔮 Futuro</span></li>
+          <li>Cron de limpeza de arquivos órfãos <span class="badge-future">🔮 Futuro</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ESTRUTURA DE ARQUIVOS -->
+  <h2 class="section-title" id="arquivos">📁 Estrutura de Arquivos do Projeto</h2>
+  <div class="file-tree">
+    <div><span class="ft-folder">whatsapp-lucas-felipe-whisper/</span> <span class="ft-comment">← Raiz do projeto</span></div>
+    <div><span class="ft-indent"></span><span class="ft-file-py">whatsapp_local.py</span> <span class="ft-comment">← Script original CLI (v1)</span></div>
+    <div><span class="ft-indent"></span><span class="ft-file-py">whatsapp_pipeline.py</span> <span class="ft-comment">← Pipeline principal de processamento</span></div>
+    <div><span class="ft-indent"></span><span class="ft-file">Start_AntiGravity.command</span> <span class="ft-comment">← Launcher macOS (duplo clique)</span></div>
+    <div><span class="ft-indent"></span><span class="ft-file">CONTEXT.md</span> <span class="ft-comment">← Documentação do projeto</span></div>
+    <div>&nbsp;</div>
+    <div><span class="ft-indent"></span><span class="ft-folder">web_ui/</span> <span class="ft-comment">← Interface Web Flask</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file-py">app.py</span> <span class="ft-comment">← Servidor Flask principal</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-folder">templates/</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file-html">index.html</span> <span class="ft-comment">← UI principal (drag & drop)</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-folder">static/</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file-js">styles.css</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file-js">main.js</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-folder">uploads/</span> <span class="ft-comment">← Arquivos temporários de upload</span></div>
+    <div>&nbsp;</div>
+    <div><span class="ft-indent"></span><span class="ft-folder">casos/</span> <span class="ft-comment">← Output por caso processado</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-folder">{NOME_DO_CASO}/</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-folder">01_zip/</span> <span class="ft-comment">← Arquivo .zip original</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-folder">02_extraido/</span> <span class="ft-comment">← Conteúdo extraído</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-folder">03_audios/</span> <span class="ft-comment">← Áudios .opus isolados</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-folder">04_transcricoes/</span> <span class="ft-comment">← .txt por áudio transcrito</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-folder">05_consolidado/</span> <span class="ft-comment">← ⭐ Relatório final aqui</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file">TRANSCRICAO_{caso}_{data}.txt</span></div>
+    <div>&nbsp;</div>
+    <div><span class="ft-indent"></span><span class="ft-folder">context/</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file">CONTEXT.md</span> <span class="ft-comment">← Conversa e documentação histórica</span></div>
+    <div><span class="ft-indent"></span><span class="ft-folder">ideias/</span> <span class="ft-comment">← Documentos de planejamento (você está aqui!)</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file-html">antigravity-infraestrutura-custos.html</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file-html">antigravity-fluxograma.html</span></div>
+    <div><span class="ft-indent"></span><span class="ft-indent"></span><span class="ft-file-html">antigravity-estrutura-modulos.html</span> <span class="ft-key">← este arquivo</span></div>
+  </div>
+
+  <!-- TECNOLOGIAS -->
+  <h2 class="section-title" id="tecnologias">🔧 Tecnologias em Detalhe</h2>
+  <div class="tech-grid">
+
+    <div class="tech-card">
+      <div class="tech-card-head" style="background: var(--verde);">🐍 Python + Flask</div>
+      <div class="tech-card-body">
+        <p>Backend principal. Flask serve como servidor web leve para a UI local, enquanto scripts Python orquestram todo o pipeline de processamento.</p>
+        <div class="role">📌 Usado em: app.py, whatsapp_local.py, whatsapp_pipeline.py</div>
+        <div class="code-ex">
+<span class="cm"># Rota principal do upload</span><br>
+<span class="kw">@app</span>.route(<span class="str">'/processar'</span>, methods=[<span class="str">'POST'</span>])<br>
+<span class="kw">def</span> <span class="fn">processar</span>():<br>
+&nbsp;&nbsp;zip_file = request.files[<span class="str">'arquivo'</span>]<br>
+&nbsp;&nbsp;caso = request.form[<span class="str">'nome_caso'</span>]<br>
+&nbsp;&nbsp;<span class="kw">return</span> pipeline.<span class="fn">run</span>(zip_file, caso)
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-card-head" style="background: var(--roxo);">🎙️ OpenAI Whisper (Local)</div>
+      <div class="tech-card-body">
+        <p>Motor de transcrição open-source da OpenAI, rodando completamente na máquina local. Suporta múltiplos modelos com diferentes trade-offs de velocidade e precisão.</p>
+        <div class="role">📌 Modelos: tiny (mais rápido) → small → medium → large (mais preciso)</div>
+        <div class="code-ex">
+<span class="kw">import</span> whisper<br>
+model = whisper.<span class="fn">load_model</span>(<span class="str">"small"</span>)<br>
+result = model.<span class="fn">transcribe</span>(<span class="str">"audio.wav"</span>,<br>
+&nbsp;&nbsp;language=<span class="str">"pt"</span>,<br>
+&nbsp;&nbsp;fp16=<span class="num">False</span>)<br>
+texto = result[<span class="str">"text"</span>]
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-card-head" style="background: var(--laranja);">🎵 imageio-ffmpeg</div>
+      <div class="tech-card-body">
+        <p>Biblioteca Python que empacota um binário FFmpeg portátil. Resolve o problema de dependência do sistema — sem precisar instalar ffmpeg via Homebrew ou apt-get.</p>
+        <div class="role">📌 Converte .opus (WhatsApp) → .wav (16kHz mono) para o Whisper processar</div>
+        <div class="code-ex">
+<span class="kw">import</span> imageio_ffmpeg<br>
+ffmpeg_path = imageio_ffmpeg.<span class="fn">get_ffmpeg_exe</span>()<br>
+<span class="cm"># Injeta o path no ambiente</span><br>
+os.environ[<span class="str">"PATH"</span>] += <span class="str">":" + </span>os.path.<span class="fn">dirname</span>(ffmpeg_path)<br>
+<span class="cm"># Agora whisper.transcribe() funciona!</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-card-head" style="background: var(--azul);">🌐 Groq API (Próximo)</div>
+      <div class="tech-card-body">
+        <p>API de inferência ultrarrápida com modelos open-source. Suporta Whisper large v3 com velocidade ~10x superior à OpenAI, com free tier generoso para desenvolvimento.</p>
+        <div class="role">📌 Caso de uso: versão cloud onde o usuário paga R$2,00 e não precisa ter Mac ligado</div>
+        <div class="code-ex">
+<span class="kw">from</span> groq <span class="kw">import</span> Groq<br>
+client = <span class="fn">Groq</span>(api_key=<span class="str">"..."</span>)<br>
+transcription = client.audio.transcriptions.<span class="fn">create</span>(<br>
+&nbsp;&nbsp;file=audio_file,<br>
+&nbsp;&nbsp;model=<span class="str">"whisper-large-v3"</span>,<br>
+&nbsp;&nbsp;language=<span class="str">"pt"</span><br>
+)
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-card-head" style="background: #374151;">💳 Asaas PIX API (Próximo)</div>
+      <div class="tech-card-body">
+        <p>Gateway de pagamento brasileiro com PIX dinâmico. Taxa de R$0,01 fixo por transação — o mais barato do mercado para tickets baixos como R$2,00.</p>
+        <div class="role">📌 Fluxo: criar cobrança → gerar QR Code → webhook pix_paid → liberar processamento</div>
+        <div class="code-ex">
+<span class="cm"># POST /api/v3/charges</span><br>
+payload = {<br>
+&nbsp;&nbsp;<span class="str">"billingType"</span>: <span class="str">"PIX"</span>,<br>
+&nbsp;&nbsp;<span class="str">"value"</span>: <span class="num">2.00</span>,<br>
+&nbsp;&nbsp;<span class="str">"dueDate"</span>: today,<br>
+&nbsp;&nbsp;<span class="str">"externalReference"</span>: session_id<br>
+}
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-card">
+      <div class="tech-card-head" style="background: var(--verde-c);">🗄️ Supabase (Futuro)</div>
+      <div class="tech-card-body">
+        <p>Backend as a service para a versão SaaS escalada. Oferece PostgreSQL, autenticação, storage e realtime sem necessidade de gerenciar servidor de banco de dados.</p>
+        <div class="role">📌 Uso futuro: histórico de casos, créditos do usuário, logs de transações</div>
+        <div class="code-ex">
+<span class="kw">from</span> supabase <span class="kw">import</span> create_client<br>
+supabase = <span class="fn">create_client</span>(URL, KEY)<br>
+<span class="cm"># Salva histórico do caso</span><br>
+supabase.table(<span class="str">"casos"</span>).<span class="fn">insert</span>({<br>
+&nbsp;&nbsp;<span class="str">"user_id"</span>: uid,<br>
+&nbsp;&nbsp;<span class="str">"nome"</span>: caso, <span class="str">"audios"</span>: qtd<br>
+}).<span class="fn">execute</span>()
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCHEMA DE DADOS (FUTURO) -->
+  <h2 class="section-title" id="schema">🗄️ Schema de Dados — Versão Cloud (Futuro)</h2>
+  <div class="alert alert-info">
+    <div class="icon">ℹ️</div>
+    <div>Na versão atual (local), não há banco de dados. O schema abaixo representa a estrutura futura para a versão SaaS com Supabase PostgreSQL.</div>
+  </div>
+  <div class="db-grid">
+    <div class="db-card">
+      <div class="db-head" style="background: var(--verde);">users <span class="count">Usuários da plataforma</span></div>
+      <table class="tbl">
+        <thead><tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td class="pk">id</td><td>uuid</td><td>PK — Supabase Auth</td></tr>
+          <tr><td>email</td><td>text</td><td>Email de contato</td></tr>
+          <tr><td>creditos</td><td>integer</td><td>Créditos de áudio disponíveis</td></tr>
+          <tr><td>plano</td><td>text</td><td>free / payg / mensal</td></tr>
+          <tr><td>criado_em</td><td>timestamptz</td><td>Data de cadastro</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="db-card">
+      <div class="db-head" style="background: var(--roxo);">casos <span class="count">Transcrições processadas</span></div>
+      <table class="tbl">
+        <thead><tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td class="pk">id</td><td>uuid</td><td>PK</td></tr>
+          <tr><td class="fk">user_id</td><td>uuid</td><td>FK → users.id</td></tr>
+          <tr><td>nome_caso</td><td>text</td><td>Nome dado pelo usuário</td></tr>
+          <tr><td>qtd_audios</td><td>integer</td><td>Áudios transcritos</td></tr>
+          <tr><td>modelo_whisper</td><td>text</td><td>tiny/small/medium</td></tr>
+          <tr><td>status</td><td>text</td><td>pending/processing/done</td></tr>
+          <tr><td>download_token</td><td>text</td><td>Token único de 1 uso</td></tr>
+          <tr><td>criado_em</td><td>timestamptz</td><td>Data do processamento</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="db-card">
+      <div class="db-head" style="background: var(--azul);">pagamentos <span class="count">Cobranças PIX</span></div>
+      <table class="tbl">
+        <thead><tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td class="pk">id</td><td>uuid</td><td>PK</td></tr>
+          <tr><td class="fk">caso_id</td><td>uuid</td><td>FK → casos.id</td></tr>
+          <tr><td>gateway_txid</td><td>text</td><td>ID do gateway (MP/Asaas)</td></tr>
+          <tr><td>valor</td><td>numeric</td><td>Valor cobrado em R$</td></tr>
+          <tr><td>status</td><td>text</td><td>pending/paid/expired</td></tr>
+          <tr><td>pago_em</td><td>timestamptz</td><td>Timestamp da confirmação</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ARQUITETURA VISUAL -->
+  <h2 class="section-title" id="arquitetura">🏛️ Diagrama de Arquitetura — MVP Cloud</h2>
+  <div class="flow-wrap">
+    <h3>🏗️ Visão completa das camadas do sistema na versão web</h3>
+    <div class="mermaid">
+flowchart LR
+  subgraph CLIENT["👤 Cliente (Browser)"]
+    C1["Interface Web\nDark Mode + Upload"]
+    C2["QR Code PIX\n(tempo real)"]
+    C3["Progress Bar\n(SSE stream)"]
+    C4["Download\n(token único)"]
+  end
+
+  subgraph APP["⚡ Servidor Python (Railway/Render)"]
+    A1["Flask App\n(app.py)"]
+    A2["Parser WhatsApp\n(whatsapp_pipeline.py)"]
+    A3["Gerenciador de Jobs\n(threading / celery)"]
+    A4["PIX Handler\n(webhook listener)"]
+    A5["File Manager\n(upload + cleanup)"]
+  end
+
+  subgraph AI_LAYER["🤖 Camada IA"]
+    W1["Groq Whisper API\n(transcrição rápida)"]
+    W2["Whisper Local\n(fallback / dev)"]
+  end
+
+  subgraph PAY["💳 Gateway Pagamento"]
+    P1["Asaas / Mercado Pago\nPIX Dinâmico"]
+    P2["Webhook /pix/callback"]
+  end
+
+  subgraph STORAGE["📁 Storage Temporário"]
+    S1["Upload Temp\n(deletar após job)"]
+    S2["Output Temp\n(deletar após download)"]
+  end
+
+  subgraph DB["🗄️ Supabase (Futuro)"]
+    D1["Tabela: casos"]
+    D2["Tabela: pagamentos"]
+    D3["Tabela: users"]
+  end
+
+  C1 -->|"POST .zip"| A1
+  A1 --> A2
+  A2 --> A5
+  A5 --> S1
+  A1 --> A4
+  A4 -->|"Cria cobrança"| P1
+  P1 -->|"QR Code"| C2
+  P1 --> P2
+  P2 -->|"pix_paid"| A4
+  A4 --> A3
+  A3 --> W1
+  A3 -.->|"fallback"| W2
+  W1 -->|"transcrição"| A3
+  A3 -->|"SSE events"| C3
+  A3 --> A5
+  A5 --> S2
+  S2 -->|"token download"| C4
+  C4 -->|"GET /download/token"| A5
+  A5 -->|"deleção automática"| S1
+  A1 -.->|"futuro"| D1
+
+  style CLIENT fill:#EEF2FF,stroke:#818CF8
+  style APP fill:#D1FAE5,stroke:#34D399
+  style AI_LAYER fill:#EDE9FE,stroke:#8B5CF6
+  style PAY fill:#FEF3C7,stroke:#F59E0B
+  style STORAGE fill:#F1F5F9,stroke:#94A3B8
+  style DB fill:#DBEAFE,stroke:#3B82F6
+    </div>
+  </div>
+
+  <!-- EVOLUÇÃO -->
+  <h2 class="section-title" id="evolucao">🚀 Evolução: MVP Local → SaaS</h2>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Funcionalidade</th>
+        <th>🏠 v0 — Local Atual</th>
+        <th>🚀 v1 — MVP Web</th>
+        <th>🌐 v2 — SaaS Completo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Interface</strong></td><td>Web UI local (Flask)</td><td class="cp">Web pública com domínio</td><td class="ck">App responsivo + PWA</td></tr>
+      <tr><td><strong>Transcrição</strong></td><td>Whisper small local</td><td class="cp">Groq API (cloud)</td><td class="ck">Multi-engine + diarização</td></tr>
+      <tr><td><strong>Pagamento</strong></td><td class="cx">Nenhum</td><td class="cp">PIX via Asaas</td><td class="ck">PIX + Cartão + Assinatura</td></tr>
+      <tr><td><strong>Multi-usuário</strong></td><td class="cx">Não</td><td class="cp">Sim (sem login)</td><td class="ck">Login + histórico</td></tr>
+      <tr><td><strong>Output</strong></td><td>.txt local</td><td class="cp">.txt + link download</td><td class="ck">PDF jurídico + visualização web</td></tr>
+      <tr><td><strong>Filtro de período</strong></td><td class="cx">Nenhum (tudo)</td><td class="cp">Hoje/Semana/Custom</td><td class="ck">Qualquer range + buscas</td></tr>
+      <tr><td><strong>Banco de dados</strong></td><td class="cx">Nenhum</td><td class="cx">Nenhum</td><td class="ck">Supabase PostgreSQL</td></tr>
+      <tr><td><strong>Segurança</strong></td><td class="cp">Alta (100% local)</td><td class="cp">Boa (HTTPS + token)</td><td class="ck">Máxima (auth + RLS)</td></tr>
+      <tr><td><strong>Deploy</strong></td><td>macOS .command</td><td class="cp">Railway / Render</td><td class="ck">VPS + Docker + CDN</td></tr>
+      <tr><td><strong>Esforço de dev</strong></td><td class="ck">0 (pronto)</td><td class="cp">~3 semanas</td><td class="cx">~2–3 meses</td></tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-verde">
+    <div class="icon">🎯</div>
+    <div><strong>Estratégia recomendada:</strong> Manter a v0 funcionando para uso próprio enquanto desenvolve a v1 em paralelo. A v1 é o produto comercial mínimo. Com <strong>apenas 35 transcrições/mês já paga toda a infraestrutura</strong>. Foque primeiro no mercado jurídico — advogados e peritos têm alta demanda por transcrições de evidências de WhatsApp.</div>
+  </div>
+
+</div>
+
+<footer>
+  AntiGravity · WhatsApp Transcription MVP · Estrutura de Módulos · Atualizado em 02/04/2026
+</footer>
+
+</body>
+</html>

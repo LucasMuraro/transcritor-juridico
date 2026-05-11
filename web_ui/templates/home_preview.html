@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiGravity | Transcrição de Áudios Jurídicos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        :root {
+            --purple:      #2D7A5A;
+            --purple-dark: #1A5C3E;
+            --purple-deep: #0A1F14;
+            --purple-mid:  #1A3A2A;
+            --purple-tint: #E8F5EE;
+            --accent:      #2D7A5A;
+            --gold:        #D4E8C2;
+            --text:        #111B14;
+            --muted:       #5C6B61;
+            --light-bg:    #F6FAF7;
+            --border:      #D8E8DC;
+            --white:       #FFFFFF;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Outfit',sans-serif; }
+        body { background:var(--white); color:var(--text); }
+        a { text-decoration:none; }
+
+        /* ═══════════════════════════════════════
+           NAVBAR — clean, minimal
+        ═══════════════════════════════════════ */
+        .navbar {
+            background: #F2EDE4;
+            border-bottom: 1px solid #E0D8CC;
+            padding: 0 48px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-logo { display:flex; align-items:center; overflow:hidden; }
+        .nav-logo img { height:56px; width:160px; object-fit:contain; transform:scale(1.8); transform-origin:center; }
+        .nav-links { display:flex; gap:4px; }
+        .nav-links a {
+            color: #4A3F35;
+            font-size: 0.88rem; font-weight: 600;
+            padding: 7px 14px; border-radius: 8px;
+            transition: all .18s;
+        }
+        .nav-links a:hover { background: #D8EDE2; color: #0A1F14; }
+        .nav-right { display:flex; align-items:center; gap:10px; }
+        .btn-nav {
+            background: var(--purple);
+            color: #fff; font-size: 0.85rem; font-weight: 700;
+            padding: 9px 20px; border-radius: 8px;
+            transition: background .18s;
+        }
+        .btn-nav:hover { background: var(--purple-dark); }
+
+        /* ═══════════════════════════════════════
+           HERO — uma mensagem, um botão
+        ═══════════════════════════════════════ */
+        .hero {
+            background:linear-gradient(160deg, var(--purple-deep) 0%, var(--purple-mid) 60%, #5A1FA8 100%);
+            min-height: 88vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            padding:80px 24px;
+            position:relative;
+            overflow:hidden;
+        }
+        /* Brilho de fundo sutil */
+        .hero::before {
+            content:'';
+            position:absolute;
+            width:700px; height:700px;
+            background:radial-gradient(circle, rgba(112,72,232,0.35) 0%, transparent 65%);
+            top:-200px; left:50%; transform:translateX(-50%);
+        }
+        .hero::after {
+            content:'';
+            position:absolute;
+            width:500px; height:300px;
+            background:radial-gradient(ellipse, rgba(255,107,53,0.15) 0%, transparent 70%);
+            bottom:0; right:0;
+        }
+        .hero-inner { position:relative; z-index:1; max-width:760px; }
+
+        .hero-tag {
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            background:rgba(255,255,255,0.1);
+            border:1px solid rgba(255,255,255,0.18);
+            color:rgba(255,255,255,0.85);
+            font-size:0.75rem;
+            font-weight:700;
+            letter-spacing:0.06em;
+            text-transform:uppercase;
+            padding:6px 14px;
+            border-radius:99px;
+            margin-bottom:28px;
+        }
+        .hero-tag i { color:var(--gold); }
+
+        .hero h1 {
+            font-size:3.2rem;
+            font-weight:900;
+            color:#fff;
+            line-height:1.1;
+            margin-bottom:22px;
+            letter-spacing:-0.02em;
+        }
+        .hero h1 em {
+            font-style:normal;
+            color:var(--gold);
+            position:relative;
+        }
+
+        .hero-sub {
+            font-size:1.1rem;
+            color:rgba(255,255,255,0.7);
+            line-height:1.7;
+            max-width:580px;
+            margin:0 auto 40px;
+        }
+
+        /* CTA único e dominante */
+        .hero-cta {
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            background:var(--gold);
+            color:#1a0533;
+            font-size:1.05rem;
+            font-weight:800;
+            padding:18px 36px;
+            border-radius:12px;
+            box-shadow:0 8px 30px rgba(255,207,100,0.4);
+            transition:transform .15s, box-shadow .15s;
+            margin-bottom:20px;
+        }
+        .hero-cta:hover { transform:translateY(-3px); box-shadow:0 14px 36px rgba(255,207,100,0.5); }
+        .hero-cta i { font-size:1rem; }
+
+        .hero-note {
+            display:block;
+            font-size:0.78rem;
+            color:rgba(255,255,255,0.45);
+            margin-top:4px;
+        }
+        .hero-note i { margin-right:5px; }
+
+        /* Scroll hint */
+        .scroll-hint {
+            position:absolute;
+            bottom:28px; left:50%; transform:translateX(-50%);
+            display:flex; flex-direction:column; align-items:center; gap:6px;
+            color:rgba(255,255,255,0.35); font-size:0.72rem;
+            animation: bounce 2s infinite;
+        }
+        .scroll-hint i { font-size:1rem; }
+        @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+        /* ═══════════════════════════════════════
+           SOCIAL PROOF BAR
+        ═══════════════════════════════════════ */
+        .proof-bar {
+            background:var(--white);
+            border-bottom:1px solid var(--border);
+            padding:16px 48px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:48px;
+            flex-wrap:wrap;
+        }
+        .proof-item { display:flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:600; color:#374151; }
+        .proof-item i { color:var(--purple); }
+
+        /* ═══════════════════════════════════════
+           COMO FUNCIONA — 3 passos simples
+        ═══════════════════════════════════════ */
+        .how-section {
+            background:var(--light-bg);
+            padding:80px 24px;
+            text-align:center;
+        }
+        .section-eyebrow { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--purple); margin-bottom:10px; }
+        .section-h2 { font-size:2rem; font-weight:900; color:var(--text); margin-bottom:12px; }
+        .section-p { font-size:1rem; color:var(--muted); max-width:500px; margin:0 auto 56px; line-height:1.65; }
+
+        .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:0; max-width:900px; margin:0 auto; position:relative; }
+        .steps::before {
+            content:'';
+            position:absolute;
+            top:40px; left:calc(16.6% + 20px); right:calc(16.6% + 20px);
+            height:2px;
+            background:linear-gradient(90deg, var(--purple-tint), var(--purple), var(--purple-tint));
+        }
+        .step { display:flex; flex-direction:column; align-items:center; padding:0 24px; }
+        .step-num {
+            width:80px; height:80px;
+            background:var(--purple);
+            color:#fff;
+            font-size:1.8rem;
+            font-weight:900;
+            border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            margin-bottom:20px;
+            position:relative; z-index:1;
+            box-shadow:0 6px 20px rgba(112,72,232,0.35);
+        }
+        .step-num.done { background:var(--gold); color:#1a0533; }
+        .step h3 { font-size:1.05rem; font-weight:800; color:var(--text); margin-bottom:8px; }
+        .step p  { font-size:0.85rem; color:var(--muted); line-height:1.6; }
+        .step-note { font-size:0.75rem; color:var(--purple); font-weight:700; margin-top:8px; }
+
+        /* ═══════════════════════════════════════
+           PARA QUEM É — casos de uso reais
+        ═══════════════════════════════════════ */
+        .usecases-section { padding:80px 24px; text-align:center; }
+        .usecases-grid {
+            display:grid; grid-template-columns:repeat(3,1fr);
+            gap:24px; max-width:960px; margin:0 auto;
+        }
+        .usecase-card {
+            background:var(--white);
+            border:1.5px solid var(--border);
+            border-radius:18px;
+            padding:32px 24px;
+            text-align:left;
+            transition:border-color .18s, box-shadow .18s;
+        }
+        .usecase-card:hover { border-color:var(--purple); box-shadow:0 8px 24px rgba(112,72,232,0.1); }
+        .usecase-emoji { font-size:2.2rem; margin-bottom:16px; display:block; }
+        .usecase-card h3 { font-size:1.05rem; font-weight:800; color:var(--text); margin-bottom:10px; }
+        .usecase-card p  { font-size:0.85rem; color:var(--muted); line-height:1.65; }
+        .usecase-result {
+            display:inline-block;
+            background:var(--purple-tint);
+            color:var(--purple);
+            font-size:0.72rem; font-weight:700;
+            padding:4px 10px; border-radius:99px;
+            margin-top:14px;
+        }
+
+        /* ═══════════════════════════════════════
+           FERRAMENTAS — cards simples
+        ═══════════════════════════════════════ */
+        .tools-section { background:var(--light-bg); padding:80px 24px; text-align:center; }
+        .tools-grid {
+            display:grid; grid-template-columns:repeat(2,1fr);
+            gap:16px; max-width:800px; margin:0 auto;
+        }
+        .tool-card {
+            background:var(--white);
+            border:1.5px solid var(--border);
+            border-radius:14px;
+            padding:24px;
+            display:flex; align-items:center; gap:18px;
+            text-align:left;
+            color:inherit;
+            transition:border-color .18s, box-shadow .18s, transform .18s;
+        }
+        .tool-card:hover { border-color:var(--purple); box-shadow:0 6px 20px rgba(112,72,232,0.1); transform:translateY(-2px); }
+        .tool-card.highlight { border-color:var(--purple); background:var(--purple-tint); }
+        .tool-icon {
+            width:52px; height:52px; border-radius:12px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.3rem; flex-shrink:0;
+        }
+        .tool-card h3 { font-size:0.95rem; font-weight:800; color:var(--text); margin-bottom:4px; }
+        .tool-card p  { font-size:0.8rem; color:var(--muted); line-height:1.5; }
+        .tool-badge { font-size:0.65rem; font-weight:800; background:var(--gold); color:#1a0533; padding:2px 8px; border-radius:99px; margin-left:6px; text-transform:uppercase; }
+
+        /* ═══════════════════════════════════════
+           PRIVACIDADE — bloco de confiança
+        ═══════════════════════════════════════ */
+        .trust-section {
+            background:linear-gradient(160deg, var(--purple-deep) 0%, var(--purple-mid) 100%);
+            padding:80px 24px;
+            text-align:center;
+        }
+        .trust-section .section-eyebrow { color:var(--gold); }
+        .trust-section .section-h2 { color:#fff; }
+        .trust-section .section-p   { color:rgba(255,255,255,0.65); }
+        .trust-grid {
+            display:grid; grid-template-columns:repeat(4,1fr);
+            gap:20px; max-width:900px; margin:0 auto;
+        }
+        .trust-card {
+            background:rgba(255,255,255,0.07);
+            border:1px solid rgba(255,255,255,0.12);
+            border-radius:14px;
+            padding:24px 16px;
+            text-align:center;
+        }
+        .trust-card i    { font-size:1.6rem; color:var(--gold); margin-bottom:12px; display:block; }
+        .trust-card h4   { font-size:0.88rem; font-weight:700; color:#fff; margin-bottom:6px; }
+        .trust-card p    { font-size:0.75rem; color:rgba(255,255,255,0.55); line-height:1.5; }
+
+        /* ═══════════════════════════════════════
+           CTA FINAL
+        ═══════════════════════════════════════ */
+        .final-cta {
+            padding:96px 24px;
+            text-align:center;
+            background:var(--white);
+        }
+        .final-cta h2 { font-size:2.4rem; font-weight:900; color:var(--text); margin-bottom:14px; line-height:1.15; }
+        .final-cta h2 span { color:var(--purple); }
+        .final-cta p  { font-size:1rem; color:var(--muted); max-width:480px; margin:0 auto 36px; line-height:1.65; }
+        .btn-final {
+            display:inline-flex; align-items:center; gap:10px;
+            background:var(--purple);
+            color:#fff; font-size:1rem; font-weight:800;
+            padding:16px 36px; border-radius:12px;
+            box-shadow:0 6px 24px rgba(112,72,232,0.35);
+            transition:transform .15s, box-shadow .15s;
+        }
+        .btn-final:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(112,72,232,0.4); }
+
+        /* ═══════════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════════ */
+        .footer {
+            background:#0D0B1F;
+            padding:52px 48px 24px;
+        }
+        .footer-grid {
+            max-width:1100px; margin:0 auto;
+            display:grid; grid-template-columns:2fr 1fr 1fr 1fr;
+            gap:40px; padding-bottom:40px;
+            border-bottom:1px solid rgba(255,255,255,0.08);
+        }
+        .fb-logo { display:flex; align-items:center; overflow:hidden; margin-bottom:14px; }
+        .fb-logo img { height:48px; width:150px; object-fit:contain; transform:scale(1.8); transform-origin:left center; filter:brightness(0) invert(1); }
+        .fb-desc { font-size:0.8rem; color:rgba(255,255,255,0.55); line-height:1.65; max-width:240px; margin-bottom:18px; }
+        .fb-social { display:flex; gap:8px; }
+        .fb-social a { width:32px; height:32px; border-radius:7px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.6); font-size:0.85rem; transition:background .18s; }
+        .fb-social a:hover { background:var(--purple); color:#fff; }
+        .fc h4 { font-size:0.76rem; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:.07em; margin-bottom:14px; }
+        .fc ul { list-style:none; display:flex; flex-direction:column; gap:9px; }
+        .fc ul li a { color:rgba(255,255,255,0.55); font-size:0.8rem; transition:color .18s; }
+        .fc ul li a:hover { color:#fff; }
+        .fc-contact { display:flex; align-items:center; gap:8px; font-size:0.8rem; color:rgba(255,255,255,0.55); margin-bottom:9px; }
+        .fc-contact i { color:var(--purple); width:14px; font-size:0.8rem; }
+        .fc-contact a { color:rgba(255,255,255,0.55); }
+        .footer-bottom { max-width:1100px; margin:0 auto; padding-top:22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+        .footer-bottom p { font-size:0.72rem; color:rgba(255,255,255,0.3); }
+        .footer-bottom-links { display:flex; gap:16px; }
+        .footer-bottom-links a { font-size:0.72rem; color:rgba(255,255,255,0.3); }
+
+        /* ═══════════════════════════════════════
+           PREVIEW BADGE
+        ═══════════════════════════════════════ */
+        .preview-badge {
+            position:fixed; bottom:24px; right:24px; z-index:999;
+            background:#111; color:#fff; font-size:0.75rem; font-weight:700;
+            padding:8px 14px; border-radius:99px;
+            display:flex; align-items:center; gap:7px;
+            box-shadow:0 4px 14px rgba(0,0,0,0.4);
+        }
+        .preview-badge a { color:#FFCF64; text-decoration:none; }
+        .preview-dot { width:8px; height:8px; border-radius:50%; background:#4ade80; animation:pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        /* ═══════════════════════════════════════
+           RESPONSIVO
+        ═══════════════════════════════════════ */
+        @media (max-width:900px) {
+            .hero h1 { font-size:2.2rem; }
+            .steps { grid-template-columns:1fr; gap:40px; }
+            .steps::before { display:none; }
+            .usecases-grid { grid-template-columns:1fr; }
+            .tools-grid { grid-template-columns:1fr; }
+            .trust-grid { grid-template-columns:1fr 1fr; }
+            .footer-grid { grid-template-columns:1fr 1fr; }
+            .navbar { padding:0 20px; }
+            .proof-bar { gap:20px; padding:16px 20px; }
+        }
+        @media (max-width:600px) {
+            .hero h1 { font-size:1.8rem; }
+            .hero-cta { font-size:0.95rem; padding:15px 28px; }
+            .final-cta h2 { font-size:1.7rem; }
+            .trust-grid { grid-template-columns:1fr; }
+            .footer-grid { grid-template-columns:1fr; }
+            .nav-links { display:none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="/preview" class="nav-logo">
+            <img src="{{ url_for('static', filename='logo_orange.png') }}" alt="AntiGravity">
+        </a>
+        <div class="nav-links">
+            <a href="/whatsapp">WhatsApp</a>
+            <a href="/video">Vídeos</a>
+            <a href="/audio">Áudio</a>
+            <a href="/audiencia">Audiência</a>
+            <a href="/sobre">Sobre Nós</a>
+        </div>
+        <div class="nav-right">
+            <a href="/whatsapp" class="btn-nav">Transcrever agora →</a>
+        </div>
+    </nav>
+
+    <!-- ═══════ HERO ═══════ -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-tag">
+                <i class="fa-solid fa-lock"></i>
+                100% na sua máquina · Zero risco de vazamento
+            </div>
+
+            <h1>
+                Chega de ouvir<br>
+                <em>horas de áudio</em><br>
+                para achar a prova.
+            </h1>
+
+            <p class="hero-sub">
+                Envie o arquivo do WhatsApp ou o vídeo da audiência. Em minutos, você recebe o texto completo — com nomes, horários e ordem cronológica — pronto para usar no processo.
+            </p>
+
+            <a href="/whatsapp" class="hero-cta">
+                <i class="fa-brands fa-whatsapp"></i>
+                Transcrever meu WhatsApp agora
+            </a>
+            <span class="hero-note">
+                <i class="fa-solid fa-circle-check"></i>
+                Gratuito · Sem cadastro · Seus dados ficam com você
+            </span>
+        </div>
+        <div class="scroll-hint">
+            <span>veja como funciona</span>
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- ═══════ PROOF BAR ═══════ -->
+    <div class="proof-bar">
+        <div class="proof-item"><i class="fa-solid fa-shield-halved"></i> Dados nunca saem do seu computador</div>
+        <div class="proof-item"><i class="fa-solid fa-gavel"></i> Aceito em Atas Notariais</div>
+        <div class="proof-item"><i class="fa-solid fa-clock"></i> Processa em minutos, não horas</div>
+        <div class="proof-item"><i class="fa-solid fa-users"></i> Identifica quem está falando</div>
+        <div class="proof-item"><i class="fa-solid fa-file-lines"></i> Exporta em texto estruturado</div>
+    </div>
+
+    <!-- ═══════ COMO FUNCIONA ═══════ -->
+    <section class="how-section">
+        <p class="section-eyebrow">É mais simples do que parece</p>
+        <h2 class="section-h2">Três passos. Menos de 5 minutos.</h2>
+        <p class="section-p">Você não precisa entender de tecnologia. Basta seguir os passos abaixo.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <h3>Exporte sua conversa</h3>
+                <p>No WhatsApp, abra o chat, toque no nome do contato e escolha "Exportar conversa". Salve o arquivo ZIP no computador.</p>
+                <span class="step-note">⏱ Leva menos de 1 minuto</span>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <h3>Faça o upload</h3>
+                <p>Arraste o arquivo ZIP para a ferramenta ou clique em "Selecionar arquivo". A IA começa a processar automaticamente.</p>
+                <span class="step-note">🔒 Fica só na sua máquina</span>
+            </div>
+            <div class="step">
+                <div class="step-num done">3</div>
+                <h3>Baixe o texto pronto</h3>
+                <p>Você recebe um arquivo de texto com cada mensagem em ordem, data, hora e a transcrição de todos os áudios.</p>
+                <span class="step-note">📄 Pronto para o processo</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ CASOS DE USO ═══════ -->
+    <section class="usecases-section">
+        <p class="section-eyebrow">Para quem é o AntiGravity</p>
+        <h2 class="section-h2">Situações reais do dia a dia jurídico</h2>
+        <p class="section-p">Feito para quem lida com prova digital e não tem tempo a perder.</p>
+
+        <div class="usecases-grid">
+            <div class="usecase-card">
+                <span class="usecase-emoji">⚖️</span>
+                <h3>Ata Notarial de WhatsApp</h3>
+                <p>Seu cliente enviou centenas de áudios em uma briga de inventário. Você precisa de tudo transcrito, em ordem, com timestamps. O AntiGravity faz isso em minutos.</p>
+                <span class="usecase-result">✓ Cronologia completa para Ata</span>
+            </div>
+            <div class="usecase-card">
+                <span class="usecase-emoji">🎥</span>
+                <h3>Audiência Judicial gravada</h3>
+                <p>Você tem o vídeo da audiência mas não quer ouvir 2 horas para achar uma frase específica. A ferramenta transcreve tudo e separa cada orador.</p>
+                <span class="usecase-result">✓ SPEAKER_00, SPEAKER_01 identificados</span>
+            </div>
+            <div class="usecase-card">
+                <span class="usecase-emoji">🔒</span>
+                <h3>Casos com sigilo absoluto</h3>
+                <p>Não dá para enviar áudio de cliente para uma IA na nuvem. O AntiGravity processa tudo offline — nenhum arquivo sai do seu computador.</p>
+                <span class="usecase-result">✓ Compatível com ética da OAB</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ FERRAMENTAS ═══════ -->
+    <section class="tools-section">
+        <p class="section-eyebrow">Ferramentas disponíveis</p>
+        <h2 class="section-h2">Escolha o que você precisa hoje</h2>
+        <p class="section-p">Cada módulo foi criado para um tipo de material diferente.</p>
+
+        <div class="tools-grid">
+            <a href="/whatsapp" class="tool-card highlight">
+                <div class="tool-icon" style="background:#E8FAF0;color:#25D366;">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <div>
+                    <h3>Backup de WhatsApp <span class="tool-badge">Popular</span></h3>
+                    <p>Processa o ZIP do WhatsApp e gera a conversa completa com todos os áudios transcritos em ordem.</p>
+                </div>
+            </a>
+            <a href="/audiencia" class="tool-card">
+                <div class="tool-icon" style="background:#F3F0FF;color:#7048E8;">
+                    <i class="fa-solid fa-gavel"></i>
+                </div>
+                <div>
+                    <h3>Audiência Judicial</h3>
+                    <p>Transcreve vídeos de audiência e identifica automaticamente cada orador — juiz, advogado, réu.</p>
+                </div>
+            </a>
+            <a href="/video" class="tool-card">
+                <div class="tool-icon" style="background:#FEF2F2;color:#ef4444;">
+                    <i class="fa-solid fa-circle-play"></i>
+                </div>
+                <div>
+                    <h3>Vídeo</h3>
+                    <p>Transcreve qualquer vídeo MP4, MOV ou WEBM com timestamps precisos por segmento.</p>
+                </div>
+            </a>
+            <a href="/audio" class="tool-card">
+                <div class="tool-icon" style="background:#F5F3FF;color:#8b5cf6;">
+                    <i class="fa-solid fa-microphone-lines"></i>
+                </div>
+                <div>
+                    <h3>Áudio Isolado</h3>
+                    <p>Para gravações avulsas de gravadores de campo, depoimentos externos ou arquivos soltos.</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- ═══════ CONFIANÇA / PRIVACIDADE ═══════ -->
+    <section class="trust-section">
+        <p class="section-eyebrow">Privacidade não é opcional</p>
+        <h2 class="section-h2" style="margin-bottom:12px;">Por que os advogados confiam no AntiGravity</h2>
+        <p class="section-p">Desenvolvido para respeitar o sigilo profissional desde o primeiro dia.</p>
+
+        <div class="trust-grid">
+            <div class="trust-card">
+                <i class="fa-solid fa-server"></i>
+                <h4>Roda no seu computador</h4>
+                <p>Sem servidores externos. A IA processa os arquivos direto na sua máquina.</p>
+            </div>
+            <div class="trust-card">
+                <i class="fa-solid fa-wifi-slash"></i>
+                <h4>Funciona offline</h4>
+                <p>Não precisa de internet para processar. Seus arquivos nunca viajam pela rede.</p>
+            </div>
+            <div class="trust-card">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <h4>Compatível com a OAB</h4>
+                <p>Nenhum dado de cliente é exposto. Segue os princípios do sigilo profissional e LGPD.</p>
+            </div>
+            <div class="trust-card">
+                <i class="fa-solid fa-trash-can"></i>
+                <h4>Sem rastros</h4>
+                <p>Os arquivos processados ficam na sua máquina. Você controla o que guardar ou apagar.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ CTA FINAL ═══════ -->
+    <section class="final-cta">
+        <h2>Pronto para parar de<br><span>ouvir áudio por áudio?</span></h2>
+        <p>Comece agora. Não precisa criar conta, não precisa pagar, não precisa entregar dado nenhum.</p>
+        <a href="/whatsapp" class="btn-final">
+            <i class="fa-brands fa-whatsapp"></i>
+            Começar com o WhatsApp
+        </a>
+    </section>
+
+    <!-- ═══════ FOOTER ═══════ -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <div class="fb-logo"><img src="{{ url_for('static', filename='logo_orange.png') }}" alt="AntiGravity"></div>
+                <p class="fb-desc">Ferramenta de transcrição jurídica local. Desenvolvida pela Muraro TechHub para advogados que levam privacidade a sério.</p>
+                <div class="fb-social">
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+            <div class="fc">
+                <h4>Ferramentas</h4>
+                <ul>
+                    <li><a href="/whatsapp">WhatsApp</a></li>
+                    <li><a href="/audiencia">Audiência</a></li>
+                    <li><a href="/video">Vídeo</a></li>
+                    <li><a href="/audio">Áudio</a></li>
+                </ul>
+            </div>
+            <div class="fc">
+                <h4>Empresa</h4>
+                <ul>
+                    <li><a href="/sobre">Sobre Nós</a></li>
+                    <li><a href="/sobre#missao">Nossa Missão</a></li>
+                    <li><a href="/sobre#tecnologia">Tecnologia</a></li>
+                </ul>
+            </div>
+            <div class="fc">
+                <h4>Contato</h4>
+                <div class="fc-contact"><i class="fa-solid fa-envelope"></i><a href="mailto:lucas.muraro.pk@gmail.com">lucas.muraro.pk@gmail.com</a></div>
+                <div class="fc-contact"><i class="fa-solid fa-building"></i><span>Muraro TechHub</span></div>
+                <div class="fc-contact"><i class="fa-solid fa-map-pin"></i><span>Brasil</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Muraro TechHub · AntiGravity. Todos os direitos reservados.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacidade</a>
+                <a href="#">Termos</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BADGE: voltar ao site atual -->
+    <div class="preview-badge">
+        <div class="preview-dot"></div>
+        Preview ativo ·
+        <a href="/">ver site atual</a>
+    </div>
+
+</body>
+</html>

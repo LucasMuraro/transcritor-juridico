@@ -1,0 +1,32 @@
+# Python / Flask
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+.env
+
+# Transcriber Outputs & Inputs
+casos/
+web_ui/uploads/
+bin/
+
+# OS Files
+.DS_Store
+
+# Arquivos compactados de entrada (dados de clientes)
+*.rar
+*.7z
+*.tar
+*.tar.gz
+
+# Pastas de conversa exportadas do WhatsApp
+WhatsApp Chat*/
+
+# Logs
+*.log
+
+*.mp4
+*.zip
+
+CONTEXT.md

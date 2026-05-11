@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp para Texto | AuditorIA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg:       #F7F7FF;
+            --surface:  #FFFFFF;
+            --border:   rgba(99,102,241,0.1);
+            --indigo:   #6366F1;
+            --indigo-d: #4F51D0;
+            --green:    #16A34A;
+            --green-bg: rgba(22,163,74,0.08);
+            --amber:    #D97706;
+            --red:      #DC2626;
+            --text:     #0F172A;
+            --mid:      #475569;
+            --dim:      #94A3B8;
+            --wpp:      #25D366;
+            --radius:   12px;
+            --radius-lg:18px;
+        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+        a { text-decoration:none; color:inherit; }
+
+        /* ── NAVBAR ─────────────────────────────── */
+        .nav {
+            position:sticky; top:0; z-index:100;
+            background:rgba(247,247,255,0.92);
+            backdrop-filter:blur(16px);
+            border-bottom:1px solid var(--border);
+            height:60px; display:flex; align-items:center; padding:0 32px;
+        }
+        .nav-inner { width:100%; max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
+        .nav-logo img { height:36px; width:auto; }
+        .nav-links { display:flex; gap:2px; }
+        .nav-links a { font-size:0.875rem; font-weight:600; color:var(--mid); padding:6px 12px; border-radius:8px; min-height:40px; display:flex; align-items:center; transition:all .15s; }
+        .nav-links a:hover, .nav-links a.active { background:rgba(99,102,241,0.08); color:var(--indigo); }
+        .btn-nav { background:var(--indigo); color:#fff; font-size:0.85rem; font-weight:700; padding:8px 18px; border-radius:8px; min-height:40px; display:flex; align-items:center; transition:background .15s; box-shadow:0 2px 8px rgba(99,102,241,0.2); }
+        .btn-nav:hover { background:var(--indigo-d); }
+
+        /* ── PAGE HEADER ─────────────────────────── */
+        .page-header {
+            background:var(--surface);
+            border-bottom:1px solid var(--border);
+            padding:16px 32px;
+            display:flex; align-items:center; gap:10px;
+        }
+        .page-header-inner { max-width:1200px; margin:0 auto; width:100%; display:flex; align-items:center; justify-content:space-between; }
+        .page-header-left { display:flex; align-items:center; gap:10px; }
+        .page-header-icon { width:36px; height:36px; border-radius:10px; background:rgba(37,211,102,0.1); display:flex; align-items:center; justify-content:center; color:var(--wpp); font-size:1rem; }
+        .page-header h1 { font-size:1rem; font-weight:800; color:var(--text); }
+        .page-header-sub { font-size:0.78rem; color:var(--dim); }
+        .privacy-pill { display:flex; align-items:center; gap:6px; background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.18); color:var(--green); font-size:0.72rem; font-weight:700; padding:5px 12px; border-radius:99px; }
+
+        /* ── MAIN LAYOUT ─────────────────────────── */
+        .main-layout {
+            max-width:1200px; margin:0 auto; padding:28px 32px 60px;
+            display:grid; grid-template-columns:440px 1fr; gap:28px; align-items:start;
+        }
+
+        /* ── STEP INDICATOR ──────────────────────── */
+        .steps-bar {
+            display:flex; align-items:center; gap:0;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius); padding:14px 20px;
+            margin-bottom:16px;
+        }
+        .step-item { display:flex; align-items:center; gap:8px; flex:1; }
+        .step-circle {
+            width:28px; height:28px; border-radius:50%; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.75rem; font-weight:800;
+            transition:all .3s;
+        }
+        .step-circle.active { background:var(--indigo); color:#fff; }
+        .step-circle.done   { background:var(--green); color:#fff; }
+        .step-circle.idle   { background:rgba(99,102,241,0.08); color:var(--dim); border:1.5px solid var(--border); }
+        .step-label { font-size:0.75rem; font-weight:700; }
+        .step-label.active { color:var(--text); }
+        .step-label.done   { color:var(--green); }
+        .step-label.idle   { color:var(--dim); }
+        .step-divider { width:24px; height:1px; background:var(--border); flex-shrink:0; margin:0 4px; }
+
+        /* ── UPLOAD CARD ─────────────────────────── */
+        .upload-card {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius-lg); padding:24px;
+            box-shadow:0 1px 4px rgba(99,102,241,0.06);
+        }
+
+        /* Drop zone */
+        .dropzone {
+            border:2px dashed rgba(99,102,241,0.2);
+            border-radius:var(--radius);
+            background:#FAFAFF;
+            padding:32px 20px;
+            text-align:center;
+            cursor:pointer;
+            transition:all .2s;
+            display:block;
+            margin-bottom:16px;
+            position:relative;
+        }
+        .dropzone:hover, .dropzone.drag-over {
+            border-color:var(--indigo);
+            background:rgba(99,102,241,0.04);
+        }
+        .dropzone.file-ready {
+            border-color:var(--wpp);
+            background:rgba(37,211,102,0.04);
+        }
+        .dz-icon { font-size:2rem; color:var(--dim); margin-bottom:12px; display:block; transition:color .2s; }
+        .dropzone:hover .dz-icon, .dropzone.drag-over .dz-icon { color:var(--indigo); }
+        .dropzone.file-ready .dz-icon { color:var(--wpp); }
+        .dz-title { font-size:0.95rem; font-weight:700; color:var(--text); margin-bottom:4px; }
+        .dz-sub   { font-size:0.78rem; color:var(--dim); }
+        .dz-file-name { font-size:0.82rem; font-weight:700; color:var(--wpp); margin-top:8px; display:none; }
+        .dz-file-name.visible { display:block; }
+        #file_tool { display:none; }
+
+        /* Submit button */
+        #btn-submit {
+            width:100%; padding:15px;
+            background:var(--wpp); color:#fff;
+            font-size:1rem; font-weight:800;
+            border:none; border-radius:var(--radius); cursor:pointer;
+            display:flex; align-items:center; justify-content:center; gap:10px;
+            min-height:52px;
+            box-shadow:0 4px 16px rgba(37,211,102,0.3);
+            transition:background .15s, transform .1s, box-shadow .15s;
+        }
+        #btn-submit:hover:not(:disabled) { background:#1ea855; transform:translateY(-1px); box-shadow:0 6px 20px rgba(37,211,102,0.4); }
+        #btn-submit:disabled { opacity:0.55; cursor:not-allowed; transform:none; }
+        #btn-submit .btn-spinner { display:none; width:18px; height:18px; border:2.5px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
+        #btn-submit.loading .btn-spinner { display:block; }
+        #btn-submit.loading .btn-text { display:none; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        /* Advanced settings accordion */
+        .adv-toggle {
+            display:flex; align-items:center; justify-content:space-between;
+            width:100%; background:none; border:none; cursor:pointer;
+            padding:12px 0 0; font-size:0.8rem; font-weight:700; color:var(--dim);
+            transition:color .15s;
+        }
+        .adv-toggle:hover { color:var(--mid); }
+        .adv-toggle i { transition:transform .2s; font-size:0.7rem; }
+        .adv-toggle.open i { transform:rotate(180deg); }
+        .adv-body { display:none; padding-top:14px; }
+        .adv-body.open { display:block; }
+        .field-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+        .field-group { display:flex; flex-direction:column; gap:5px; }
+        .field-group label { font-size:0.75rem; font-weight:700; color:var(--mid); }
+        .field-group input, .field-group select {
+            border:1.5px solid var(--border); border-radius:8px;
+            padding:8px 12px; font-size:0.85rem; font-family:'Outfit',sans-serif;
+            color:var(--text); background:var(--surface);
+            min-height:40px; transition:border-color .15s;
+            outline:none;
+        }
+        .field-group input:focus, .field-group select:focus { border-color:var(--indigo); }
+        .field-hint { font-size:0.7rem; color:var(--dim); margin-top:2px; }
+
+        /* ── PROGRESS CARD (hidden until submit) ── */
+        #progress-card {
+            display:none;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius-lg); padding:32px 24px;
+            text-align:center;
+            box-shadow:0 1px 4px rgba(99,102,241,0.06);
+        }
+        .progress-icon { font-size:2.4rem; margin-bottom:16px; display:block; }
+        .progress-icon.spinning { animation:spin 1.2s linear infinite; display:inline-block; }
+        #progress-title { font-size:1.1rem; font-weight:800; color:var(--text); margin-bottom:6px; }
+        #progress-sub   { font-size:0.85rem; color:var(--mid); margin-bottom:24px; line-height:1.5; }
+        .progress-bar-wrap { background:rgba(99,102,241,0.08); border-radius:99px; height:6px; overflow:hidden; margin-bottom:20px; }
+        .progress-bar-fill { height:100%; background:linear-gradient(90deg, var(--indigo), #8B5CF6); border-radius:99px; width:30%; animation:progress-indeterminate 1.8s ease-in-out infinite; }
+        @keyframes progress-indeterminate {
+            0%   { width:0%;  margin-left:0%; }
+            50%  { width:60%; margin-left:20%; }
+            100% { width:0%;  margin-left:100%; }
+        }
+        .logs-toggle { font-size:0.75rem; font-weight:700; color:var(--dim); cursor:pointer; background:none; border:none; display:flex; align-items:center; gap:5px; margin:0 auto; transition:color .15s; }
+        .logs-toggle:hover { color:var(--mid); }
+        #terminal {
+            display:none; margin-top:12px; text-align:left;
+            background:#F8F7FF; border:1px solid var(--border); border-radius:10px;
+            padding:14px; height:160px; overflow-y:auto;
+            font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--mid);
+        }
+        #terminal p { line-height:1.6; }
+        #terminal .log-error   { color:var(--red); }
+        #terminal .log-success { color:var(--green); }
+
+        /* ── DONE CARD ──────────────────────────── */
+        #done-card {
+            display:none;
+            background:var(--surface); border:1.5px solid rgba(37,211,102,0.3);
+            border-radius:var(--radius-lg); padding:32px 24px;
+            text-align:center;
+            box-shadow:0 4px 20px rgba(37,211,102,0.1);
+        }
+        .done-icon { font-size:3rem; color:var(--wpp); margin-bottom:16px; display:block; }
+        #done-card h3 { font-size:1.2rem; font-weight:900; color:var(--text); margin-bottom:8px; }
+        #done-card p  { font-size:0.875rem; color:var(--mid); margin-bottom:24px; }
+        .btn-download {
+            display:inline-flex; align-items:center; gap:10px;
+            background:var(--wpp); color:#fff;
+            font-size:1rem; font-weight:800;
+            padding:15px 28px; border-radius:var(--radius);
+            box-shadow:0 4px 16px rgba(37,211,102,0.3);
+            transition:background .15s, transform .1s;
+            margin-bottom:14px;
+        }
+        .btn-download:hover { background:#1ea855; transform:translateY(-1px); }
+        .btn-new { font-size:0.82rem; font-weight:700; color:var(--dim); cursor:pointer; background:none; border:none; display:flex; align-items:center; gap:5px; margin:0 auto; transition:color .15s; }
+        .btn-new:hover { color:var(--mid); }
+
+        /* ── TUTORIAL COL ───────────────────────── */
+        .tutorial-col { position:sticky; top:80px; }
+        .tutorial-header { margin-bottom:20px; }
+        .tutorial-eyebrow { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--wpp); margin-bottom:6px; }
+        .tutorial-title { font-size:1.15rem; font-weight:900; color:var(--text); margin-bottom:6px; }
+        .tutorial-sub { font-size:0.85rem; color:var(--mid); line-height:1.6; }
+
+        .tutorial-steps { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+        .tut-step {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            overflow:hidden;
+            box-shadow:0 1px 4px rgba(99,102,241,0.05);
+            transition:box-shadow .2s, border-color .2s;
+        }
+        .tut-step:hover { box-shadow:0 4px 16px rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.2); }
+
+        .tut-step-img {
+            width:100%; height:180px;
+            object-fit:cover; object-position:center top;
+            display:block; background:#F1F5F9;
+        }
+        .tut-step-footer {
+            padding:10px 12px;
+            display:flex; align-items:flex-start; gap:9px;
+            border-top:1px solid rgba(99,102,241,0.06);
+        }
+        .tut-num {
+            width:22px; height:22px; border-radius:50%; flex-shrink:0;
+            background:var(--wpp); color:#fff;
+            font-size:0.68rem; font-weight:800;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .tut-label { font-size:0.75rem; font-weight:600; color:var(--text); line-height:1.45; }
+
+        /* ── STATUS CONTAINER (hidden terminal bridge) ── */
+        #status-container { display:none; }
+
+        /* ── RESPONSIVE ─────────────────────────── */
+        @media (max-width:900px) {
+            .main-layout { grid-template-columns:1fr; padding:20px 16px 40px; }
+            .tutorial-col { position:static; }
+        }
+        @media (max-width:600px) {
+            .tutorial-steps { grid-template-columns:1fr 1fr; }
+            .nav-links { display:none; }
+            .page-header-sub { display:none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">
+            <img src="{{ url_for('static', filename='logo_auditoria_light.svg') }}" alt="AuditorIA">
+        </a>
+        <div class="nav-links">
+            <a href="/whatsapp-v2" class="active">WhatsApp</a>
+            <a href="/video">Vídeos</a>
+            <a href="/sobre">Sobre</a>
+        </div>
+        <a href="/whatsapp-v2" class="btn-nav">
+            <i class="fa-brands fa-whatsapp" style="margin-right:7px;"></i>
+            Transcrever
+        </a>
+    </div>
+</nav>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+    <div class="page-header-inner">
+        <div class="page-header-left">
+            <div class="page-header-icon"><i class="fa-brands fa-whatsapp"></i></div>
+            <div>
+                <h1>WhatsApp para Texto</h1>
+                <p class="page-header-sub">Envie o ZIP exportado do WhatsApp e receba a transcrição completa</p>
+            </div>
+        </div>
+        <div class="privacy-pill">
+            <i class="fa-solid fa-lock" style="font-size:.65rem;"></i>
+            Seus dados ficam na sua máquina
+        </div>
+    </div>
+</div>
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="main-layout">
+
+    <!-- ══ COLUNA ESQUERDA — FORM ══ -->
+    <div class="form-col">
+
+        <!-- Step indicator -->
+        <div class="steps-bar" id="steps-bar">
+            <div class="step-item">
+                <div class="step-circle active" id="sc1">1</div>
+                <span class="step-label active" id="sl1">Envie o arquivo</span>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-item">
+                <div class="step-circle idle" id="sc2">2</div>
+                <span class="step-label idle" id="sl2">Processando</span>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-item">
+                <div class="step-circle idle" id="sc3">3</div>
+                <span class="step-label idle" id="sl3">Baixar</span>
+            </div>
+        </div>
+
+        <!-- Upload card -->
+        <div class="upload-card" id="upload-card">
+
+            <!-- Drop zone -->
+            <label for="file_tool" class="dropzone" id="dz-tool">
+                <i class="fa-solid fa-file-zipper dz-icon"></i>
+                <div class="dz-title">Arraste o arquivo ZIP aqui</div>
+                <div class="dz-sub">ou clique para selecionar do computador</div>
+                <div class="dz-file-name" id="file-name-display"></div>
+            </label>
+            <input type="file" id="file_tool" accept=".zip">
+
+            <!-- Submit -->
+            <button id="btn-submit" onclick="window.iniciarTranscricao()">
+                <div class="btn-spinner"></div>
+                <span class="btn-text">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    Transcrever agora
+                </span>
+            </button>
+
+            <!-- Advanced settings -->
+            <button class="adv-toggle" id="adv-toggle" onclick="toggleAdv()">
+                <span><i class="fa-solid fa-sliders" style="margin-right:6px;"></i>Configurações avançadas</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="adv-body" id="adv-body">
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="case_name">Nome do caso</label>
+                        <input type="text" id="case_name" placeholder="Ex: Caso_Silva">
+                        <span class="field-hint">Deixe vazio para gerar automaticamente</span>
+                    </div>
+                    <div class="field-group">
+                        <label for="model">Qualidade da transcrição</label>
+                        <select id="model">
+                            <option value="tiny">Ultrarrápido</option>
+                            <option value="base">Rápido</option>
+                            <option value="small" selected>Recomendado</option>
+                            <option value="medium">Alta qualidade</option>
+                            <option value="large">Máxima qualidade</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="wpp_start">Filtrar a partir de</label>
+                        <input type="datetime-local" id="wpp_start">
+                    </div>
+                    <div class="field-group">
+                        <label for="wpp_end">Filtrar até</label>
+                        <input type="datetime-local" id="wpp_end">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress card (aparece após submit) -->
+        <div id="progress-card">
+            <i class="fa-solid fa-waveform-lines progress-icon spinning" id="progress-icon"></i>
+            <h3 id="progress-title">Transcrevendo seus áudios...</h3>
+            <p id="progress-sub">A IA está processando os arquivos.<br>Isso pode levar alguns minutos.</p>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="progress-bar"></div>
+            </div>
+            <button class="logs-toggle" onclick="toggleLogs()">
+                <i class="fa-solid fa-terminal"></i>
+                Ver detalhes técnicos
+            </button>
+            <div id="terminal"></div>
+        </div>
+
+        <!-- Done card (aparece ao terminar) -->
+        <div id="done-card">
+            <i class="fa-solid fa-circle-check done-icon"></i>
+            <h3>Transcrição concluída!</h3>
+            <p>Seu arquivo está pronto. Clique abaixo para baixar o pacote completo.</p>
+            <a href="#" class="btn-download" id="btn-download">
+                <i class="fa-solid fa-download"></i>
+                Baixar transcrição (ZIP)
+            </a>
+            <button class="btn-new" onclick="resetForm()">
+                <i class="fa-solid fa-rotate-left"></i>
+                Transcrever outro arquivo
+            </button>
+        </div>
+
+        <!-- Bridge: status-container oculto (usado pelo script.js original) -->
+        <div id="status-container" style="display:none;">
+            <div id="terminal-hidden" style="display:none;"></div>
+        </div>
+
+    </div><!-- /form-col -->
+
+    <!-- ══ COLUNA DIREITA — TUTORIAL ══ -->
+    <div class="tutorial-col">
+        <div class="tutorial-header">
+            <p class="tutorial-eyebrow"><i class="fa-solid fa-circle-question" style="margin-right:5px;"></i>Nunca exportou antes?</p>
+            <h2 class="tutorial-title">Como exportar do WhatsApp</h2>
+            <p class="tutorial-sub">Siga os 4 passos abaixo no seu celular para gerar o arquivo ZIP, depois faça o upload ao lado.</p>
+        </div>
+
+        <div class="tutorial-steps">
+            <div class="tut-step">
+                <img class="tut-step-img" src="{{ url_for('static', filename='tutorial/step1.jpeg') }}" alt="Passo 1">
+                <div class="tut-step-footer">
+                    <span class="tut-num">1</span>
+                    <span class="tut-label">Abra o chat e toque no nome do contato</span>
+                </div>
+            </div>
+            <div class="tut-step">
+                <img class="tut-step-img" src="{{ url_for('static', filename='tutorial/step2.jpeg') }}" alt="Passo 2">
+                <div class="tut-step-footer">
+                    <span class="tut-num">2</span>
+                    <span class="tut-label">Toque em "Exportar conversa"</span>
+                </div>
+            </div>
+            <div class="tut-step">
+                <img class="tut-step-img" src="{{ url_for('static', filename='tutorial/step3.jpeg') }}" alt="Passo 3">
+                <div class="tut-step-footer">
+                    <span class="tut-num">3</span>
+                    <span class="tut-label">Escolha "Anexar mídia" para incluir os áudios</span>
+                </div>
+            </div>
+            <div class="tut-step">
+                <img class="tut-step-img" src="{{ url_for('static', filename='tutorial/step4.jpeg') }}" alt="Passo 4">
+                <div class="tut-step-footer">
+                    <span class="tut-num">4</span>
+                    <span class="tut-label">Salve o ZIP e faça o upload ao lado</span>
+                </div>
+            </div>
+        </div>
+    </div><!-- /tutorial-col -->
+
+</div><!-- /main-layout -->
+
+<script>
+    window.CURRENT_JOB = "wpp";
+
+    // ── Drag & drop ─────────────────────────────────
+    const dz = document.getElementById('dz-tool');
+    const fi = document.getElementById('file_tool');
+
+    fi.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            dz.classList.add('file-ready');
+            const nameEl = document.getElementById('file-name-display');
+            nameEl.textContent = '✓ ' + this.files[0].name;
+            nameEl.classList.add('visible');
+        }
+    });
+
+    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => {
+        e.preventDefault(); dz.classList.remove('drag-over');
+        if (e.dataTransfer.files.length > 0) {
+            fi.files = e.dataTransfer.files;
+            fi.dispatchEvent(new Event('change'));
+        }
+    });
+
+    // ── Advanced accordion ───────────────────────────
+    function toggleAdv() {
+        const body = document.getElementById('adv-body');
+        const btn  = document.getElementById('adv-toggle');
+        body.classList.toggle('open');
+        btn.classList.toggle('open');
+    }
+
+    // ── Logs toggle ──────────────────────────────────
+    function toggleLogs() {
+        const t = document.getElementById('terminal');
+        t.style.display = t.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // ── Step state helpers ───────────────────────────
+    function setStep(n) {
+        [1,2,3].forEach(i => {
+            const c = document.getElementById('sc'+i);
+            const l = document.getElementById('sl'+i);
+            if (i < n)      { c.className='step-circle done';   l.className='step-label done';   c.innerHTML='<i class="fa-solid fa-check" style="font-size:.6rem;"></i>'; }
+            else if (i===n) { c.className='step-circle active';  l.className='step-label active'; }
+            else            { c.className='step-circle idle';    l.className='step-label idle';   }
+        });
+    }
+
+    // ── Show progress, hide upload ───────────────────
+    function showProgress() {
+        document.getElementById('upload-card').style.display  = 'none';
+        document.getElementById('progress-card').style.display = 'block';
+        document.getElementById('done-card').style.display    = 'none';
+        setStep(2);
+    }
+
+    // ── Show done card ───────────────────────────────
+    function showDone(downloadUrl) {
+        document.getElementById('progress-card').style.display = 'none';
+        document.getElementById('done-card').style.display     = 'block';
+        document.getElementById('btn-download').href = downloadUrl;
+        setStep(3);
+    }
+
+    // ── Reset form ───────────────────────────────────
+    function resetForm() {
+        document.getElementById('upload-card').style.display  = 'block';
+        document.getElementById('progress-card').style.display = 'none';
+        document.getElementById('done-card').style.display    = 'none';
+        document.getElementById('file_tool').value = '';
+        dz.classList.remove('file-ready');
+        document.getElementById('file-name-display').textContent = '';
+        document.getElementById('file-name-display').classList.remove('visible');
+        setStep(1);
+    }
+
+    // ── Override iniciarTranscricao ──────────────────
+    window.iniciarTranscricao = async function() {
+        const fileIn    = document.getElementById('file_tool');
+        const submitBtn = document.getElementById('btn-submit');
+        const terminal  = document.getElementById('terminal');
+
+        if (!fileIn || !fileIn.files || fileIn.files.length === 0) {
+            dz.style.borderColor = '#DC2626';
+            setTimeout(() => dz.style.borderColor = '', 1500);
+            return;
+        }
+
+        const file = fileIn.files[0];
+        const ONE_GB = 1024 * 1024 * 1024;
+        if (file.size > ONE_GB) {
+            alert("🚨 Alerta: O arquivo excede o limite gratuito de 1GB! Converta o arquivo ou assine o Premium.");
+            return;
+        }
+
+        const LIMIT_USAGES = 2;
+        const WAIT_TIME_MS = 2 * 60 * 60 * 1000; // 2 horas
+        let usageData = JSON.parse(localStorage.getItem('transcription_usage') || '{"count": 0, "last_used": 0}');
+
+        if (usageData.count >= LIMIT_USAGES) {
+            const timePassed = Date.now() - usageData.last_used;
+            if (timePassed < WAIT_TIME_MS) {
+                const timeLeftMs = WAIT_TIME_MS - timePassed;
+                const hours = Math.floor(timeLeftMs / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
+                alert(`⏳ Limite gratuito diário atingido! Aguarde ${hours}h e ${minutes}m ou crie uma conta Premium para uso ilimitado.`);
+                return;
+            } else {
+                // Reseta se já passou o tempo
+                usageData.count = 0;
+            }
+        }
+
+        // Auto case name
+        const caseInput = document.getElementById('case_name');
+        let caseName = caseInput ? caseInput.value.trim() : "";
+        if (!caseName) {
+            const now = new Date(), pad = n => String(n).padStart(2,'0');
+            caseName = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}_${Math.floor(Math.random()*9000)+1000}`;
+            if (caseInput) caseInput.value = caseName;
+        }
+
+        const formData = new FormData();
+        formData.append('job_type',   'wpp');
+        formData.append('file',       fileIn.files[0]);
+        formData.append('case_name',  caseName);
+        formData.append('model',      document.getElementById('model').value);
+        formData.append('start_date', document.getElementById('wpp_start').value || "");
+        formData.append('end_date',   document.getElementById('wpp_end').value   || "");
+
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        showProgress();
+
+        function addLog(msg, type) {
+            const p = document.createElement('p');
+            p.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            if (type === 'error') p.className = 'log-error';
+            if (type === 'success') p.className = 'log-success';
+            terminal.appendChild(p);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        addLog("🚀 Preparando arquivo e criptografando conexão...", "system");
+        addLog("⚙️ Enviando para a nuvem segura (Modal)... Aguarde, isso pode levar alguns minutos.", "info");
+
+        try {
+            const MODAL_URL = "https://lucas-muraro-pk--transcritor-juridico-fastapi-app.modal.run";
+            const resp = await fetch(MODAL_URL, { method:'POST', body:formData });
+            
+            if (resp.ok) {
+                const data = await resp.json();
+                
+                if (data.success) {
+                    addLog('✓ Processamento concluído com sucesso!', 'success');
+
+                    usageData.count += 1;
+                    usageData.last_used = Date.now();
+                    localStorage.setItem('transcription_usage', JSON.stringify(usageData));
+                    
+                    const blob = new Blob([data.text], { type: "text/plain;charset=utf-8" });
+                    const dlUrl = URL.createObjectURL(blob);
+                    
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    showDone(dlUrl);
+                    
+                    document.getElementById('btn-download').setAttribute('download', `Transcricao_${caseName}.txt`);
+                } else {
+                    throw new Error(data.error || "Erro desconhecido na transcrição");
+                }
+            } else {
+                throw new Error("Falha de comunicação com a nuvem.");
+            }
+        } catch(e) {
+            addLog("❌ ERRO: " + e.message, "error");
+            document.getElementById('progress-title').textContent = 'Erro de processamento';
+            document.getElementById('progress-sub').textContent = e.message;
+            document.getElementById('progress-icon').className = 'fa-solid fa-triangle-exclamation progress-icon';
+            document.getElementById('progress-icon').style.color = '#DC2626';
+            document.getElementById('progress-bar').style.display = 'none';
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('loading');
+        }
+    };
+</script>
+
+</body>
+</html>

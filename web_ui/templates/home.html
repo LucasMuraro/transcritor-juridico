@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiGravity | Transcrição Jurídica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: '#1a0b2e',
+              foreground: '#fdf5eb',
+              primary: '#ff6b35',
+              secondary: '#f7931e',
+              accent: '#e84393',
+              muted: '#36274a',
+              'muted-foreground': '#d1c7bc',
+              border: '#2c1e40',
+              card: '#1e1136'
+            },
+            fontFamily: {
+              sans: ['Barlow', 'sans-serif'],
+              display: ['Bebas Neue', 'sans-serif']
+            }
+          }
+        }
+      }
+    </script>
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .bg-gradient-sunset { background: linear-gradient(135deg, #ff6b35, #e84393); }
+        .bg-gradient-fire { background: linear-gradient(135deg, #f7931e, #ff6b35); }
+        .text-gradient-sunset {
+          background: linear-gradient(135deg, #ff6b35, #e84393);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+        .shadow-glow { box-shadow: 0 0 40px rgba(255, 107, 53, 0.35); }
+      }
+      body {
+        background-color: #1a0b2e;
+        color: #fdf5eb;
+      }
+    </style>
+</head>
+<body class="min-h-screen bg-background text-foreground antialiased font-sans">
+    
+    <!-- Navbar -->
+    <nav class="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between relative">
+        <a href="/" class="flex items-center gap-2 z-10">
+          <span class="font-display text-3xl md:text-4xl tracking-wider text-gradient-sunset">TRANSCRITOR JURÍDICO</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max">
+          <a href="/video" class="text-muted-foreground hover:text-primary transition-colors uppercase">Vídeos</a>
+          <a href="/whatsapp" class="text-muted-foreground hover:text-primary transition-colors uppercase">WhatsApp</a>
+          <a href="/audio" class="text-muted-foreground hover:text-primary transition-colors uppercase">Áudio WhatsApp</a>
+          <a href="/audiencia" class="text-muted-foreground hover:text-primary transition-colors uppercase">Audiência</a>
+        </div>
+        <div class="hidden md:block z-10">
+          <a href="/whatsapp" class="px-6 py-2.5 rounded-full bg-gradient-sunset text-foreground shadow-glow hover:scale-105 transition-transform uppercase tracking-widest">
+            Começar
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+      <!-- Glow blobs -->
+      <div class="absolute -top-40 -left-20 w-[500px] h-[500px] bg-primary/30 rounded-full blur-[120px]"></div>
+      <div class="absolute -bottom-40 -right-20 w-[500px] h-[500px] bg-accent/30 rounded-full blur-[120px]"></div>
+  
+      <div class="relative max-w-7xl mx-auto px-4 md:px-8 pt-16 md:pt-28 pb-12">
+        <h1 class="font-display text-5xl md:text-7xl lg:text-8xl leading-none tracking-wide mb-6">
+          TRANSCRIÇÃO JURÍDICA<br/>
+          <span class="text-gradient-sunset">RÁPIDA E SEGURA NA NUVEM</span>
+        </h1>
+        <p class="text-lg md:text-2xl text-muted-foreground max-w-2xl mb-10 font-medium">
+          Ferramenta para escritórios que processa backups de WhatsApp e vídeos com IA. Arquivos são excluídos imediatamente após a transcrição.
+        </p>
+  
+        <!-- "City picker" but for Tools -->
+        <div class="flex items-center gap-3 mb-4">
+          <i class="fa-solid fa-gavel text-primary text-xl"></i>
+          <span class="text-sm uppercase tracking-widest text-muted-foreground font-bold">
+            Escolha a ferramenta
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="/whatsapp" class="px-6 py-3 rounded-full font-bold text-base md:text-lg transition-all border-2 bg-gradient-sunset text-foreground border-transparent shadow-glow scale-105 inline-block">
+            <span class="mr-2"><i class="fa-brands fa-whatsapp"></i></span> WhatsApp
+          </a>
+          <a href="/audiencia" class="px-6 py-3 rounded-full font-bold text-base md:text-lg transition-all border-2 bg-card border-border text-foreground hover:border-primary/50 inline-block">
+            <span class="mr-2"><i class="fa-solid fa-users"></i></span> Audiência Judicial
+          </a>
+          <a href="/video" class="px-6 py-3 rounded-full font-bold text-base md:text-lg transition-all border-2 bg-card border-border text-foreground hover:border-primary/50 inline-block">
+            <span class="mr-2"><i class="fa-solid fa-video"></i></span> Vídeos
+          </a>
+          <a href="/audio" class="px-6 py-3 rounded-full font-bold text-base md:text-lg transition-all border-2 bg-card border-border text-foreground hover:border-primary/50 inline-block">
+            <span class="mr-2"><i class="fa-solid fa-microphone-lines"></i></span> Áudio Solo
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FlyerGrid style for Features -->
+    <section class="max-w-7xl mx-auto px-4 md:px-8 py-16 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Card 1 -->
+        <a href="/whatsapp" class="group relative aspect-[4/5] overflow-hidden rounded-xl bg-card border-2 border-border hover:border-primary/50 transition-all flex flex-col justify-end p-6 hover:-translate-y-1">
+          <img src="{{ url_for('static', filename='images/whatsapp_bg.png') }}" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-70 transition-opacity z-0" alt="WhatsApp Background">
+          <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent z-10"></div>
+          <div class="absolute top-4 right-4 z-20">
+            <span class="px-3 py-1 bg-gradient-sunset text-foreground text-xs font-bold uppercase tracking-wider rounded-full">Mais usado</span>
+          </div>
+          <div class="relative z-20 mt-auto">
+            <h3 class="font-display text-4xl mb-2 text-gradient-sunset">Transcrição WhatsApp</h3>
+            <p class="text-sm text-muted-foreground font-medium">Processa ZIP do WhatsApp. Combina texto e áudio na ordem cronológica pronta para atas.</p>
+          </div>
+        </a>
+
+        <!-- Card 2 -->
+        <a href="/audiencia" class="group relative aspect-[4/5] overflow-hidden rounded-xl bg-card border-2 border-border hover:border-primary/50 transition-all flex flex-col justify-end p-6 hover:-translate-y-1">
+          <img src="{{ url_for('static', filename='images/audiencia_bg.png') }}" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-70 transition-opacity z-0" alt="Audiência Background">
+          <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent z-10"></div>
+          <div class="relative z-20 mt-auto">
+            <h3 class="font-display text-4xl mb-2 text-foreground group-hover:text-primary transition-colors">Audiência Judicial</h3>
+            <p class="text-sm text-muted-foreground font-medium">Diarização completa por IA. Identifica cada orador separadamente, agrupa falas e detecta nomes automaticamente.</p>
+          </div>
+        </a>
+
+        <!-- Card 3 -->
+        <a href="/video" class="group relative aspect-[4/5] overflow-hidden rounded-xl bg-card border-2 border-border hover:border-primary/50 transition-all flex flex-col justify-end p-6 hover:-translate-y-1">
+          <img src="{{ url_for('static', filename='images/files_bg.png') }}" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-70 transition-opacity z-0" alt="Files Background">
+          <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent z-10"></div>
+          <div class="relative z-20 mt-auto">
+            <h3 class="font-display text-4xl mb-2 text-foreground group-hover:text-primary transition-colors">Outros Arquivos</h3>
+            <p class="text-sm text-muted-foreground font-medium">Aceita vídeos MP4, MOV, WEBM, ou arquivos de áudio isolados de gravadores e depoimentos externos.</p>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-border py-12 text-center text-sm text-muted-foreground relative z-10">
+      <p class="mb-4">
+        <span class="font-display text-2xl text-gradient-sunset tracking-wider">TRANSCRITOR JURÍDICO</span>
+        <br/>
+        Feito para escritórios que levam o sigilo a sério. Arquivos não são armazenados. © 2026
+      </p>
+      <div class="flex justify-center gap-6 mt-6">
+        <a href="/whatsapp" class="hover:text-primary transition-colors uppercase font-bold">WhatsApp</a>
+        <a href="/audiencia" class="hover:text-primary transition-colors uppercase font-bold">Audiência</a>
+        <a href="/video" class="hover:text-primary transition-colors uppercase font-bold">Vídeo</a>
+      </div>
+    </footer>
+
+</body>
+</html>

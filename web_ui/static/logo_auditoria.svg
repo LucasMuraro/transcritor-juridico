@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 52" width="236" height="52" role="img" aria-label="AuditorIA">
+  <defs>
+    <linearGradient id="badge-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7C7FF5"/>
+      <stop offset="100%" style="stop-color:#4F51D0"/>
+    </linearGradient>
+    <linearGradient id="bar-fade" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── BADGE ICON ─────────────────────────── -->
+  <rect x="0" y="0" width="52" height="52" rx="14" fill="url(#badge-grad)"/>
+
+  <!-- Subtle inner glow ring -->
+  <rect x="0" y="0" width="52" height="52" rx="14" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+
+  <!-- Waveform bars (5 bars, asymmetric like real audio) -->
+  <!-- bar 1 — short -->
+  <rect x="8"  y="21" width="5" height="10" rx="2.5" fill="white" opacity="0.45"/>
+  <!-- bar 2 — tall -->
+  <rect x="16" y="12" width="5" height="28" rx="2.5" fill="white" opacity="0.9"/>
+  <!-- bar 3 — medium -->
+  <rect x="24" y="17" width="5" height="18" rx="2.5" fill="white" opacity="0.7"/>
+  <!-- bar 4 — tallest -->
+  <rect x="32" y="9"  width="5" height="34" rx="2.5" fill="white"/>
+  <!-- bar 5 — short-medium -->
+  <rect x="40" y="19" width="5" height="14" rx="2.5" fill="white" opacity="0.5"/>
+
+  <!-- ── WORDMARK ──────────────────────────── -->
+  <!-- "Auditor" + "IA" using system font stack (Outfit loaded by HTML context) -->
+  <text
+    x="64" y="38"
+    font-family="'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif"
+    font-weight="900"
+    font-size="30"
+    letter-spacing="-0.02em"
+    fill="#F1F5F9"
+  ><tspan fill="#F1F5F9">Auditor</tspan><tspan fill="#F59E0B">IA</tspan></text>
+
+  <!-- Tagline / descriptor (optional — remove if too small) -->
+  <text
+    x="65" y="50"
+    font-family="'Outfit', 'Inter', system-ui, sans-serif"
+    font-weight="600"
+    font-size="9"
+    letter-spacing="0.1em"
+    fill="#6366F1"
+    text-transform="uppercase"
+  >TRANSCRIÇÃO JURÍDICA COM IA</text>
+</svg>

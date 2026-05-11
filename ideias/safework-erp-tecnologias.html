@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SafeWork ERP — Guia Técnico Completo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    :root {
+      --azul:#0D2E8C; --azul-c:#1a3fa3; --verde:#186B2B;
+      --roxo:#6F0EC3; --laranja:#A44507; --vermelho:#CD1A1D;
+      --bg:#f4f6fb; --borda:#e2e8f0; --txt:#1a1a2e; --txt-l:#555;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;}
+
+    header{background:linear-gradient(135deg,var(--azul),var(--azul-c));color:#fff;padding:2.5rem 2rem;text-align:center;}
+    header .badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+    header h1{font-size:2rem;font-weight:800;margin-bottom:6px;}
+    header p{opacity:.85;font-size:.95rem;}
+
+    nav{background:white;border-bottom:2px solid var(--borda);position:sticky;top:0;z-index:100;padding:.6rem 1.5rem;display:flex;gap:.5rem;flex-wrap:wrap;}
+    nav a{font-size:.8rem;font-weight:600;color:var(--azul);text-decoration:none;padding:5px 12px;border-radius:20px;border:1px solid var(--borda);transition:.2s;}
+    nav a:hover{background:var(--azul);color:#fff;}
+
+    .container{max-width:1200px;margin:0 auto;padding:2rem 1.5rem;}
+    .section{margin-bottom:3.5rem;}
+    .section-title{font-size:1.5rem;font-weight:800;color:var(--azul);border-left:5px solid var(--azul);padding-left:14px;margin-bottom:1.5rem;display:flex;align-items:center;gap:10px;}
+
+    .card{background:#fff;border-radius:14px;border:1px solid var(--borda);padding:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:1rem;}
+    .card h3{font-size:1rem;font-weight:700;margin-bottom:.5rem;color:var(--azul);}
+    .card p{font-size:.88rem;color:var(--txt-l);margin-bottom:.5rem;}
+    .card code{background:#f0f4ff;border:1px solid #c7d2fe;border-radius:5px;padding:2px 7px;font-size:.82rem;font-family:Courier,monospace;color:var(--roxo);}
+
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+    @media(max-width:800px){.two-col,.three-col{grid-template-columns:1fr;}}
+
+    /* ===== TECH CARDS ===== */
+    .tech-card{background:#fff;border-radius:14px;border:1px solid var(--borda);overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+    .tech-card-head{padding:1rem 1.2rem;color:#fff;font-weight:800;font-size:.95rem;display:flex;align-items:center;gap:8px;}
+    .tech-card-body{padding:1.2rem;}
+    .tech-card-body p{font-size:.87rem;color:var(--txt-l);margin-bottom:.6rem;}
+    .tech-card-body .role{font-size:.82rem;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;color:var(--verde);font-weight:600;margin-top:.5rem;}
+    .tech-card-body .code-ex{background:#1e1e2e;border-radius:8px;padding:10px 14px;margin-top:.7rem;font-family:Courier,monospace;font-size:.8rem;color:#cdd6f4;overflow-x:auto;line-height:1.6;}
+    .tech-card-body .code-ex .kw{color:#89b4fa;}
+    .tech-card-body .code-ex .str{color:#a6e3a1;}
+    .tech-card-body .code-ex .fn{color:#f38ba8;}
+    .tech-card-body .code-ex .cm{color:#6c7086;}
+
+    /* ===== FLOW WRAPPER ===== */
+    .flow-wrap{background:#fff;border-radius:14px;border:1px solid var(--borda);padding:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.06);overflow-x:auto;}
+    .flow-wrap .mermaid{min-width:700px;}
+
+    /* ===== SECURITY ===== */
+    .sec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1rem;}
+    .sec-card{background:#fff;border-radius:12px;border:1px solid var(--borda);padding:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+    .sec-card .level{display:inline-block;font-size:.72rem;font-weight:700;border-radius:20px;padding:2px 10px;margin-bottom:.5rem;}
+    .level-critico{background:#fee2e2;color:var(--vermelho);}
+    .level-alto{background:#fef3c7;color:#b45309;}
+    .level-medio{background:#dbeafe;color:var(--azul);}
+    .sec-card h4{font-size:.9rem;font-weight:700;color:var(--txt);margin-bottom:.4rem;}
+    .sec-card p{font-size:.82rem;color:var(--txt-l);}
+    .sec-card .impl{margin-top:.5rem;font-size:.8rem;background:#f8fafc;border-left:3px solid var(--azul);padding:6px 10px;border-radius:0 6px 6px 0;color:var(--txt);}
+
+    /* ===== DB TABLE ===== */
+    .db-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+    .db-table th{background:var(--azul);color:#fff;padding:8px 12px;text-align:left;}
+    .db-table td{padding:8px 12px;border-bottom:1px solid var(--borda);}
+    .db-table tr:last-child td{border:none;}
+    .db-table .pk{color:var(--laranja);font-weight:700;}
+    .db-table .fk{color:var(--roxo);font-weight:700;}
+    .db-table .uk{color:var(--verde);font-weight:700;}
+    .db-table tr:hover td{background:#f8fafc;}
+
+    /* ===== STORAGE ===== */
+    .storage-flow{display:flex;flex-direction:column;gap:0;}
+    .storage-step{display:flex;align-items:flex-start;gap:1rem;padding:1rem;}
+    .storage-step:nth-child(even){background:#f8fafc;}
+    .storage-step .num{width:32px;height:32px;border-radius:50%;background:var(--azul);color:#fff;font-weight:800;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .storage-step .content h4{font-weight:700;font-size:.9rem;margin-bottom:3px;}
+    .storage-step .content p{font-size:.83rem;color:var(--txt-l);}
+
+    /* ===== HIGHLIGHT BOX ===== */
+    .highlight{background:linear-gradient(135deg,#eef2ff,#e0e7ff);border:1px solid #818cf8;border-radius:12px;padding:1.2rem;margin:.8rem 0;}
+    .highlight h4{color:var(--roxo);font-weight:700;margin-bottom:.4rem;font-size:.9rem;}
+    .highlight p{font-size:.85rem;color:var(--txt-l);}
+    .warn{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:.9rem 1rem;margin:.6rem 0;font-size:.84rem;color:#9a3412;}
+
+    footer{background:var(--azul);color:rgba(255,255,255,.7);text-align:center;padding:1.2rem;font-size:.8rem;margin-top:3rem;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Guia Técnico de Estudo</div>
+  <h1>SafeWork Web ERP — Tecnologias Explicadas</h1>
+  <p>Edge Functions · Webhooks · Stack Frontend · Storage · InfoSec · Banco de Dados · API Routes</p>
+</header>
+
+<nav>
+  <a href="#stack">📦 Stack Frontend</a>
+  <a href="#apiroutes">⚡ API Routes</a>
+  <a href="#edge">🚀 Edge Functions</a>
+  <a href="#webhooks">🔔 Webhooks Assíncronos</a>
+  <a href="#storage">🗂️ Armazenamento</a>
+  <a href="#infosec">🔐 InfoSec</a>
+  <a href="#banco">🗃️ Banco de Dados</a>
+</nav>
+
+<div class="container">
+
+  <!-- ===================== STACK FRONTEND ===================== -->
+  <div class="section" id="stack">
+    <div class="section-title">📦 Stack Frontend — O que cada tecnologia faz no ERP</div>
+    <p style="margin-bottom:1rem;font-size:.9rem;color:var(--txt-l)">Imagine que o ERP é uma casa. Cada tecnologia tem um papel específico na construção.</p>
+
+    <div class="two-col">
+
+      <div class="tech-card">
+        <div class="tech-card-head" style="background:#000">⬛ Next.js 14 (App Router)</div>
+        <div class="tech-card-body">
+          <p><strong>O que é:</strong> É o <em>gerente geral</em> da aplicação. Next.js é um framework que fica em cima do React e resolve os problemas mais difíceis: roteamento, performance e segurança.</p>
+          <p><strong>No ERP da SafeWork:</strong> Ele controla TODAS as páginas: <code>/login</code>, <code>/clientes</code>, <code>/faturamento</code>, <code>/exames</code>. Cada pasta vira uma rota automaticamente.</p>
+          <p><strong>App Router:</strong> É o sistema de pastas novo do Next.js onde você cria um arquivo <code>page.tsx</code> dentro de uma pasta e ele já vira uma página do ERP.</p>
+          <div class="role">📋 Papel no ERP: Estrutura de páginas, performance e backend-in-one (API Routes)</div>
+          <div class="code-ex">
+            <span class="cm">// Estrutura de pastas = Rotas do ERP</span><br>
+            app/<br>
+            &nbsp; login/page.tsx &nbsp;&nbsp;<span class="cm">→ erp.safework.com/login</span><br>
+            &nbsp; clientes/page.tsx <span class="cm">→ erp.safework.com/clientes</span><br>
+            &nbsp; api/nf/route.ts &nbsp;<span class="cm">→ API interna /api/nf</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-card-head" style="background:#61DAFB;color:#000">⚛️ React 18</div>
+        <div class="tech-card-body">
+          <p><strong>O que é:</strong> É a <em>linguagem visual</em> do ERP. React permite criar interfaces interativas usando "componentes" — pedaços reutilizáveis de tela.</p>
+          <p><strong>No ERP da SafeWork:</strong> A tabela de clientes é um componente. O modal de confirmação de NF é um componente. O botão verde "Emitir" é um componente. Você escreve uma vez, usa em qualquer lugar.</p>
+          <div class="role">📋 Papel no ERP: Interatividade — o que acontece quando o usuário clica, digita ou filtra dados na tela</div>
+          <div class="code-ex">
+            <span class="cm">// Componente React — Botão reutilizável</span><br>
+            <span class="kw">export function</span> <span class="fn">BotaoEmitir</span>({ clienteId }) {<br>
+            &nbsp; <span class="kw">return</span> &lt;button <span class="kw">onClick</span>={() =&gt; emitirNF(clienteId)}&gt;<br>
+            &nbsp;&nbsp;&nbsp; Emitir NF<br>
+            &nbsp; &lt;/button&gt;<br>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-card-head" style="background:#06B6D4">🎨 TailwindCSS</div>
+        <div class="tech-card-body">
+          <p><strong>O que é:</strong> É a <em>tinta e o pincel</em>. Tailwind é um sistema de CSS onde você aplica estilos diretamente no HTML usando classes pré-prontas, sem escrever CSS separado.</p>
+          <p><strong>No ERP da SafeWork:</strong> Em vez de criar um arquivo <code>estilo.css</code>, você escreve diretamente: <code>bg-blue-600 text-white rounded-lg px-4 py-2</code> e o botão já sai estilizado.</p>
+          <div class="role">📋 Papel no ERP: Aparência visual — cores, tamanhos, espaçamentos, responsividade mobile</div>
+          <div class="code-ex">
+            <span class="cm">// Botão SafeWork com Tailwind</span><br>
+            &lt;button <span class="kw">className</span>=<span class="str">"bg-blue-700 text-white px-6 py-2<br>
+            &nbsp; rounded-lg hover:bg-blue-800 font-bold"</span>&gt;<br>
+            &nbsp; Emitir Nota Fiscal<br>
+            &lt;/button&gt;
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-card-head" style="background:#18181b">🧩 shadcn/ui</div>
+        <div class="tech-card-body">
+          <p><strong>O que é:</strong> É uma <em>biblioteca de componentes prontos e bonitos</em>. Botões, tabelas, formulários, modais — tudo já existe e você só usa.</p>
+          <p><strong>No ERP da SafeWork:</strong> A tela de listagem de clientes vai usar o componente <code>&lt;Table&gt;</code> do shadcn, com ordenação e paginação prontas. O modal de confirmação de exclusão usa o <code>&lt;Dialog&gt;</code>.</p>
+          <div class="role">📋 Papel no ERP: Velocidade de desenvolvimento — não reinventa a roda, já tem tudo pronto</div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-card-head" style="background:#3178C6">🔷 TypeScript</div>
+        <div class="tech-card-body">
+          <p><strong>O que é:</strong> É o <em>revisor gramatical</em> do código. TypeScript é JavaScript com tipos, o que significa que o editor avisa ANTES de rodar se você cometeu um erro.</p>
+          <p><strong>No ERP da SafeWork:</strong> Se você tentar passar o campo errado para a função de criar cliente (ex: esquecer o CNPJ), o TypeScript sublinha em vermelho antes mesmo de salvar o arquivo. Evita bugs em produção.</p>
+          <div class="role">📋 Papel no ERP: Segurança do código — menos bugs, mais confiança para alterar código em produção</div>
+          <div class="code-ex">
+            <span class="cm">// TypeScript "avisa" se faltar campo obrigatório</span><br>
+            <span class="kw">type</span> Cliente = {<br>
+            &nbsp; id: <span class="kw">string</span><br>
+            &nbsp; cnpj: <span class="kw">string</span> <span class="cm">// obrigatório!</span><br>
+            &nbsp; empresa_id: <span class="kw">string</span><br>
+            }<br>
+            <span class="cm">// ❌ ERRO — cnpj está faltando</span><br>
+            <span class="kw">const</span> c: Cliente = { id: <span class="str">'...'</span> }
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-card-head" style="background:#FF4154">🔄 React Query (TanStack Query)</div>
+        <div class="tech-card-body">
+          <p><strong>O que é:</strong> É o <em>mensageiro inteligente</em> entre a tela e o banco de dados. Ele busca os dados, guarda em cache (memória) e sabe quando precisa atualizar.</p>
+          <p><strong>No ERP da SafeWork:</strong> Quando o funcionário abre a lista de clientes, o React Query busca os dados uma vez e guarda. Se ele navegar para outra tela e voltar, não faz nova requisição — já está em cache. Só busca de novo se os dados ficarem "velhos".</p>
+          <div class="role">📋 Papel no ERP: Performance e sincronização de dados — sem loading desnecessário, dados sempre atualizados</div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-card-head" style="background:#433E7C">🐻 Zustand (Estado Global)</div>
+        <div class="tech-card-body">
+          <p><strong>O que é:</strong> É a <em>memória compartilhada</em> da aplicação. Zustand é uma "loja" onde você guarda informações que várias telas precisam acessar ao mesmo tempo.</p>
+          <p><strong>No ERP da SafeWork:</strong> O CNPJ ativo da filial selecionada, o usuário logado e o perfil de permissão ficam no Zustand. Qualquer componente de qualquer página acessa isso sem precisar "passar" de componente em componente.</p>
+          <div class="role">📋 Papel no ERP: Estado do usuário logado, CNPJ ativo, permissões — acessível em qualquer tela</div>
+          <div class="code-ex">
+            <span class="cm">// Store do usuário logado</span><br>
+            <span class="kw">const</span> useAuth = <span class="fn">create</span>((set) =&gt; ({<br>
+            &nbsp; usuario: <span class="kw">null</span>,<br>
+            &nbsp; empresa_id: <span class="kw">null</span>,<br>
+            &nbsp; perfil: <span class="str">'recepcao'</span>,<br>
+            &nbsp; <span class="fn">login</span>: (u) =&gt; <span class="fn">set</span>({ usuario: u })<br>
+            }))
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-card-head" style="background:#186B2B">⚡ SSR + SSG (Performance)</div>
+        <div class="tech-card-body">
+          <p><strong>SSR (Server Side Rendering):</strong> A página é montada no servidor antes de chegar ao browser do usuário. Resultado: carregamento instantâneo e mais seguro (dados sensíveis não ficam expostos no JavaScript do cliente).</p>
+          <p><strong>SSG (Static Site Generation):</strong> Páginas que não mudam muito (como o login ou a documentação interna) são geradas uma vez e servidas como HTML puro. Velocidade máxima.</p>
+          <div class="role">📋 Papel no ERP: SSR para telas com dados sensíveis (faturamento, exames). SSG para páginas estáticas (login, FAQ interno)</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================== API ROUTES ===================== -->
+  <div class="section" id="apiroutes">
+    <div class="section-title">⚡ API Routes — Como funcionam as rotas de API</div>
+
+    <div class="card">
+      <h3>O que são API Routes?</h3>
+      <p>No Next.js, você pode criar um backend <em>dentro do mesmo projeto</em> do frontend, simplesmente criando arquivos dentro da pasta <code>app/api/</code>. Cada arquivo <code>route.ts</code> vira um endpoint de API.</p>
+      <p>É como ter um "mini-servidor" dentro do seu projeto. O browser chama <code>/api/clientes</code>, o Next.js executa o código do servidor, consulta o Supabase e devolve o JSON.</p>
+    </div>
+
+    <div class="flow-wrap" style="margin-bottom:1rem;">
+      <div class="mermaid">
+sequenceDiagram
+  participant B as 🖥️ Browser (Funcionário)
+  participant NX as ⚡ Next.js (API Route)
+  participant SB as 🗄️ Supabase (PostgreSQL)
+  participant EX as 🔌 API Externa (SOC/Fiscal)
+
+  B->>NX: GET /api/clientes?empresa_id=ABC
+  Note over NX: Verifica JWT do usuário
+  NX->>SB: SELECT * FROM clientes WHERE empresa_id='ABC'
+  Note over SB: RLS valida: usuário tem permissão?
+  SB-->>NX: [ {id, nome, cnpj, ...}, ... ]
+  NX-->>B: JSON com lista de clientes
+
+  B->>NX: POST /api/nf/emitir { fatura_id }
+  Note over NX: Valida dados + injeta cert A1
+  NX->>EX: POST api.focusnfe.com/v2/nfe (mTLS)
+  EX-->>NX: { status: "processando", ref: "NF-001" }
+  NX->>SB: UPDATE faturas SET status='enviada'
+  NX-->>B: { ok: true, ref: "NF-001" }
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3>Exemplo de rota real no ERP</h3>
+        <div class="tech-card-body">
+          <div class="code-ex">
+            <span class="cm">// app/api/clientes/route.ts</span><br>
+            <span class="kw">export async function</span> <span class="fn">GET</span>(req: Request) {<br>
+            &nbsp; <span class="cm">// 1. Pega o token JWT do header</span><br>
+            &nbsp; <span class="kw">const</span> token = req.headers.get(<span class="str">'Authorization'</span>)<br>
+            &nbsp; <span class="cm">// 2. Valida quem é o usuário</span><br>
+            &nbsp; <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">verificarJWT</span>(token)<br>
+            &nbsp; <span class="cm">// 3. Busca dados (RLS protege)</span><br>
+            &nbsp; <span class="kw">const</span> { data } = <span class="kw">await</span> supabase<br>
+            &nbsp;&nbsp;&nbsp; .from(<span class="str">'clientes'</span>)<br>
+            &nbsp;&nbsp;&nbsp; .select(<span class="str">'*'</span>)<br>
+            &nbsp; <span class="kw">return</span> Response.json(data)<br>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Rotas planejadas para o ERP SafeWork</h3>
+        <table class="db-table" style="font-size:.8rem;">
+          <tr><th>Rota</th><th>Método</th><th>Função</th></tr>
+          <tr><td><code>/api/auth/login</code></td><td>POST</td><td>Autenticação JWT</td></tr>
+          <tr><td><code>/api/clientes</code></td><td>GET/POST</td><td>Listar / Criar clientes</td></tr>
+          <tr><td><code>/api/exames/sync</code></td><td>POST</td><td>Sincronizar SOC API</td></tr>
+          <tr><td><code>/api/nf/emitir</code></td><td>POST</td><td>Emitir NF no Gateway</td></tr>
+          <tr><td><code>/api/itau/boleto</code></td><td>POST</td><td>Gerar boleto Itaú (mTLS)</td></tr>
+          <tr><td><code>/api/webhooks/itau</code></td><td>POST</td><td>Receber Pix pago</td></tr>
+          <tr><td><code>/api/webhooks/nf</code></td><td>POST</td><td>Receber status da SEFAZ</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EDGE FUNCTIONS ===================== -->
+  <div class="section" id="edge">
+    <div class="section-title">🚀 Edge Functions — O que são e por que usar</div>
+
+    <div class="card">
+      <h3>A analogia da farmácia</h3>
+      <p>Imagine que você mora em Medianeira-PR e precisa de um remédio. Se o depósito central fica em São Paulo, demora. Se tem uma farmácia no bairro, é instantâneo. <strong>Edge Functions são "farmácias no bairro"</strong> — são funções que rodam em servidores espalhados pelo mundo, próximos do usuário, em vez de um servidor central.</p>
+      <p style="margin-top:.6rem"><strong>No Supabase:</strong> Edge Functions são pequenos programas (em TypeScript/Deno) que rodam nos servidores do Supabase. Eles são perfeitos para processar <strong>webhooks</strong> que chegam de serviços externos (Itaú, FocusNFe).</p>
+    </div>
+
+    <div class="flow-wrap" style="margin-bottom:1rem;">
+      <div class="mermaid">
+flowchart LR
+  subgraph EXTERNA["🔌 Serviço Externo"]
+    ITAU["🏦 Itaú\nPix Recebido"]
+    SEFAZ["🧾 SEFAZ\nNF Aprovada"]
+  end
+
+  subgraph EDGE["⚡ Supabase Edge Function"]
+    EF1["Recebe o\nWebhook POST"]
+    EF2["Valida assinatura\n(HMAC Secret)"]
+    EF3["Atualiza o banco\n(Supabase SQL)"]
+    EF4["Dispara Realtime\n(notificação)"]
+  end
+
+  subgraph FRONT["🖥️ ERP — Browser"]
+    UI["Tela atualiza\nautomaticamente"]
+  end
+
+  ITAU -->|"POST /webhooks/pix"| EF1
+  SEFAZ -->|"POST /webhooks/nf"| EF1
+  EF1 --> EF2
+  EF2 --> EF3
+  EF3 --> EF4
+  EF4 -->|"WebSocket"| UI
+
+  style EXTERNA fill:#FEF3C7,stroke:#F59E0B
+  style EDGE fill:#EDE9FE,stroke:#8B5CF6
+  style FRONT fill:#DBEAFE,stroke:#3B82F6
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3>Quando usar Edge Function vs API Route?</h3>
+        <table class="db-table" style="font-size:.82rem;">
+          <tr><th>Situação</th><th>Usar</th></tr>
+          <tr><td>Receber webhook do Itaú (Pix pago)</td><td style="color:var(--roxo);font-weight:700">Edge Function</td></tr>
+          <tr><td>Receber webhook da SEFAZ (NF aprovada)</td><td style="color:var(--roxo);font-weight:700">Edge Function</td></tr>
+          <tr><td>Listar clientes na tela</td><td style="color:var(--azul);font-weight:700">API Route</td></tr>
+          <tr><td>Login do usuário</td><td style="color:var(--azul);font-weight:700">API Route</td></tr>
+          <tr><td>Sincronização noturna do SOC</td><td style="color:var(--roxo);font-weight:700">Edge Function (Cron)</td></tr>
+          <tr><td>Emitir NF no Gateway</td><td style="color:var(--azul);font-weight:700">API Route</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Exemplo real — Edge Function do Pix</h3>
+        <div class="tech-card-body">
+          <div class="code-ex">
+            <span class="cm">// supabase/functions/webhook-pix/index.ts</span><br>
+            <span class="fn">Deno.serve</span>(<span class="kw">async</span> (req) =&gt; {<br>
+            &nbsp; <span class="kw">const</span> body = <span class="kw">await</span> req.<span class="fn">json</span>()<br>
+            &nbsp; <span class="cm">// Valida que veio mesmo do Itaú</span><br>
+            &nbsp; <span class="fn">validarAssinatura</span>(req, body)<br>
+            &nbsp; <span class="cm">// Atualiza boleto para "pago"</span><br>
+            &nbsp; <span class="kw">await</span> supabase.from(<span class="str">'boletos'</span>)<br>
+            &nbsp;&nbsp;&nbsp; .<span class="fn">update</span>({ status: <span class="str">'pago'</span> })<br>
+            &nbsp;&nbsp;&nbsp; .<span class="fn">eq</span>(<span class="str">'id_itau'</span>, body.txid)<br>
+            &nbsp; <span class="kw">return new</span> Response(<span class="str">'ok'</span>)<br>
+            })
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== WEBHOOKS ===================== -->
+  <div class="section" id="webhooks">
+    <div class="section-title">🔔 Webhooks Assíncronos — Por que não esperar na tela?</div>
+
+    <div class="card">
+      <h3>O problema do forno de pizza</h3>
+      <p>Imagine que você pediu uma pizza. O atendente <strong>não fica parado na frente do forno esperando</strong>. Ele te dá um número, você senta, e quando a pizza ficar pronta, <strong>ele te chama</strong>. Isso é processamento assíncrono com webhook.</p>
+      <p style="margin-top:.6rem">No ERP, emitir uma NF pode levar de 2 a 30 segundos (a SEFAZ é lenta). Se a tela ficasse "travada" esperando, o funcionário não poderia fazer mais nada. Com webhook, ele clica em "Emitir", o sistema confirma "Enviado!", e quando a SEFAZ aprovar, a tela atualiza automaticamente.</p>
+    </div>
+
+    <div class="flow-wrap" style="margin-bottom:1rem;">
+      <div class="mermaid">
+sequenceDiagram
+  participant F as 👩 Funcionária SafeWork
+  participant ERP as 🖥️ ERP (Next.js)
+  participant GW as 🧾 Gateway Fiscal (FocusNFe)
+  participant SEF as 🏛️ SEFAZ / Prefeitura
+  participant WH as ⚡ Edge Function (Webhook)
+
+  F->>ERP: Clica em "Emitir NF"
+  ERP->>GW: POST /nfe { dados da nota, CNPJ, valor }
+  GW-->>ERP: { status: "processando", ref: "NF-001" }
+  ERP->>ERP: Salva status = "enviada"
+  ERP-->>F: ✅ "NF enviada! Aguardando SEFAZ..."
+  Note over F: Funcionária continua trabalhando normalmente
+
+  GW->>SEF: Envia XML + Certificado A1
+  SEF-->>GW: Autorizada ✅ chave=3509...
+
+  GW->>WH: POST /webhooks/nf { ref:"NF-001", status:"autorizada" }
+  WH->>WH: Atualiza boletos SET status='autorizada'
+  WH->>F: 🔔 Notificação: "NF-001 autorizada pela SEFAZ!"
+      </div>
+    </div>
+
+    <div class="highlight">
+      <h4>💡 Por que isso é importante para a SafeWork?</h4>
+      <p>Com 1.500 NFs por mês distribuídas em 5 CNPJs, alguns dias terão picos de emissão. Se o sistema fosse síncrono (esperando resposta na tela), uma lentidão na SEFAZ travaria a tela de todos os funcionários. Com o fluxo assíncrono, a operação continua normalmente enquanto as NFs são processadas em segundo plano.</p>
+    </div>
+  </div>
+
+  <!-- ===================== STORAGE ===================== -->
+  <div class="section" id="storage">
+    <div class="section-title">🗂️ Armazenamento de Arquivos — PDFs, ASOs e Imagens</div>
+
+    <div class="card">
+      <h3>O Supabase Storage — Como funciona por dentro</h3>
+      <p>O Supabase Storage é como um "Google Drive programável". Em vez de salvar arquivos no servidor (o que quebraria com múltiplos servidores), todos os arquivos ficam na nuvem, acessíveis por URL segura com tempo de expiração.</p>
+    </div>
+
+    <div class="flow-wrap" style="margin-bottom:1rem;">
+      <div class="mermaid">
+flowchart TD
+  subgraph UPLOAD["📤 Upload de ASO (Atestado de Saúde)"]
+    U1["Recepcionista escaneia o ASO"]
+    U2["Seleciona arquivo PDF no ERP"]
+    U3["Next.js API Route recebe o PDF"]
+    U4["Supabase Storage armazena o arquivo\nem /aso/{empresa_id}/{cliente_id}/ASO-2026.pdf"]
+    U5["URL segura salva na tabela DOCUMENTOS"]
+    U6["✅ ASO disponível para visualização"]
+  end
+
+  subgraph DOWNLOAD["📥 Visualizar ASO depois"]
+    D1["Médico abre a ficha do paciente"]
+    D2["ERP busca URL na tabela DOCUMENTOS"]
+    D3["Supabase gera URL temporária\n(expira em 60 minutos)"]
+    D4["PDF abre no browser do médico"]
+  end
+
+  subgraph SEGURANCA["🔐 Proteção"]
+    S1["Bucket privado — URL direto = erro 403"]
+    S2["RLS: só empresa_id correta acessa"]
+    S3["URLs assinadas com tempo de expiração"]
+  end
+
+  U1 --> U2 --> U3 --> U4 --> U5 --> U6
+  D1 --> D2 --> D3 --> D4
+  U4 -.-> S1
+  D3 -.-> S3
+
+  style UPLOAD fill:#DBEAFE,stroke:#3B82F6
+  style DOWNLOAD fill:#D1FAE5,stroke:#34D399
+  style SEGURANCA fill:#FEE2E2,stroke:#EF4444
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3>Estrutura de Buckets (Pastas) no Storage</h3>
+        <div class="tech-card-body">
+          <div class="code-ex">
+            <span class="cm">// Organização dos arquivos no Supabase Storage</span><br>
+            safework-documentos/<br>
+            &nbsp; aso/<br>
+            &nbsp;&nbsp;&nbsp; {empresa_id}/<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {cliente_id}/<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ASO-2026-01-15.pdf<br>
+            &nbsp; laudos/<br>
+            &nbsp;&nbsp;&nbsp; {empresa_id}/<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PGR-cliente-XYZ.pdf<br>
+            &nbsp; nfs/<br>
+            &nbsp;&nbsp;&nbsp; {empresa_id}/<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NF-001-jan-2026.pdf<br>
+            &nbsp; logos/<br>
+            &nbsp;&nbsp;&nbsp; {empresa_id}/<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; logo.png
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Tipos de arquivo e casos de uso no ERP</h3>
+        <table class="db-table" style="font-size:.82rem;">
+          <tr><th>Arquivo</th><th>Tipo</th><th>Bucket</th></tr>
+          <tr><td>ASO (Atestado Saúde Ocupacional)</td><td>PDF</td><td>aso/</td></tr>
+          <tr><td>PGR (Programa Ger. de Riscos)</td><td>PDF</td><td>laudos/</td></tr>
+          <tr><td>PCMSO</td><td>PDF</td><td>laudos/</td></tr>
+          <tr><td>LTCAT</td><td>PDF</td><td>laudos/</td></tr>
+          <tr><td>Nota Fiscal PDF</td><td>PDF</td><td>nfs/</td></tr>
+          <tr><td>XML da NF</td><td>XML</td><td>nfs/</td></tr>
+          <tr><td>Logo das filiais</td><td>PNG/JPG</td><td>logos/</td></tr>
+          <tr><td>Fotos de colaboradores</td><td>JPG</td><td>funcionarios/</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="warn">⚠️ <strong>LGPD:</strong> ASOs e laudos médicos são dados sensíveis de saúde. O bucket DEVE ser privado (nunca público). Toda URL de acesso deve ser temporária (signed URL) e registrada em log para auditoria.</div>
+  </div>
+
+  <!-- ===================== INFOSEC ===================== -->
+  <div class="section" id="infosec">
+    <div class="section-title">🔐 InfoSec — Segurança da Infraestrutura de TI</div>
+
+    <div class="card" style="background:linear-gradient(135deg,#fff1f2,#ffe4e6);border-color:#fca5a5;">
+      <h3 style="color:var(--vermelho)">⚠️ Por que segurança é CRÍTICA no ERP da SafeWork?</h3>
+      <p>O ERP vai armazenar: dados médicos de 10.000 trabalhadores (sensíveis pela LGPD), informações financeiras de 10 CNPJs, chaves de APIs bancárias (Itaú) e certificados digitais. Um vazamento pode gerar <strong>multas da ANPD de até R$50 milhões</strong> e responsabilidade civil.</p>
+    </div>
+
+    <div class="sec-grid">
+
+      <div class="sec-card">
+        <div class="level level-critico">🔴 CRÍTICO</div>
+        <h4>Row Level Security (RLS) — A Muralha do Banco</h4>
+        <p>O banco de dados filtra os dados <em>antes</em> de entregar. Mesmo que um hacker invada o frontend da Filial A, o banco recusa entregar dados da Filial B.</p>
+        <div class="impl"><strong>Como implementar:</strong> Toda tabela com dados sensíveis recebe uma policy: <code>CREATE POLICY "filial_isolada" ON clientes USING (empresa_id = auth.jwt()->> 'empresa_id')</code></div>
+      </div>
+
+      <div class="sec-card">
+        <div class="level level-critico">🔴 CRÍTICO</div>
+        <h4>Zero Credenciais no Código (Secrets)</h4>
+        <p>Chaves do Supabase, token do Itaú, senha do Gateway Fiscal — NENHUMA dessas informações pode estar no código que vai para o GitHub.</p>
+        <div class="impl"><strong>Como implementar:</strong> Usar <code>.env.local</code> localmente e Vercel Environment Variables em produção. O arquivo <code>.env</code> deve estar no <code>.gitignore</code>.</div>
+      </div>
+
+      <div class="sec-card">
+        <div class="level level-critico">🔴 CRÍTICO</div>
+        <h4>mTLS — Autenticação Mútua com o Itaú</h4>
+        <p>A API do Itaú exige que seu servidor prove sua identidade com um certificado digital antes de aceitar qualquer requisição de boleto ou Pix.</p>
+        <div class="impl"><strong>Como implementar:</strong> Certificado A1 convertido para Base64, salvo como variável de ambiente na Vercel. Código cria um <code>https.Agent</code> com o certificado antes de chamar a API.</div>
+      </div>
+
+      <div class="sec-card">
+        <div class="level level-alto">🟡 ALTO</div>
+        <h4>JWT com Expiração Curta + Revogação</h4>
+        <p>Quando um funcionário é demitido, o token de acesso dele precisa ser invalidado imediatamente. Tokens sem expiração são uma porta aberta.</p>
+        <div class="impl"><strong>Como implementar:</strong> Supabase Auth usa JWT com expiração de 1 hora. Para revogação imediata: <code>supabase.auth.admin.signOut(userId)</code> invalida todos os tokens do usuário.</div>
+      </div>
+
+      <div class="sec-card">
+        <div class="level level-alto">🟡 ALTO</div>
+        <h4>Validação de Webhook (HMAC)</h4>
+        <p>Quando o Itaú ou FocusNFe enviam um webhook, qualquer pessoa poderia tentar simular uma chamada falsa para "marcar um boleto como pago" sem ter pago.</p>
+        <div class="impl"><strong>Como implementar:</strong> Cada provider fornece um "Webhook Secret". Você recalcula o HMAC-SHA256 do body e compara com a assinatura enviada no header. Se não bater, rejeita.</div>
+      </div>
+
+      <div class="sec-card">
+        <div class="level level-alto">🟡 ALTO</div>
+        <h4>Rate Limiting nas API Routes</h4>
+        <p>Sem limite de requisições, um atacante pode tentar 10.000 combinações de senha por segundo (ataque de força bruta) ou sobrecarregar o servidor.</p>
+        <div class="impl"><strong>Como implementar:</strong> Na Vercel, usar o middleware de rate limiting por IP. Para o login: máximo 5 tentativas / 15 minutos por IP. Bloquear automaticamente após isso.</div>
+      </div>
+
+      <div class="sec-card">
+        <div class="level level-alto">🟡 ALTO</div>
+        <h4>LGPD — Proteção de Dados Médicos</h4>
+        <p>ASOs e laudos são dados de saúde — a categoria mais protegida pela LGPD. Acesso deve ser minimizado, logado e justificado.</p>
+        <div class="impl"><strong>Como implementar:</strong> Log de acesso em tabela separada (<code>auditoria_acessos</code>). URLs de arquivos são temporárias (signed URL de 1h). Bucket privado no Supabase Storage.</div>
+      </div>
+
+      <div class="sec-card">
+        <div class="level level-medio">🔵 MÉDIO</div>
+        <h4>Soft Delete — Integridade para Auditoria Fiscal</h4>
+        <p>Deletar uma nota fiscal, cliente ou exame pode destruir evidências necessárias para auditorias da Receita Federal e do Ministério do Trabalho.</p>
+        <div class="impl"><strong>Como implementar:</strong> Toda tabela crítica tem <code>deleted_at TIMESTAMP</code>. Em vez de <code>DELETE</code>, usar <code>UPDATE SET deleted_at = NOW()</code>. Query padrão sempre adiciona <code>WHERE deleted_at IS NULL</code>.</div>
+      </div>
+
+      <div class="sec-card">
+        <div class="level level-medio">🔵 MÉDIO</div>
+        <h4>HTTPS / TLS Automático (Vercel)</h4>
+        <p>Todo tráfego entre o browser do funcionário e o servidor DEVE ser criptografado. HTTP puro expõe senhas e dados médicos.</p>
+        <div class="impl"><strong>Como implementar:</strong> A Vercel gerencia certificados SSL/TLS automaticamente. Após configurar o domínio <code>erp.safework.com.br</code>, HTTPS é ativado em minutos sem custo adicional.</div>
+      </div>
+
+      <div class="sec-card">
+        <div class="level level-medio">🔵 MÉDIO</div>
+        <h4>Cabeçalhos de Segurança HTTP</h4>
+        <p>Cabeçalhos como <code>Content-Security-Policy</code>, <code>X-Frame-Options</code> e <code>Strict-Transport-Security</code> protegem contra ataques como XSS e Clickjacking.</p>
+        <div class="impl"><strong>Como implementar:</strong> Configurar no arquivo <code>next.config.ts</code> → <code>headers()</code>. A IA irá gerar essa configuração automaticamente quando você pedir.</div>
+      </div>
+
+    </div>
+
+    <div class="flow-wrap" style="margin-top:1.5rem;">
+      <h3 style="margin-bottom:1rem;font-size:1rem;font-weight:700;color:var(--azul)">🔐 Fluxo Completo de Segurança — Login até Dado Protegido</h3>
+      <div class="mermaid">
+flowchart TD
+  A["👩 Funcionária digita login/senha"] --> B["Supabase Auth verifica credenciais"]
+  B --> C{Usuário válido?}
+  C -->|Não| D["❌ Erro 401 — Tentativa logada\nApós 5 falhas: bloqueio 15min"]
+  C -->|Sim| E["✅ JWT gerado — expira em 1h\n(contém: user_id, empresa_id, perfil)"]
+  E --> F["Browser armazena JWT no cookie httpOnly"]
+  F --> G["Funcionária acessa /faturamento"]
+  G --> H["Next.js middleware — verifica JWT"]
+  H --> I{JWT válido e não expirado?}
+  I -->|Não| J["Redireciona para /login"]
+  I -->|Sim| K["API Route busca dados no Supabase"]
+  K --> L["Supabase RLS verifica empresa_id do JWT"]
+  L --> M{Dados pertencem à empresa do usuário?}
+  M -->|Não| N["❌ Erro 403 — Log de tentativa suspeita"]
+  M -->|Sim| O["✅ Dados entregues — APENAS da filial correta"]
+
+  style D fill:#FEE2E2,stroke:#EF4444
+  style J fill:#FEF3C7,stroke:#F59E0B
+  style N fill:#FEE2E2,stroke:#EF4444
+  style O fill:#D1FAE5,stroke:#34D399
+  style E fill:#DBEAFE,stroke:#3B82F6
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BANCO DE DADOS ===================== -->
+  <div class="section" id="banco">
+    <div class="section-title">🗃️ Banco de Dados — Nomes e Convenções Corretas</div>
+
+    <div class="card">
+      <h3>Por que a tabela USUARIOS pareceu estranha?</h3>
+      <p>O que você viu (<em>"uuididPKuuidempresa_idFK..."</em>) foi só um problema de renderização do diagrama Mermaid comprimindo os tipos. As convenções estão corretas. Veja a tabela abaixo de forma legível, com a explicação de cada campo e por quê ele se chama assim.</p>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h4 style="font-weight:700;margin-bottom:.7rem;color:var(--azul)">📋 Tabela: <code>usuarios</code></h4>
+        <div style="background:#fff;border-radius:12px;border:1px solid var(--borda);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05);">
+          <table class="db-table">
+            <tr><th>Coluna</th><th>Tipo</th><th>Chave</th><th>Por que este nome?</th></tr>
+            <tr>
+              <td><span class="pk">id</span></td>
+              <td>UUID</td>
+              <td><span class="pk">PK</span></td>
+              <td>Padrão Supabase. Gerado automaticamente. Único globalmente.</td>
+            </tr>
+            <tr>
+              <td><span class="fk">empresa_id</span></td>
+              <td>UUID</td>
+              <td><span class="fk">FK</span></td>
+              <td>Convenção: <em>tabela_referenciada</em> + <em>_id</em>. Aponta para <code>empresas.id</code>.</td>
+            </tr>
+            <tr>
+              <td>nome</td>
+              <td>VARCHAR(200)</td>
+              <td>—</td>
+              <td>Nome completo do funcionário.</td>
+            </tr>
+            <tr>
+              <td><span class="uk">email</span></td>
+              <td>VARCHAR(255)</td>
+              <td><span class="uk">UK</span></td>
+              <td>Único no banco (nenhum email duplicado). Usado para login.</td>
+            </tr>
+            <tr>
+              <td>perfil</td>
+              <td>ENUM</td>
+              <td>—</td>
+              <td>Controla o que o usuário vê. Valores: admin, gerente, recepcao.</td>
+            </tr>
+            <tr>
+              <td>deleted_at</td>
+              <td>TIMESTAMP</td>
+              <td>—</td>
+              <td>Soft delete. NULL = ativo. Preenchido = usuário desligado.</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <h4 style="font-weight:700;margin-bottom:.7rem;color:var(--azul)">📐 Convenções de Nomenclatura (snake_case)</h4>
+        <div class="card">
+          <h3>Por que <code>empresa_id</code> e não <code>empresaId</code>?</h3>
+          <p>Em bancos de dados SQL (PostgreSQL), o padrão da indústria é <strong>snake_case</strong> (letras minúsculas com underline). JavaScript usa camelCase — por isso parece diferente, mas os dois estão certos.</p>
+          <table class="db-table" style="margin-top:.7rem;font-size:.82rem;">
+            <tr><th>Coluna no BD</th><th>Variável no JS</th><th>Significado</th></tr>
+            <tr><td><code>empresa_id</code></td><td><code>empresaId</code></td><td>FK para tabela empresas</td></tr>
+            <tr><td><code>deleted_at</code></td><td><code>deletedAt</code></td><td>Data de inativação</td></tr>
+            <tr><td><code>razao_social</code></td><td><code>razaoSocial</code></td><td>Nome empresarial</td></tr>
+            <tr><td><code>created_at</code></td><td><code>createdAt</code></td><td>Data de criação</td></tr>
+          </table>
+        </div>
+        <div class="card" style="margin-top:.7rem;">
+          <h3>Regras de nomenclatura para o ERP</h3>
+          <p style="font-size:.85rem">✅ Tabelas: plural, snake_case (<code>clientes</code>, <code>faturas</code>)<br>
+          ✅ PKs: sempre <code>id</code> UUID<br>
+          ✅ FKs: <code>{tabela_singular}_id</code> (<code>cliente_id</code>, <code>empresa_id</code>)<br>
+          ✅ Booleans: prefixo <code>is_</code> (<code>is_ativo</code>, <code>is_matriz</code>)<br>
+          ✅ Timestamps: sufixo <code>_at</code> (<code>created_at</code>, <code>pago_at</code>)<br>
+          ✅ Status: coluna <code>status</code> com ENUM definido</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:1rem;">
+      <h4>💡 Dica para o Antigravity Ultra</h4>
+      <p>No seu <strong>CONTEXT.md</strong>, inclua uma seção chamada "Convenções do Banco de Dados" com essas regras. Assim, toda vez que o agente criar uma nova tabela, ele já vai seguir o padrão sem você precisar lembrar de pedir.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  SafeWork SST — Medianeira, PR &nbsp;|&nbsp; Guia Técnico de Estudo — Web ERP &nbsp;|&nbsp; Abril de 2026
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+    sequence: { useMaxWidth: true },
+    securityLevel: 'loose'
+  });
+</script>
+</body>
+</html>

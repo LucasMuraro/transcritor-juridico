@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} | Transcritor Jurídico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- JetBrains Mono for terminal -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: '#1a0b2e',
+              foreground: '#fdf5eb',
+              primary: '#ff6b35',
+              secondary: '#f7931e',
+              accent: '#e84393',
+              muted: '#36274a',
+              'muted-foreground': '#d1c7bc',
+              border: '#2c1e40',
+              card: '#1e1136'
+            },
+            fontFamily: {
+              sans: ['Barlow', 'sans-serif'],
+              display: ['Bebas Neue', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace']
+            }
+          }
+        }
+      }
+    </script>
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .bg-gradient-sunset { background: linear-gradient(135deg, #ff6b35, #e84393); }
+        .text-gradient-sunset {
+          background: linear-gradient(135deg, #ff6b35, #e84393);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+        .shadow-glow { box-shadow: 0 0 40px rgba(255, 107, 53, 0.35); }
+        .input-dark {
+          @apply w-full px-4 py-3 bg-[#130722] border-2 border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all;
+        }
+        .label-dark {
+          @apply block text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2;
+        }
+      }
+      body {
+        background-color: #1a0b2e;
+        color: #fdf5eb;
+      }
+    </style>
+</head>
+<body class="min-h-screen bg-background text-foreground antialiased font-sans flex flex-col">
+    
+    <!-- Navbar -->
+    <nav class="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between relative">
+        <a href="/" class="flex items-center gap-2 z-10">
+          <span class="font-display text-3xl md:text-4xl tracking-wider text-gradient-sunset">TRANSCRITOR JURÍDICO</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max">
+          <a href="/video" class="{% if tool_type == 'video' %}text-primary{% else %}text-muted-foreground hover:text-primary{% endif %} transition-colors uppercase">Vídeos</a>
+          <a href="/whatsapp" class="{% if tool_type == 'wpp' %}text-primary{% else %}text-muted-foreground hover:text-primary{% endif %} transition-colors uppercase">WhatsApp</a>
+          <a href="/audio" class="{% if tool_type == 'audio' %}text-primary{% else %}text-muted-foreground hover:text-primary{% endif %} transition-colors uppercase">Áudio WhatsApp</a>
+          <a href="/audiencia" class="{% if tool_type == 'audiencia' %}text-primary{% else %}text-muted-foreground hover:text-primary{% endif %} transition-colors uppercase">Audiência</a>
+        </div>
+        <div class="hidden md:block z-10 w-[120px]"></div>
+      </div>
+    </nav>
+
+    <!-- Header Tool -->
+    <div class="bg-gradient-sunset py-6 px-4 md:px-8">
+      <div class="max-w-7xl mx-auto flex items-center gap-4">
+        <i class="{{ icon }} text-3xl text-background"></i>
+        <div>
+          <h1 class="font-display text-3xl text-background tracking-wide m-0 leading-none">{{ title }}</h1>
+          <span class="text-sm font-medium text-background/80">Processamento 100% local · nenhum dado enviado à nuvem</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-10">
+      {% if tool_type == 'wpp' %}
+      <div class="flex flex-col gap-6 max-w-4xl mx-auto items-center">
+        <!-- Tutorial Row -->
+        <div class="w-full bg-[#130722] border border-border rounded-xl p-4">
+          <div class="flex items-center gap-2 mb-3">
+            <i class="fa-solid fa-circle-question text-primary"></i>
+            <span class="text-sm font-bold uppercase tracking-wider text-foreground">Como exportar o WhatsApp?</span>
+          </div>
+          
+          <div class="grid grid-cols-4 gap-3">
+            <div class="bg-card border border-border rounded-lg overflow-hidden flex flex-col">
+              <img src="{{ url_for('static', filename='tutorial/step1.jpeg') }}" class="w-full h-20 object-contain bg-black p-1" alt="Passo 1">
+              <div class="p-2 border-t border-border flex items-center gap-1.5">
+                <span class="w-4 h-4 flex-shrink-0 bg-primary text-background font-bold rounded-full flex items-center justify-center text-[10px]">1</span>
+                <span class="text-[10px] font-bold text-muted-foreground leading-tight">"Exportar conversa"</span>
+              </div>
+            </div>
+            <div class="bg-card border border-border rounded-lg overflow-hidden flex flex-col">
+              <img src="{{ url_for('static', filename='tutorial/step2.jpeg') }}" class="w-full h-20 object-contain bg-black p-1" alt="Passo 2">
+              <div class="p-2 border-t border-border flex items-center gap-1.5">
+                <span class="w-4 h-4 flex-shrink-0 bg-primary text-background font-bold rounded-full flex items-center justify-center text-[10px]">2</span>
+                <span class="text-[10px] font-bold text-muted-foreground leading-tight">"Anexar mídia"</span>
+              </div>
+            </div>
+            <div class="bg-card border border-border rounded-lg overflow-hidden flex flex-col">
+              <img src="{{ url_for('static', filename='tutorial/step3.jpeg') }}" class="w-full h-20 object-cover bg-black" alt="Passo 3">
+              <div class="p-2 border-t border-border flex items-center gap-1.5">
+                <span class="w-4 h-4 flex-shrink-0 bg-primary text-background font-bold rounded-full flex items-center justify-center text-[10px]">3</span>
+                <span class="text-[10px] font-bold text-muted-foreground leading-tight">Salvar o ZIP gerado</span>
+              </div>
+            </div>
+            <div class="bg-card border border-border rounded-lg overflow-hidden flex flex-col">
+              <img src="{{ url_for('static', filename='tutorial/step4.jpeg') }}" class="w-full h-20 object-contain bg-black p-1" alt="Passo 4">
+              <div class="p-2 border-t border-border flex items-center gap-1.5">
+                <span class="w-4 h-4 flex-shrink-0 bg-primary text-background font-bold rounded-full flex items-center justify-center text-[10px]">4</span>
+                <span class="text-[10px] font-bold text-muted-foreground leading-tight">Upload e Transcrever</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Column (WPP) -->
+        <div class="w-full">
+          <div class="bg-card border-2 border-border rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+      {% else %}
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-card border-2 border-border rounded-2xl p-8 shadow-xl relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+      {% endif %}
+      
+            <div class="flex items-center gap-3 mb-6">
+              <i class="{{ icon }} text-2xl text-primary"></i>
+              <h2 class="font-display text-3xl m-0">{% if tool_type == 'wpp' %}TRANSCREVA UMA CONVERSA INTEIRA DO WHATSAPP{% else %}{{ title }}{% endif %}</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+              <div>
+                <label class="label-dark">Identificação do Caso</label>
+                <input type="text" id="case_name" class="input-dark" placeholder="Ex: Caso_Silva (opcional)">
+              </div>
+              <div>
+                <label class="label-dark">Precisão da IA</label>
+                <select id="model" class="input-dark appearance-none">
+                    <option value="tiny">Ultrarrápido</option>
+                    <option value="base">Rápido</option>
+                    <option value="small" selected>Recomendado</option>
+                    <option value="medium">Excelente</option>
+                    <option value="large">Máxima</option>
+                </select>
+              </div>
+            </div>
+
+            {% if tool_type == 'video' %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+              <div>
+                <label class="label-dark">Início (Opcional)</label>
+                <input type="text" id="start_time" class="input-dark" placeholder="00:00:00">
+              </div>
+              <div>
+                <label class="label-dark">Fim (Opcional)</label>
+                <input type="text" id="end_time" class="input-dark" placeholder="00:01:30">
+              </div>
+            </div>
+            <div class="flex items-center gap-3 bg-[#130722] p-4 rounded-xl border-2 border-border mb-6">
+              <input type="checkbox" id="diarization" checked class="w-5 h-5 accent-primary rounded cursor-pointer">
+              <label for="diarization" class="text-sm font-bold text-primary cursor-pointer uppercase tracking-wide">👥 Identificar Oradores</label>
+            </div>
+            {% elif tool_type == 'wpp' %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+              <div>
+                <label class="label-dark">Data Início (Opcional)</label>
+                <input type="datetime-local" id="wpp_start" class="input-dark" style="color-scheme: dark;">
+              </div>
+              <div>
+                <label class="label-dark">Data Fim (Opcional)</label>
+                <input type="datetime-local" id="wpp_end" class="input-dark" style="color-scheme: dark;">
+              </div>
+            </div>
+            {% elif tool_type == 'audiencia' %}
+            <div class="bg-[#130722] p-4 rounded-xl border-2 border-primary/30 mb-6 flex gap-3 items-center">
+              <i class="fa-solid fa-users text-primary text-xl"></i>
+              <p class="text-sm font-bold text-foreground m-0">Identificação automática de oradores ativada. Aceita MP4, WEBM, MOV, MKV, RAR, ZIP.</p>
+            </div>
+            {% endif %}
+
+            <!-- Dropzone -->
+            <label for="file_tool" class="block border-2 border-dashed border-muted-foreground/40 hover:border-primary bg-[#130722] rounded-xl p-8 text-center cursor-pointer transition-colors group mb-6" id="dz-tool">
+              <i class="fa-solid fa-cloud-arrow-up text-4xl text-muted-foreground group-hover:text-primary transition-colors mb-4 pointer-events-none"></i>
+              <br/>
+              <div class="bg-gradient-sunset text-background px-6 py-2 rounded-full font-bold uppercase tracking-wider text-sm inline-block pointer-events-none mb-3">
+                  Selecionar arquivo
+              </div>
+              <p class="text-sm font-medium text-muted-foreground pointer-events-none m-0">ou arraste e solte aqui</p>
+              <div id="file-info" class="text-sm font-bold text-primary mt-3 pointer-events-none"></div>
+            </label>
+            <input type="file" id="file_tool" class="hidden" onchange="
+                if (this.files && this.files.length > 0) {
+                    const dz = document.getElementById('dz-tool');
+                    const info = document.getElementById('file-info');
+                    if (dz) { dz.style.borderColor = '#ff6b35'; dz.style.backgroundColor = 'rgba(255, 107, 53, 0.05)'; }
+                    if (info) { info.innerText = '✅ Arquivo: ' + this.files[0].name; }
+                }
+            ">
+
+            <button id="btn-submit" onclick="window.iniciarTranscricao()" class="w-full py-4 rounded-xl bg-gradient-sunset text-background font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-glow">
+                Iniciar Transcrição
+            </button>
+
+            <!-- TERMINAL -->
+            <div id="status-container" class="mt-8">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="w-2.5 h-2.5 bg-[#4ade80] rounded-full animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-widest text-muted-foreground">Progresso do Motor IA</span>
+              </div>
+              <div id="terminal" class="bg-[#0D0518] border-2 border-border rounded-xl p-5 h-40 overflow-y-auto font-mono text-xs leading-relaxed text-[#d1c7bc] shadow-inner">
+                  Aguardando início do processamento...
+              </div>
+            </div>
+
+            {% if tool_type == 'wpp' %}
+            <!-- Exemplo Visual -->
+            <div class="mt-10">
+              <div class="flex items-center gap-2 mb-3">
+                <i class="fa-regular fa-file-lines text-primary"></i>
+                <span class="text-sm font-bold uppercase tracking-wider text-muted-foreground">Exemplo de Resultado</span>
+              </div>
+              <div class="bg-[#fdf5eb] text-[#1a0b2e] rounded-xl p-5 sm:p-6 font-mono text-xs sm:text-sm shadow-xl border-2 border-primary/20 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-sunset"></div>
+                <div class="font-bold mb-4 sm:mb-6 text-center text-[#e84393] uppercase tracking-wider">
+                  TRANSCRIÇÃO MASTER DE WHATSAPP<br>
+                  ======================================================================
+                </div>
+                <div class="space-y-4 leading-relaxed">
+                  <div>
+                    <span class="text-gray-400">[18/12/2025 13:04:48]</span> <strong class="text-[#ff6b35]">Felipe Muraro:</strong> Chama
+                  </div>
+                  <div>
+                    <span class="text-gray-400">[18/12/2025 13:04:53]</span> <strong class="text-[#ff6b35]">Felipe Muraro:</strong> Tava sem celular
+                  </div>
+                  <div>
+                    <span class="text-gray-400">[18/12/2025 13:04:56]</span> <strong class="text-[#ff6b35]">Felipe Muraro:</strong> Arrumei agora
+                  </div>
+                  <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-[#ff6b35] shadow-sm">
+                    <div class="mb-1.5">
+                      <span class="text-gray-400">[18/12/2025 13:18:29]</span> <strong class="text-[#ff6b35]">muraro</strong> — <span class="text-lg">🎙️</span> ÁUDIO: <span class="text-[10px] text-gray-400">00000009-AUDIO...opus</span>
+                    </div>
+                    <div class="font-bold text-[#e84393] text-sm sm:text-base">
+                      Transcrição: E aí, pô, tá onde?
+                    </div>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">[18/12/2025 13:24:16]</span> <strong class="text-[#ff6b35]">Felipe Muraro:</strong> No shopp china
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+
+          </div><!-- /card -->
+        </div>
+      </div>
+    </div><!-- /main content -->
+
+    <script> window.CURRENT_JOB = "{{ tool_type }}"; </script>
+    <script src="{{ url_for('static', filename='script.js') }}?v={{ range(1, 10000) | random }}"></script>
+
+    <!-- Footer -->
+    <footer class="border-t border-border py-12 text-center text-sm text-muted-foreground mt-auto relative z-10">
+      <p class="mb-4">
+        <span class="font-display text-2xl text-gradient-sunset tracking-wider">TRANSCRITOR JURÍDICO</span>
+        <br/>
+        Feito para escritórios que levam o sigilo a sério. Arquivos não são armazenados. © 2026
+      </p>
+      <div class="flex justify-center gap-6 mt-6">
+        <a href="/whatsapp" class="hover:text-primary transition-colors uppercase font-bold">WhatsApp</a>
+        <a href="/audiencia" class="hover:text-primary transition-colors uppercase font-bold">Audiência</a>
+        <a href="/video" class="hover:text-primary transition-colors uppercase font-bold">Vídeo</a>
+      </div>
+    </footer>
+
+</body>
+</html>

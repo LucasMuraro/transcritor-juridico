@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuditorIA | Transcrição Jurídica com IA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --red:       #C8102E;
+      --red-dark:  #9B0B21;
+      --red-light: #FCE8EC;
+      --black:     #0A0A0A;
+      --charcoal:  #1C1C1E;
+      --ink:       #2C2C2E;
+      --gray:      #6B6B6B;
+      --border:    #E5E0DC;
+      --white:     #FFFFFF;
+      --off-white: #F8F5F2;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Barlow', sans-serif; background: var(--white); color: var(--black); -webkit-font-smoothing: antialiased; }
+
+    /* ── NAVBAR ──────────────────────────────────── */
+    .navbar {
+      background: var(--white);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 56px; height: 72px;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 1000;
+    }
+    .nav-left  { display: flex; align-items: center; gap: 48px; }
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+    .nav-logo  { text-decoration: none; display: flex; align-items: center; }
+    .nav-links { display: flex; gap: 2px; }
+    .nav-links a {
+      text-decoration: none; color: var(--ink);
+      font-weight: 600; font-size: 0.875rem;
+      padding: 7px 14px; border-radius: 5px;
+      transition: background .15s, color .15s;
+    }
+    .nav-links a:hover { background: var(--red-light); color: var(--red); }
+    .nav-badge {
+      background: var(--off-white); color: var(--gray);
+      font-size: 0.71rem; font-weight: 600;
+      padding: 5px 12px; border-radius: 4px;
+      border: 1px solid var(--border); letter-spacing: .03em;
+    }
+    .btn-nav-cta {
+      background: var(--red); color: var(--white);
+      font-size: 0.82rem; font-weight: 700;
+      padding: 9px 20px; border-radius: 6px;
+      text-decoration: none; letter-spacing: .02em;
+      transition: background .15s;
+    }
+    .btn-nav-cta:hover { background: var(--red-dark); }
+
+    /* ── HERO ─────────────────────────────────────── */
+    .hero-section {
+      background: var(--black);
+      padding: 96px 56px 88px;
+      position: relative; overflow: hidden;
+    }
+    .hero-section::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--red);
+    }
+    .hero-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 72px; align-items: center;
+    }
+    .hero-label {
+      display: inline-flex; align-items: center; gap: 10px;
+      color: var(--red); font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .16em;
+      margin-bottom: 28px;
+    }
+    .hero-label::before {
+      content: ''; display: inline-block;
+      width: 24px; height: 2px; background: var(--red);
+    }
+    .hero-section h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 5.6rem; font-weight: 900;
+      color: var(--white); line-height: .9;
+      letter-spacing: -.01em; margin-bottom: 32px;
+    }
+    .hero-section h1 .accent { color: var(--red); }
+    .hero-section > .hero-grid > .hero-left > p {
+      color: rgba(255,255,255,.5);
+      font-size: .96rem; line-height: 1.7;
+      max-width: 400px; margin-bottom: 40px;
+    }
+    .hero-cta-group { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-hero-primary {
+      background: var(--red); color: var(--white);
+      font-weight: 700; font-size: .85rem;
+      padding: 14px 26px; border-radius: 6px;
+      text-decoration: none; letter-spacing: .02em;
+      transition: background .15s, transform .15s;
+    }
+    .btn-hero-primary:hover { background: var(--red-dark); transform: translateY(-1px); }
+    .btn-hero-ghost {
+      background: transparent; color: rgba(255,255,255,.7);
+      font-weight: 600; font-size: .85rem;
+      padding: 14px 26px; border-radius: 6px;
+      text-decoration: none; border: 1px solid rgba(255,255,255,.2);
+      transition: border-color .15s, color .15s;
+    }
+    .btn-hero-ghost:hover { border-color: rgba(255,255,255,.5); color: var(--white); }
+
+    /* Hero right — stats panel */
+    .hero-stats {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px;
+      padding: 32px;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .stat-row {
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .stat-row:first-child { padding-top: 0; }
+    .stat-icon {
+      width: 38px; height: 38px; border-radius: 8px;
+      background: var(--red); display: flex; align-items: center;
+      justify-content: center; color: white; font-size: .9rem;
+      flex-shrink: 0;
+    }
+    .stat-text strong {
+      display: block; font-size: .88rem; font-weight: 700;
+      color: var(--white); margin-bottom: 2px;
+    }
+    .stat-text span { font-size: .78rem; color: rgba(255,255,255,.45); }
+
+    /* ── TRUST BAR ──────────────────────────────── */
+    .trust-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 15px 56px;
+      display: flex; align-items: center;
+      justify-content: center; gap: 48px; flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .79rem; font-weight: 600; color: var(--ink);
+    }
+    .trust-item i { color: var(--red); font-size: .82rem; }
+
+    /* ── SECTION SHARED ───────────────────────── */
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--red); font-size: .69rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .14em;
+      margin-bottom: 12px;
+    }
+    .section-tag::before {
+      content: ''; display: inline-block;
+      width: 18px; height: 2px; background: var(--red);
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.5rem; font-weight: 800;
+      color: var(--black); line-height: 1.05;
+    }
+    .section-sub { font-size: .9rem; color: var(--gray); line-height: 1.65; }
+
+    /* ── TOOLS ──────────────────────────────────── */
+    .tools-section {
+      max-width: 1200px; margin: 72px auto; padding: 0 56px;
+    }
+    .tools-header { margin-bottom: 40px; }
+    .tools-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 16px;
+    }
+    .tool-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 10px; padding: 26px;
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: 14px;
+      position: relative; overflow: hidden;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .tool-card::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--red);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s ease;
+    }
+    .tool-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 32px rgba(0,0,0,.09);
+      border-color: #D0C8C4;
+    }
+    .tool-card:hover::after { transform: scaleX(1); }
+    .tool-icon-wrap {
+      width: 44px; height: 44px; border-radius: 8px;
+      background: var(--red-light);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--red); font-size: 1.05rem;
+    }
+    .tool-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--black); letter-spacing: .01em;
+    }
+    .tool-card p { font-size: .82rem; color: var(--gray); line-height: 1.6; flex: 1; }
+    .tool-card-footer {
+      display: flex; align-items: center; gap: 6px;
+      font-size: .76rem; font-weight: 700;
+      color: var(--red); letter-spacing: .02em;
+    }
+    .tool-card.featured {
+      grid-column: span 2; flex-direction: row;
+      align-items: flex-start; gap: 22px; padding: 28px;
+      background: var(--off-white);
+    }
+    .tool-card.featured .tool-icon-wrap {
+      width: 52px; height: 52px; font-size: 1.3rem; flex-shrink: 0;
+      background: var(--red); color: var(--white);
+    }
+    .tool-card.featured .tool-text { flex: 1; }
+    .tool-card.featured h3 { font-size: 1.25rem; margin-bottom: 8px; }
+    .tag-principal {
+      display: inline-block; background: var(--red); color: var(--white);
+      font-size: .61rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 3px;
+      letter-spacing: .07em; text-transform: uppercase; margin-bottom: 8px;
+    }
+
+    /* ── BENEFITS ─────────────────────────────── */
+    .benefits-section {
+      background: var(--off-white);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 56px;
+    }
+    .benefits-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 5fr 7fr;
+      gap: 72px; align-items: start;
+    }
+    .benefits-left .section-sub { margin-top: 16px; max-width: 320px; }
+    .benefits-list { display: flex; flex-direction: column; gap: 0; }
+    .benefit-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px 0; border-bottom: 1px solid var(--border);
+    }
+    .benefit-item:first-child { border-top: 1px solid var(--border); }
+    .benefit-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.5rem; font-weight: 900;
+      color: var(--red); width: 30px; flex-shrink: 0;
+      line-height: 1; padding-top: 2px;
+    }
+    .benefit-item h4 { font-size: .87rem; font-weight: 700; color: var(--black); margin-bottom: 4px; }
+    .benefit-item p { font-size: .79rem; color: var(--gray); line-height: 1.55; }
+
+    /* ── FOOTER ───────────────────────────────── */
+    .footer {
+      background: var(--black);
+      color: rgba(255,255,255,.55);
+      padding: 64px 56px 28px;
+    }
+    .footer-top {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 48px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .footer-brand { max-width: 280px; }
+    .footer-brand p { font-size: .81rem; line-height: 1.65; margin-top: 16px; }
+    .footer-nav-group { display: flex; gap: 64px; }
+    .footer-col h4 {
+      font-size: .71rem; font-weight: 700; color: var(--white);
+      text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a {
+      color: rgba(255,255,255,.45); text-decoration: none;
+      font-size: .81rem; transition: color .15s;
+    }
+    .footer-col ul li a:hover { color: var(--white); }
+    .footer-contact { display: flex; flex-direction: column; gap: 10px; }
+    .footer-contact-item { display: flex; align-items: center; gap: 10px; font-size: .81rem; }
+    .footer-contact-item i { color: var(--red); width: 14px; }
+    .footer-contact-item a { color: rgba(255,255,255,.45); text-decoration: none; transition: color .15s; }
+    .footer-contact-item a:hover { color: var(--white); }
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto;
+      padding-top: 24px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { font-size: .73rem; color: rgba(255,255,255,.28); }
+    .footer-bottom-links { display: flex; gap: 20px; }
+    .footer-bottom-links a { font-size: .73rem; color: rgba(255,255,255,.28); text-decoration: none; transition: color .15s; }
+    .footer-bottom-links a:hover { color: rgba(255,255,255,.7); }
+
+    /* ── PREVIEW BAR ──────────────────────────── */
+    .preview-bar {
+      position: fixed; bottom: 24px; right: 24px;
+      z-index: 999; display: flex; gap: 8px;
+      flex-wrap: wrap; justify-content: flex-end;
+    }
+    .preview-btn {
+      font-size: .75rem; font-weight: 700;
+      padding: 9px 16px; border-radius: 99px;
+      display: flex; align-items: center; gap: 7px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.3);
+      text-decoration: none; letter-spacing: .02em;
+    }
+    .preview-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── RESPONSIVE ───────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+      .hero-stats { display: none; }
+      .hero-section h1 { font-size: 4rem; }
+      .tools-grid { grid-template-columns: 1fr 1fr; }
+      .tool-card.featured { grid-column: span 2; }
+      .benefits-inner { grid-template-columns: 1fr; gap: 40px; }
+      .footer-top { flex-direction: column; }
+    }
+    @media (max-width: 768px) {
+      .navbar { padding: 0 24px; }
+      .nav-links { display: none; }
+      .hero-section { padding: 64px 24px 72px; }
+      .hero-section h1 { font-size: 3rem; }
+      .tools-section { padding: 0 24px; margin: 48px auto; }
+      .tools-grid { grid-template-columns: 1fr; }
+      .tool-card.featured { grid-column: span 1; flex-direction: column; }
+      .benefits-section { padding: 56px 24px; }
+      .trust-bar { padding: 14px 24px; gap: 20px; }
+      .footer { padding: 48px 24px 24px; }
+      .footer-nav-group { flex-direction: column; gap: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ─────────────────────────────────── -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="/" class="nav-logo">
+      <svg width="186" height="44" viewBox="0 0 186 44" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="2" width="40" height="40" rx="9" fill="#C8102E"/>
+        <!-- Balance scales icon -->
+        <rect x="19" y="8" width="2" height="26" rx="1" fill="white"/>
+        <rect x="9.5" y="14" width="21" height="1.8" rx=".9" fill="white"/>
+        <ellipse cx="11" cy="22.5" rx="5" ry="4.2" fill="none" stroke="white" stroke-width="1.6"/>
+        <ellipse cx="29" cy="22.5" rx="5" ry="4.2" fill="none" stroke="white" stroke-width="1.6"/>
+        <rect x="15" y="33" width="10" height="1.8" rx=".9" fill="white" opacity=".7"/>
+        <!-- Wordmark -->
+        <text x="52" y="31" font-family="'Barlow Condensed', 'Barlow', sans-serif" font-weight="800" font-size="27" letter-spacing=".01em" fill="#0A0A0A">AUDITOR<tspan fill="#C8102E">IA</tspan></text>
+        <text x="53" y="43" font-family="'Barlow', sans-serif" font-weight="600" font-size="7.5" letter-spacing=".12em" fill="#9B9B9B">TRANSCRIÇÃO JURÍDICA COM IA</text>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="/video">Vídeos</a>
+      <a href="/whatsapp">WhatsApp</a>
+      <a href="/audio">Áudio Solo</a>
+      <a href="/audiencia">Audiência</a>
+      <a href="/sobre">Sobre Nós</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-badge"><i class="fa-solid fa-lock" style="margin-right:5px;font-size:.6rem;"></i>100% LOCAL</span>
+    <a href="/whatsapp" class="btn-nav-cta">Começar agora →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────── -->
+<section class="hero-section">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hero-label">Inteligência Jurídica Offline</div>
+      <h1>TRANS-<br>CREVA.<br>PROVE.<br><span class="accent">PROTO-<br>COLE.</span></h1>
+      <p>Ferramenta 100% local para advogados e escritórios. Identifica oradores, mantém cronologia e gera transcrições prontas para atas e processos — sem enviar dados a nenhum servidor.</p>
+      <div class="hero-cta-group">
+        <a href="/whatsapp" class="btn-hero-primary"><i class="fa-brands fa-whatsapp" style="margin-right:8px;"></i>Transcrever WhatsApp</a>
+        <a href="/audiencia" class="btn-hero-ghost"><i class="fa-solid fa-gavel" style="margin-right:8px;"></i>Audiência Judicial</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-row">
+        <div class="stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="stat-text">
+          <strong>Dados 100% Protegidos</strong>
+          <span>Nenhum arquivo sai do seu computador</span>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-text">
+          <strong>Identificação de Oradores</strong>
+          <span>WhisperX + pyannote — separação automática</span>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon"><i class="fa-solid fa-file-lines"></i></div>
+        <div class="stat-text">
+          <strong>Pronto para Ata Notarial</strong>
+          <span>Saída formatada para protocolação</span>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+        <div class="stat-text">
+          <strong>Timestamps Precisos</strong>
+          <span>Cronologia fiel ao material original</span>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon"><i class="fa-brands fa-whatsapp"></i></div>
+        <div class="stat-text">
+          <strong>ZIP Direto do WhatsApp</strong>
+          <span>Aceita o export nativo do aplicativo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST BAR ──────────────────────────────── -->
+<div class="trust-bar">
+  <div class="trust-item"><i class="fa-solid fa-server"></i>Processamento 100% local</div>
+  <div class="trust-item"><i class="fa-solid fa-shield-halved"></i>Sem envio à nuvem</div>
+  <div class="trust-item"><i class="fa-solid fa-file-lines"></i>Saída pronta para Ata Notarial</div>
+  <div class="trust-item"><i class="fa-solid fa-users"></i>Identificação automática de oradores</div>
+  <div class="trust-item"><i class="fa-solid fa-clock"></i>Timestamps precisos</div>
+</div>
+
+<!-- ── TOOLS ─────────────────────────────────── -->
+<section class="tools-section">
+  <div class="tools-header">
+    <div class="section-tag">Ferramentas disponíveis</div>
+    <div class="section-title" style="margin-bottom:10px;">Escolha o módulo certo<br>para seu caso</div>
+    <p class="section-sub">Cada ferramenta foi concebida para um tipo específico de material probatório.</p>
+  </div>
+  <div class="tools-grid">
+
+    <a href="/whatsapp" class="tool-card featured">
+      <div class="tool-icon-wrap"><i class="fa-brands fa-whatsapp"></i></div>
+      <div class="tool-text">
+        <span class="tag-principal">Mais utilizado</span>
+        <h3>Backup de WhatsApp</h3>
+        <p>Processa o arquivo ZIP exportado diretamente pelo WhatsApp. Combina mensagens de texto e áudios em Ata única ordenada cronologicamente — com filtro por data de início e fim da conversa.</p>
+        <div class="tool-card-footer" style="margin-top:12px;"><i class="fa-solid fa-arrow-right"></i>Acessar ferramenta</div>
+      </div>
+    </a>
+
+    <a href="/audiencia" class="tool-card">
+      <div class="tool-icon-wrap"><i class="fa-solid fa-gavel"></i></div>
+      <h3>Audiência Judicial</h3>
+      <p>Diarização completa via WhisperX + pyannote. Identifica cada orador separadamente e detecta nomes por apresentação durante a sessão.</p>
+      <div class="tool-card-footer"><i class="fa-solid fa-arrow-right"></i>Acessar ferramenta</div>
+    </a>
+
+    <a href="/video" class="tool-card">
+      <div class="tool-icon-wrap"><i class="fa-solid fa-circle-play"></i></div>
+      <h3>Transcrição de Vídeo</h3>
+      <p>Aceita MP4, MOV, WEBM, MKV, AVI, RAR e ZIP com vídeo. Suporte a recorte de trecho por horário exato de início e fim.</p>
+      <div class="tool-card-footer"><i class="fa-solid fa-arrow-right"></i>Acessar ferramenta</div>
+    </a>
+
+    <a href="/audio" class="tool-card">
+      <div class="tool-icon-wrap"><i class="fa-solid fa-microphone-lines"></i></div>
+      <h3>Áudio Isolado</h3>
+      <p>Transcreve gravações avulsas de gravadores de campo, depoimentos externos ou mensagens fora do contexto do WhatsApp.</p>
+      <div class="tool-card-footer"><i class="fa-solid fa-arrow-right"></i>Acessar ferramenta</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ── BENEFITS ───────────────────────────────── -->
+<section class="benefits-section">
+  <div class="benefits-inner">
+    <div class="benefits-left">
+      <div class="section-tag">Por que usar o AuditorIA</div>
+      <div class="section-title">Feito para o escritório jurídico</div>
+      <p class="section-sub">Construído para advogados que precisam de transcrições auditáveis, rápidas e organizadas — sem depender de internet ou expor dados de clientes.</p>
+    </div>
+    <div class="benefits-list">
+      <div class="benefit-item">
+        <div class="benefit-num">01</div>
+        <div>
+          <h4>Dados nunca saem da sua máquina</h4>
+          <p>Sem API externa, sem upload para nuvem. O processamento acontece inteiramente no seu computador, garantindo sigilo absoluto do material probatório.</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-num">02</div>
+        <div>
+          <h4>Cronologia fiel ao original</h4>
+          <p>Áudios e textos do WhatsApp são mesclados na ordem exata da conversa, com data e hora de cada mensagem preservada.</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-num">03</div>
+        <div>
+          <h4>Identificação de oradores em audiências</h4>
+          <p>WhisperX + pyannote separam automaticamente quem está falando em cada trecho do vídeo de audiência judicial.</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-num">04</div>
+        <div>
+          <h4>Resultado pronto para petição</h4>
+          <p>Download em ZIP com transcrição formatada, arquivos separados por orador e documento pronto para anexar ao processo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <svg width="154" height="36" viewBox="0 0 154 36" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="1" width="32" height="32" rx="7" fill="#C8102E"/>
+        <rect x="15" y="5.5" width="2" height="21" rx="1" fill="white"/>
+        <rect x="7.5" y="11" width="17" height="1.6" rx=".8" fill="white"/>
+        <ellipse cx="8.5" cy="17.5" rx="4" ry="3.3" fill="none" stroke="white" stroke-width="1.4"/>
+        <ellipse cx="23.5" cy="17.5" rx="4" ry="3.3" fill="none" stroke="white" stroke-width="1.4"/>
+        <rect x="12" y="26" width="8" height="1.5" rx=".75" fill="white" opacity=".65"/>
+        <text x="40" y="25" font-family="'Barlow Condensed', 'Barlow', sans-serif" font-weight="800" font-size="21" fill="white">AUDITOR<tspan fill="#C8102E">IA</tspan></text>
+      </svg>
+      <p>AuditorIA é uma ferramenta de transcrição jurídica local desenvolvida pela Muraro TechHub. Processa backups de WhatsApp e vídeos de audiências com IA — 100% offline, sem expor dados de clientes.</p>
+    </div>
+    <div class="footer-nav-group">
+      <div class="footer-col">
+        <h4>Ferramentas</h4>
+        <ul>
+          <li><a href="/whatsapp">Backup de WhatsApp</a></li>
+          <li><a href="/audiencia">Audiência Judicial</a></li>
+          <li><a href="/video">Transcrição de Vídeo</a></li>
+          <li><a href="/audio">Áudio Isolado</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="/sobre">Sobre Nós</a></li>
+          <li><a href="/sobre#missao">Nossa Missão</a></li>
+          <li><a href="/sobre#tecnologia">Tecnologia</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <div class="footer-contact">
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-envelope"></i>
+            <a href="mailto:lucas.muraro.pk@gmail.com">lucas.muraro.pk@gmail.com</a>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-building"></i>
+            <span>Muraro TechHub</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-map-pin"></i>
+            <span>Brasil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Muraro TechHub · AuditorIA. Todos os direitos reservados.</p>
+    <div class="footer-bottom-links">
+      <a href="#">Política de Privacidade</a>
+      <a href="#">Termos de Uso</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ── PREVIEW SWITCHER ───────────────────────── -->
+<div class="preview-bar">
+  <a href="/preview" class="preview-btn" style="background:#111;color:#FFCF64;border:1px solid rgba(255,207,100,.3);">
+    <span class="preview-dot" style="background:#4ade80;"></span>Site 1
+  </a>
+  <a href="/preview2" class="preview-btn" style="background:#111;color:#a78bfa;border:1px solid rgba(167,139,250,.3);">
+    <span class="preview-dot" style="background:#a78bfa;animation-delay:.5s;"></span>Site 2
+  </a>
+  <a href="/preview3" class="preview-btn" style="background:#fff;color:#6366F1;border:1px solid rgba(99,102,241,.25);">
+    <span class="preview-dot" style="background:#6366F1;animation-delay:1s;"></span>Site 3
+  </a>
+  <a href="/preview4" class="preview-btn" style="background:#C8102E;color:#fff;border:1px solid rgba(200,16,46,.4);">
+    <span class="preview-dot" style="background:#fff;animation-delay:1.5s;"></span>Site 4 Jurídico ←
+  </a>
+  <a href="/preview4-tool" class="preview-btn" style="background:#0A0A0A;color:#C8102E;border:1px solid rgba(200,16,46,.4);">
+    <span class="preview-dot" style="background:#C8102E;animation-delay:2s;"></span>Ferramenta 4
+  </a>
+</div>
+
+</body>
+</html>

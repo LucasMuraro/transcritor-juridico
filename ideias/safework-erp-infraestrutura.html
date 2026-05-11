@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SafeWork Web ERP — Infraestrutura & Custos</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    :root {
+      --azul: #0D2E8C;
+      --azul-claro: #1a3fa3;
+      --verde: #186B2B;
+      --verde-claro: #22943d;
+      --roxo: #6F0EC3;
+      --laranja: #A44507;
+      --vermelho: #CD1A1D;
+      --cinza-bg: #f4f6fb;
+      --cinza-card: #ffffff;
+      --cinza-borda: #e2e8f0;
+      --texto: #1a1a2e;
+      --texto-leve: #555;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--cinza-bg);
+      color: var(--texto);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--azul) 0%, var(--azul-claro) 100%);
+      color: white;
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+    }
+
+    header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 1rem;
+      opacity: 0.85;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--azul);
+      border-left: 4px solid var(--azul);
+      padding-left: 12px;
+      margin-bottom: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    /* ===== CARDS RESUMO ===== */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .card-stat {
+      background: white;
+      border-radius: 12px;
+      padding: 1.2rem 1rem;
+      border: 1px solid var(--cinza-borda);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+
+    .card-stat .num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--azul);
+    }
+
+    .card-stat .label {
+      font-size: 0.8rem;
+      color: var(--texto-leve);
+      margin-top: 4px;
+    }
+
+    /* ===== FLOWCHART ===== */
+    .flowchart-wrapper {
+      background: white;
+      border-radius: 14px;
+      border: 1px solid var(--cinza-borda);
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      overflow-x: auto;
+    }
+
+    .mermaid {
+      min-width: 800px;
+    }
+
+    /* ===== LAYERS INFRAESTRUTURA ===== */
+    .layers {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .layer {
+      border-radius: 12px;
+      border: 1px solid var(--cinza-borda);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .layer-header {
+      padding: 0.8rem 1.2rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: white;
+    }
+
+    .layer-body {
+      background: white;
+      padding: 1rem 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .tech-pill {
+      background: var(--cinza-bg);
+      border: 1px solid var(--cinza-borda);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--texto);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tech-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* layer colors */
+    .layer-ui    .layer-header { background: var(--azul); }
+    .layer-bff   .layer-header { background: var(--azul-claro); }
+    .layer-db    .layer-header { background: var(--verde); }
+    .layer-int   .layer-header { background: var(--roxo); }
+    .layer-infra .layer-header { background: #374151; }
+    .layer-ai    .layer-header { background: var(--laranja); }
+    .layer-sec   .layer-header { background: var(--vermelho); }
+
+    /* ===== TABELAS DE CUSTO ===== */
+    .cost-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media(max-width: 900px) {
+      .cost-section { grid-template-columns: 1fr; }
+    }
+
+    .cost-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--cinza-borda);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .cost-card-header {
+      padding: 1rem 1.2rem;
+      color: white;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .cost-card-header.azul    { background: var(--azul); }
+    .cost-card-header.verde   { background: var(--verde); }
+    .cost-card-header.roxo    { background: var(--roxo); }
+    .cost-card-header.laranja { background: var(--laranja); }
+    .cost-card-header.cinza   { background: #374151; }
+
+    table.cost-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+    }
+
+    table.cost-table th {
+      background: var(--cinza-bg);
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--texto-leve);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    table.cost-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--cinza-borda);
+      vertical-align: top;
+    }
+
+    table.cost-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.cost-table .total-row td {
+      background: #f0f4ff;
+      font-weight: 800;
+      color: var(--azul);
+      font-size: 0.95rem;
+    }
+
+    table.cost-table .val {
+      text-align: right;
+      font-weight: 700;
+      white-space: nowrap;
+      color: var(--azul);
+    }
+
+    .nota {
+      font-size: 0.75rem;
+      color: var(--texto-leve);
+      padding: 8px 12px;
+      background: #fffbf0;
+      border-top: 1px solid #fde68a;
+    }
+
+    /* ===== SAVINGS ===== */
+    .savings-box {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      border: 1px solid #6ee7b7;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .savings-box h3 { color: var(--verde); font-size: 1.1rem; margin-bottom: 0.8rem; }
+
+    .savings-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px dashed #6ee7b7;
+      font-size: 0.9rem;
+    }
+
+    .savings-row:last-child { border-bottom: none; font-weight: 800; font-size: 1rem; color: var(--verde); }
+
+    .savings-row .neg { color: var(--vermelho); font-weight: 700; }
+    .savings-row .pos { color: var(--verde); font-weight: 700; }
+
+    /* ===== ROADMAP ===== */
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .phase {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--cinza-borda);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .phase-header {
+      padding: 0.9rem 1rem;
+      color: white;
+      font-weight: 700;
+    }
+
+    .phase-header.p1 { background: var(--azul); }
+    .phase-header.p2 { background: var(--verde); }
+    .phase-header.p3 { background: var(--roxo); }
+    .phase-header.p4 { background: var(--laranja); }
+
+    .phase-body { padding: 0.8rem 1rem; }
+
+    .phase-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 5px 0;
+      font-size: 0.85rem;
+      border-bottom: 1px solid var(--cinza-borda);
+    }
+
+    .phase-item:last-child { border-bottom: none; }
+
+    .phase-item .check {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--cinza-bg);
+      border: 2px solid var(--cinza-borda);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ===== RULES ===== */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .rule-card {
+      background: white;
+      border-radius: 10px;
+      border: 1px solid var(--cinza-borda);
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .rule-card .rule-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: var(--azul);
+    }
+
+    .rule-card p { font-size: 0.82rem; color: var(--texto-leve); }
+
+    footer {
+      background: var(--azul);
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 1.2rem;
+      font-size: 0.8rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Arquitetura de Software</div>
+  <h1>SafeWork Web ERP</h1>
+  <p>Infraestrutura Completa · Camadas Técnicas · Análise de Custos · Roadmap de Desenvolvimento</p>
+</header>
+
+<div class="container">
+
+  <!-- CARDS RESUMO -->
+  <h2 class="section-title">📊 Visão Geral do Projeto</h2>
+  <div class="cards-grid">
+    <div class="card-stat"><div class="num">10</div><div class="label">CNPJs do Grupo</div></div>
+    <div class="card-stat"><div class="num">5</div><div class="label">Filiais com Faturamento Ativo</div></div>
+    <div class="card-stat"><div class="num">3.000</div><div class="label">Clientes Diretos</div></div>
+    <div class="card-stat"><div class="num">10.000+</div><div class="label">Vidas Gerenciadas no SOC</div></div>
+    <div class="card-stat"><div class="num">1.500</div><div class="label">Notas Fiscais / Mês</div></div>
+    <div class="card-stat"><div class="num">250</div><div class="label">Exames / Dia (5 unidades)</div></div>
+    <div class="card-stat"><div class="num">80</div><div class="label">Usuários Internos</div></div>
+    <div class="card-stat"><div class="num">R$22k</div><div class="label">Economia Potencial / Mês</div></div>
+  </div>
+
+  <!-- FLUXOGRAMA PRINCIPAL -->
+  <h2 class="section-title">🗺️ Fluxograma Completo de Infraestrutura</h2>
+  <div class="flowchart-wrapper">
+    <div class="mermaid">
+flowchart TD
+  subgraph USUARIO["👤 USUÁRIOS (80 Funcionários Internos)"]
+    U1["🖥️ Browser\n(Chrome / Edge)"]
+    U2["📱 Mobile\n(Futuro)"]
+  end
+
+  subgraph CDN["☁️ VERCEL — EDGE NETWORK (CDN Global)"]
+    V1["Next.js App Router\nSSR + SSG + API Routes"]
+    V2["Deploy Automático\n(CI/CD via GitHub)"]
+  end
+
+  subgraph FRONTEND["🎨 CAMADA FRONT-END — Next.js + React"]
+    F1["Páginas / Rotas\n/login, /clientes, /faturamento..."]
+    F2["Componentes UI\nshadcn/ui + TailwindCSS"]
+    F3["Estado Global\nZustand / React Query"]
+    F4["Auth Client\nSupabase JS SDK"]
+  end
+
+  subgraph BFF["⚡ BFF — API ROUTES (Next.js / Edge Functions)"]
+    B1["API Fiscal\n/api/nf/emitir"]
+    B2["API Bancária\n/api/itau/boleto, /api/pix"]
+    B3["API SOC\n/api/soc/sync-exames"]
+    B4["API Interna\n/api/clientes, /api/empresas"]
+  end
+
+  subgraph SUPABASE["🗄️ SUPABASE — BACKEND AS A SERVICE"]
+    SDB["PostgreSQL\nBanco de Dados Principal"]
+    SRLS["Row Level Security\nRLS por empresa_id"]
+    SAUTH["Auth / JWT\nLogin + Perfis"]
+    SSTORAGE["Storage\nPDFs de Exames, ASOs, Laudos"]
+    SFUNCTIONS["Edge Functions\nWebhooks Assíncronos"]
+    SREALTIME["Realtime\nNotificações ao Vivo"]
+  end
+
+  subgraph INTEGRACOES["🔌 INTEGRAÇÕES EXTERNAS"]
+    INT1["🧾 Gateway Fiscal\nFocusNFe / Webmania\n1.500 NFs/mês"]
+    INT2["🏦 Itaú Developers\nBoletos + Pix API\nmTLS / Certificado A1"]
+    INT3["🏥 SOC API\nsoc.com.br\nExames, PGR, PCMSO, ASO"]
+    INT4["📮 SEFAZ / Prefeituras\nXML, Certificado Digital"]
+  end
+
+  subgraph SEGURANCA["🔐 SEGURANÇA"]
+    SEC1["JWT com Expiração\nInvalidação por Demissão"]
+    SEC2["Certificados A1\n5 CNPJs — R$250/un/ano"]
+    SEC3["Variáveis de Ambiente\n.env — Vercel Secrets"]
+    SEC4["LGPD\nCriptografia de Dados Médicos"]
+  end
+
+  subgraph DEVOPS["⚙️ DEVOPS & VERSIONAMENTO"]
+    D1["GitHub\nRepositório Privado"]
+    D2["Vercel CI/CD\nDeploy Auto a cada Push"]
+    D3["Supabase Migrations\nControle de Schema do BD"]
+    D4["n8n Automações\nProcessos Repetitivos"]
+  end
+
+  subgraph IA["🤖 FERRAMENTAS DE IA — Desenvolvimento"]
+    AI1["Antigravity Ultra\nIDE + Agentes Autônomos\n(Cleber — Tech Lead)"]
+    AI2["Claude Projects\nArquiteto Consultivo\nContext.md + Docs"]
+    AI3["Claude Code\nTerminal Cirúrgico\nRefatoração em Massa"]
+  end
+
+  U1 --> V1
+  U2 --> V1
+  V2 --> D1
+  V1 --> F1
+  F1 --> F2
+  F2 --> F3
+  F3 --> F4
+  F4 --> SAUTH
+  F3 --> B1
+  F3 --> B2
+  F3 --> B3
+  F3 --> B4
+  B1 -->|"mTLS + A1"| INT1
+  B2 -->|"mTLS + A1"| INT2
+  B3 -->|"OAuth / Token"| INT3
+  INT1 -->|"XML Assinado"| INT4
+  B4 --> SDB
+  SDB --> SRLS
+  SRLS -->|"Bloqueia Filial A ver Filial B"| F3
+  SAUTH --> SEC1
+  INT2 -->|"Webhook Pix Pago"| SFUNCTIONS
+  SFUNCTIONS -->|"Baixa Fatura"| SDB
+  SFUNCTIONS --> SREALTIME
+  SREALTIME -->|"Status NF Atualizado"| F3
+  SDB --> SSTORAGE
+  D1 -->|"git push"| D2
+  D2 -->|"Deploy 1-2 min"| V1
+  D3 --> SDB
+  AI1 -->|"Escreve código"| D1
+  AI2 -->|"Define Arquitetura"| AI1
+  AI3 -->|"Refatora código"| D1
+
+  style USUARIO fill:#EEF2FF,stroke:#818CF8
+  style CDN fill:#E0F2FE,stroke:#38BDF8
+  style FRONTEND fill:#DBEAFE,stroke:#3B82F6
+  style BFF fill:#EDE9FE,stroke:#8B5CF6
+  style SUPABASE fill:#D1FAE5,stroke:#34D399
+  style INTEGRACOES fill:#FEF3C7,stroke:#F59E0B
+  style SEGURANCA fill:#FEE2E2,stroke:#EF4444
+  style DEVOPS fill:#F1F5F9,stroke:#94A3B8
+  style IA fill:#FFF7ED,stroke:#FB923C
+    </div>
+  </div>
+
+  <!-- CAMADAS DETALHADAS -->
+  <h2 class="section-title">🧱 Detalhamento das Camadas Técnicas</h2>
+  <div class="layers">
+
+    <div class="layer layer-ui">
+      <div class="layer-header">📺 Camada 1 — Interface de Usuário (Front-end)</div>
+      <div class="layer-body">
+        <div class="tech-pill"><span class="dot" style="background:#3B82F6"></span>Next.js 14 (App Router)</div>
+        <div class="tech-pill"><span class="dot" style="background:#61DAFB"></span>React 18</div>
+        <div class="tech-pill"><span class="dot" style="background:#06B6D4"></span>TailwindCSS</div>
+        <div class="tech-pill"><span class="dot" style="background:#0D2E8C"></span>shadcn/ui</div>
+        <div class="tech-pill"><span class="dot" style="background:#F59E0B"></span>TypeScript</div>
+        <div class="tech-pill"><span class="dot" style="background:#8B5CF6"></span>React Query (Cache/Estado)</div>
+        <div class="tech-pill"><span class="dot" style="background:#374151"></span>Zustand (Estado Global)</div>
+        <div class="tech-pill"><span class="dot" style="background:#10B981"></span>SSR + SSG (SEO / Performance)</div>
+      </div>
+    </div>
+
+    <div class="layer layer-bff">
+      <div class="layer-header">⚡ Camada 2 — BFF / API Routes (Servidor Next.js)</div>
+      <div class="layer-body">
+        <div class="tech-pill"><span class="dot" style="background:#6366F1"></span>API Routes (Node.js)</div>
+        <div class="tech-pill"><span class="dot" style="background:#8B5CF6"></span>Middleware Auth JWT</div>
+        <div class="tech-pill"><span class="dot" style="background:#EC4899"></span>Validação Zod</div>
+        <div class="tech-pill"><span class="dot" style="background:#F59E0B"></span>mTLS Agent (Itaú)</div>
+        <div class="tech-pill"><span class="dot" style="background:#EF4444"></span>Rate Limiting</div>
+        <div class="tech-pill"><span class="dot" style="background:#10B981"></span>Axios / Fetch</div>
+      </div>
+    </div>
+
+    <div class="layer layer-db">
+      <div class="layer-header">🗄️ Camada 3 — Banco de Dados e Back-end (Supabase)</div>
+      <div class="layer-body">
+        <div class="tech-pill"><span class="dot" style="background:#4F46E5"></span>PostgreSQL 15</div>
+        <div class="tech-pill"><span class="dot" style="background:#10B981"></span>Row Level Security (RLS)</div>
+        <div class="tech-pill"><span class="dot" style="background:#34D399"></span>Supabase Auth (JWT)</div>
+        <div class="tech-pill"><span class="dot" style="background:#0EA5E9"></span>Supabase Storage (PDFs)</div>
+        <div class="tech-pill"><span class="dot" style="background:#F59E0B"></span>Edge Functions (Webhooks)</div>
+        <div class="tech-pill"><span class="dot" style="background:#6EE7B7"></span>Realtime (WebSockets)</div>
+        <div class="tech-pill"><span class="dot" style="background:#818CF8"></span>Migrations Versionadas</div>
+        <div class="tech-pill"><span class="dot" style="background:#374151"></span>Soft Delete (status/deleted_at)</div>
+      </div>
+    </div>
+
+    <div class="layer layer-int">
+      <div class="layer-header">🔌 Camada 4 — Integrações Externas</div>
+      <div class="layer-body">
+        <div class="tech-pill"><span class="dot" style="background:#F59E0B"></span>SOC API (soc.com.br) — Exames, PGR, PCMSO</div>
+        <div class="tech-pill"><span class="dot" style="background:#EF4444"></span>Gateway NF — FocusNFe / Webmania</div>
+        <div class="tech-pill"><span class="dot" style="background:#3B82F6"></span>Itaú Developers — Boleto + Pix</div>
+        <div class="tech-pill"><span class="dot" style="background:#6366F1"></span>SEFAZ / Prefeituras (via Gateway)</div>
+        <div class="tech-pill"><span class="dot" style="background:#10B981"></span>Webhooks de Retorno (Pix/NF)</div>
+        <div class="tech-pill"><span class="dot" style="background:#8B5CF6"></span>Certificados A1 (5 CNPJs)</div>
+      </div>
+    </div>
+
+    <div class="layer layer-infra">
+      <div class="layer-header">⚙️ Camada 5 — Infraestrutura & DevOps</div>
+      <div class="layer-body">
+        <div class="tech-pill"><span class="dot" style="background:#181717"></span>GitHub (Repositório Privado)</div>
+        <div class="tech-pill"><span class="dot" style="background:#000000"></span>Vercel Pro (Deploy CI/CD)</div>
+        <div class="tech-pill"><span class="dot" style="background:#3ECF8E"></span>Supabase Cloud</div>
+        <div class="tech-pill"><span class="dot" style="background:#EF4444"></span>n8n Cloud (Automações)</div>
+        <div class="tech-pill"><span class="dot" style="background:#0EA5E9"></span>Vercel Secrets (.env)</div>
+        <div class="tech-pill"><span class="dot" style="background:#F59E0B"></span>HTTPS/TLS Automático (Vercel)</div>
+      </div>
+    </div>
+
+    <div class="layer layer-ai">
+      <div class="layer-header">🤖 Camada 6 — Stack de IA para Desenvolvimento</div>
+      <div class="layer-body">
+        <div class="tech-pill"><span class="dot" style="background:#F97316"></span>Antigravity Ultra (IDE + Agentes)</div>
+        <div class="tech-pill"><span class="dot" style="background:#7C3AED"></span>Claude Sonnet 4.6 (LLM no IDE)</div>
+        <div class="tech-pill"><span class="dot" style="background:#8B5CF6"></span>Claude Projects (Arquiteto)</div>
+        <div class="tech-pill"><span class="dot" style="background:#0D2E8C"></span>Claude Code (Terminal)</div>
+        <div class="tech-pill"><span class="dot" style="background:#374151"></span>CONTEXT.md (Memória do Projeto)</div>
+        <div class="tech-pill"><span class="dot" style="background:#10B981"></span>docs/ (Docs SOC, Fiscal, Banco)</div>
+      </div>
+    </div>
+
+    <div class="layer layer-sec">
+      <div class="layer-header">🔐 Camada 7 — Segurança & Compliance (LGPD)</div>
+      <div class="layer-body">
+        <div class="tech-pill"><span class="dot" style="background:#EF4444"></span>RLS no PostgreSQL (Multi-CNPJ)</div>
+        <div class="tech-pill"><span class="dot" style="background:#F59E0B"></span>JWT + Refresh Tokens</div>
+        <div class="tech-pill"><span class="dot" style="background:#8B5CF6"></span>mTLS Itaú (Certificado no Servidor)</div>
+        <div class="tech-pill"><span class="dot" style="background:#6366F1"></span>Certificados A1 em .env (Base64)</div>
+        <div class="tech-pill"><span class="dot" style="background:#10B981"></span>Zero Credentials no Git</div>
+        <div class="tech-pill"><span class="dot" style="background:#374151"></span>Soft Delete (auditoria fiscal)</div>
+        <div class="tech-pill"><span class="dot" style="background:#EF4444"></span>Dados médicos criptografados</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BANCO DE DADOS -->
+  <h2 class="section-title">🗃️ Modelo de Banco de Dados — Tabelas Principais</h2>
+  <div class="flowchart-wrapper">
+    <div class="mermaid">
+erDiagram
+  EMPRESAS {
+    uuid id PK
+    string razao_social
+    string cnpj UK
+    string tipo "matriz | filial"
+    uuid matriz_id FK
+    string status
+    timestamp created_at
+  }
+
+  USUARIOS {
+    uuid id PK
+    uuid empresa_id FK
+    string nome
+    string email UK
+    string perfil "admin | gerente | recepcao"
+    timestamp deleted_at
+  }
+
+  CLIENTES {
+    uuid id PK
+    uuid empresa_id FK
+    string razao_social
+    string cnpj
+    string id_soc
+    string status
+    timestamp deleted_at
+  }
+
+  EXAMES {
+    uuid id PK
+    uuid empresa_id FK
+    uuid cliente_id FK
+    string tipo "admissional | periodico | demissional"
+    string id_soc
+    date data_realizacao
+    string status
+    timestamp sincronizado_em
+  }
+
+  FATURAS {
+    uuid id PK
+    uuid empresa_id FK
+    uuid cliente_id FK
+    decimal valor_total
+    string status "rascunho | emitida | paga | cancelada"
+    string numero_nf
+    string chave_nf
+    timestamp emitida_em
+    timestamp paga_em
+    timestamp deleted_at
+  }
+
+  BOLETOS {
+    uuid id PK
+    uuid fatura_id FK
+    string linha_digitavel
+    string qrcode_pix
+    decimal valor
+    date vencimento
+    string status "aberto | pago | cancelado"
+    string id_itau
+    timestamp pago_em
+  }
+
+  DOCUMENTOS {
+    uuid id PK
+    uuid empresa_id FK
+    uuid cliente_id FK
+    string tipo "PGR | PCMSO | LTCAT | ASO"
+    string url_storage
+    date validade
+    string status
+  }
+
+  EMPRESAS ||--o{ USUARIOS : "possui"
+  EMPRESAS ||--o{ CLIENTES : "atende"
+  EMPRESAS ||--o{ FATURAS : "emite"
+  CLIENTES ||--o{ EXAMES : "realiza"
+  CLIENTES ||--o{ FATURAS : "recebe"
+  CLIENTES ||--o{ DOCUMENTOS : "tem"
+  FATURAS ||--o{ BOLETOS : "gera"
+  EMPRESAS }o--|| EMPRESAS : "matriz_id"
+    </div>
+  </div>
+
+  <!-- CUSTOS -->
+  <h2 class="section-title">💰 Análise Completa de Custos</h2>
+
+  <div class="cost-section">
+
+    <!-- Ferramentas IA -->
+    <div class="cost-card">
+      <div class="cost-card-header laranja">🤖 Ferramentas de IA & Desenvolvimento</div>
+      <table class="cost-table">
+        <tr><th>Ferramenta</th><th>Plano</th><th class="val">BRL/mês</th></tr>
+        <tr>
+          <td><strong>Antigravity Ultra</strong><br><small>IDE com Agentes Autônomos — Cleber (Tech Lead ERP)</small></td>
+          <td>$249,99/mês</td>
+          <td class="val">~R$ 1.375</td>
+        </tr>
+        <tr>
+          <td><strong>Claude Pro Web</strong><br><small>Arquiteto Consultivo + Context.md + Projetos</small></td>
+          <td>~$20/mês</td>
+          <td class="val">~R$ 150</td>
+        </tr>
+        <tr>
+          <td><strong>Claude / ChatGPT</strong><br><small>Apoio a Marketing e textos gerais</small></td>
+          <td>~$20/mês</td>
+          <td class="val">~R$ 100</td>
+        </tr>
+        <tr class="total-row"><td colspan="2"><strong>Subtotal IA</strong></td><td class="val">R$ 1.625</td></tr>
+      </table>
+      <div class="nota">⚠️ Antigravity Ultra: $249,99/mês (~R$1.375). Promoção lançamento: ~R$600 por 3 meses. Após período promocional: ~R$1.375/mês. Fonte: antigravity.google/pricing (Mar/2026)</div>
+    </div>
+
+    <!-- Infraestrutura Cloud -->
+    <div class="cost-card">
+      <div class="cost-card-header azul">☁️ Infraestrutura Cloud (ERP em Produção)</div>
+      <table class="cost-table">
+        <tr><th>Serviço</th><th>Plano</th><th class="val">BRL/mês</th></tr>
+        <tr>
+          <td><strong>Supabase Pro</strong><br><small>PostgreSQL + Auth + Storage</small></td>
+          <td>Pro ~$25</td>
+          <td class="val">R$ 125</td>
+        </tr>
+        <tr>
+          <td><strong>Vercel Pro</strong><br><small>Deploy Front-end + CI/CD</small></td>
+          <td>Pro ~$20</td>
+          <td class="val">R$ 100</td>
+        </tr>
+        <tr>
+          <td><strong>GitHub</strong><br><small>Repositório privado (1 dev solo)</small></td>
+          <td>Free</td>
+          <td class="val">R$ 0</td>
+        </tr>
+        <tr>
+          <td><strong>n8n Cloud</strong><br><small>Automações de processos</small></td>
+          <td>~$20</td>
+          <td class="val">R$ 100</td>
+        </tr>
+        <tr class="total-row"><td colspan="2"><strong>Subtotal Infra</strong></td><td class="val">R$ 325</td></tr>
+      </table>
+    </div>
+
+    <!-- APIs Transacionais -->
+    <div class="cost-card">
+      <div class="cost-card-header roxo">🔌 APIs Transacionais (Fiscais & Bancárias)</div>
+      <table class="cost-table">
+        <tr><th>Serviço</th><th>Volume</th><th class="val">BRL/mês</th></tr>
+        <tr>
+          <td><strong>Gateway Fiscal</strong><br><small>FocusNFe / Webmania — 1.500 NFs/mês</small></td>
+          <td>5 CNPJs</td>
+          <td class="val">R$ 250</td>
+        </tr>
+        <tr>
+          <td><strong>Certificados A1</strong><br><small>5 CNPJs × R$250/ano rateado</small></td>
+          <td>5 un/ano</td>
+          <td class="val">R$ 104</td>
+        </tr>
+        <tr>
+          <td><strong>Itaú API — Boletos</strong><br><small>Tarifa bancária de liquidação (~R$2/boleto)</small></td>
+          <td>1.500 bol.</td>
+          <td class="val" style="color:#CD1A1D">R$ 3.000*</td>
+        </tr>
+        <tr>
+          <td><strong>Itaú API — Pix</strong><br><small>~R$1,20/transação (estimativa)</small></td>
+          <td>variável</td>
+          <td class="val" style="color:#CD1A1D">variável*</td>
+        </tr>
+        <tr class="total-row"><td colspan="2"><strong>Subtotal APIs (sem Itaú)</strong></td><td class="val">R$ 354</td></tr>
+      </table>
+      <div class="nota">* Tarifa Itaú é custo financeiro bancário (desconta nos recebimentos), não TI. Negocie com seu gerente.</div>
+    </div>
+
+    <!-- Observação sobre equipe -->
+    <div class="cost-card">
+      <div class="cost-card-header cinza">ℹ️ Observação — Custos de Equipe</div>
+      <table class="cost-table">
+        <tr><td colspan="2" style="padding:14px;font-size:0.87rem;color:#555;line-height:1.7">
+          Os custos de equipe (bolsas de estágio, Tech Lead e time de automação) <strong>não estão incluídos neste orçamento</strong>, pois pertencem a um centro de custo separado do projeto de TI.<br><br>
+          O ERP será desenvolvido por <strong>1 desenvolvedor solo (Tech Lead)</strong> utilizando o Antigravity Ultra como principal ferramenta de desenvolvimento acelerado por IA.
+        </td></tr>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- RESUMO TOTAL -->
+  <div style="background:white;border-radius:12px;border:1px solid var(--cinza-borda);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-top:1.5rem;">
+    <div class="cost-card-header cinza">📋 RESUMO TOTAL MENSAL — SOMENTE SOFTWARE & INFRA</div>
+    <table class="cost-table">
+      <tr><th>Categoria</th><th>Detalhe</th><th class="val">Custo Mensal</th></tr>
+      <tr><td><strong>Antigravity Ultra</strong></td><td>$249,99/mês — IDE principal de desenvolvimento</td><td class="val">~R$ 1.375</td></tr>
+      <tr><td><strong>Claude Pro Web</strong></td><td>Arquiteto consultivo + Context do projeto</td><td class="val">~R$ 150</td></tr>
+      <tr><td><strong>Claude / ChatGPT</strong></td><td>Marketing e suporte geral</td><td class="val">~R$ 100</td></tr>
+      <tr><td><strong>Supabase Pro</strong></td><td>Banco de dados + Auth + Storage</td><td class="val">~R$ 125</td></tr>
+      <tr><td><strong>Vercel Pro</strong></td><td>Deploy front-end + CI/CD automático</td><td class="val">~R$ 100</td></tr>
+      <tr><td><strong>n8n Cloud</strong></td><td>Automações de processos internos</td><td class="val">~R$ 100</td></tr>
+      <tr><td><strong>Gateway Fiscal (FocusNFe)</strong></td><td>Emissão de 1.500 NFs/mês — 5 CNPJs</td><td class="val">~R$ 250</td></tr>
+      <tr><td><strong>Certificados A1</strong></td><td>5 CNPJs × R$250/ano (rateio mensal)</td><td class="val">~R$ 104</td></tr>
+      <tr class="total-row">
+        <td colspan="2"><strong>💰 TOTAL MENSAL — SOFTWARE + INFRA + APIS FISCAIS</strong></td>
+        <td class="val" style="font-size:1.1rem">~R$ 2.304</td>
+      </tr>
+    </table>
+    <div class="nota">* Tarifas bancárias do Itaú (boletos/Pix) são custos financeiros da operação, descontados nos recebimentos — não são fatura de TI. Custo de equipe (bolsas) é separado. Câmbio USD→BRL estimado: R$5,50.</div>
+  </div>
+
+  <!-- ANÁLISE DE ROI -->
+  <div class="savings-box">
+    <h3>📈 Análise de Retorno — ROI do Projeto</h3>
+    <div class="savings-row">
+      <span>💸 Conta Azul (atual — 10 CNPJs)</span>
+      <span class="neg">- R$ 10.000/mês</span>
+    </div>
+    <div class="savings-row">
+      <span>💸 SOC (atual — sistema core)</span>
+      <span class="neg">- R$ 12.000/mês</span>
+    </div>
+    <div class="savings-row">
+      <span>💸 UniSyst (custo de transição)</span>
+      <span class="neg">- R$ 2.000/mês</span>
+    </div>
+    <div class="savings-row">
+      <span>✅ Custo infra + IA do ERP próprio (sem equipe)</span>
+      <span class="pos">~R$ 2.304/mês</span>
+    </div>
+    <div class="savings-row">
+      <span>💰 <strong>Economia ao substituir Conta Azul + UniSyst</strong></span>
+      <span class="pos">+ R$ 9.696/mês</span>
+    </div>
+    <div class="savings-row">
+      <span>🚀 <strong>Propriedade Intelectual gerada</strong></span>
+      <span class="pos">Software próprio — ativo permanente da SafeWork</span>
+    </div>
+    <div class="savings-row">
+      <span>⚠️ vs projeto Bubble (R$110k — zero entrega)</span>
+      <span class="pos">Custo e risco MUITO menores com IA</span>
+    </div>
+  </div>
+
+  <!-- ROADMAP -->
+  <h2 class="section-title">🗓️ Roadmap de Desenvolvimento — 4 Sprints (MVP)</h2>
+  <div class="roadmap">
+
+    <div class="phase">
+      <div class="phase-header p1">🔵 Sprint 1 — Fundação (Semanas 1-4)</div>
+      <div class="phase-body">
+        <div class="phase-item"><div class="check"></div>Setup Next.js + TailwindCSS + shadcn/ui</div>
+        <div class="phase-item"><div class="check"></div>Conexão com Supabase (CONTEXT.md)</div>
+        <div class="phase-item"><div class="check"></div>Tabela EMPRESAS (10 CNPJs + Multi-tenant)</div>
+        <div class="phase-item"><div class="check"></div>Autenticação / Login (JWT + RLS)</div>
+        <div class="phase-item"><div class="check"></div>Perfis de usuário (admin / gerente / recepção)</div>
+        <div class="phase-item"><div class="check"></div>Deploy no Vercel + GitHub</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header p2">🟢 Sprint 2 — Clientes & Exames (Semanas 5-10)</div>
+      <div class="phase-body">
+        <div class="phase-item"><div class="check"></div>Tabela CLIENTES com empresa_id</div>
+        <div class="phase-item"><div class="check"></div>CRUD Clientes (soft delete)</div>
+        <div class="phase-item"><div class="check"></div>Integração básica SOC API (sincronizar exames)</div>
+        <div class="phase-item"><div class="check"></div>Tela de Exames por CNPJ</div>
+        <div class="phase-item"><div class="check"></div>Upload de PDFs (ASO, laudos) no Storage</div>
+        <div class="phase-item"><div class="check"></div>Documentos: PGR, PCMSO, LTCAT</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header p3">🟣 Sprint 3 — Faturamento NF (Semanas 11-18)</div>
+      <div class="phase-body">
+        <div class="phase-item"><div class="check"></div>Tabela FATURAS (por CNPJ)</div>
+        <div class="phase-item"><div class="check"></div>Integração Gateway Fiscal (FocusNFe)</div>
+        <div class="phase-item"><div class="check"></div>Emissão de NF assíncrona (Webhook)</div>
+        <div class="phase-item"><div class="check"></div>Certificados A1 em variáveis .env</div>
+        <div class="phase-item"><div class="check"></div>Status NF em tempo real (Supabase Realtime)</div>
+        <div class="phase-item"><div class="check"></div>Faturamento em Lote (1.500 NFs/mês)</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header p4">🟠 Sprint 4 — Financeiro Completo (Semanas 19-30)</div>
+      <div class="phase-body">
+        <div class="phase-item"><div class="check"></div>API Itaú — Boletos (mTLS configurado)</div>
+        <div class="phase-item"><div class="check"></div>Pix Dinâmico (QR Code na tela)</div>
+        <div class="phase-item"><div class="check"></div>Webhook Itaú → baixa automática</div>
+        <div class="phase-item"><div class="check"></div>Dashboard Matriz (visão consolidada 10 CNPJs)</div>
+        <div class="phase-item"><div class="check"></div>Relatórios financeiros por filial</div>
+        <div class="phase-item"><div class="check"></div>Automações n8n (rotinas SOC, e-mails)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- REGRAS DE OURO -->
+  <h2 class="section-title">⚖️ Regras de Ouro da Arquitetura (Invioláveis)</h2>
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-title">🏢 Multi-Tenant Nativo</div>
+      <p>Toda tabela DEVE ter <code>empresa_id</code>. É a regra #1. Sem ela o sistema não separa os 10 CNPJs.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-title">🔒 Row Level Security (RLS)</div>
+      <p>O banco de dados bloqueia fisicamente uma filial de ver dados de outra. Não filtre só no React.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-title">🗑️ Soft Delete Obrigatório</div>
+      <p>NUNCA use DELETE SQL. Use <code>status = 'inativo'</code> ou <code>deleted_at</code> para manter auditoria fiscal e histórico SST.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-title">🔑 Zero Credenciais no Git</div>
+      <p>Chaves Supabase, certificados A1, tokens Itaú — tudo em <code>.env</code> e Vercel Secrets. Nunca no código.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-title">⚡ NF Assíncrona (Webhook)</div>
+      <p>Emissão de NF não pode travar a tela. Envie o pedido, o Gateway avisa quando a SEFAZ aprovar.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-title">🔄 SOC: Sincronização Periódica</div>
+      <p>Não chame a API do SOC em tempo real. Sincronize de madrugada via Edge Function e salve no Supabase.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-title">🛡️ mTLS para APIs Bancárias</div>
+      <p>O Itaú exige autenticação mútua. Configure o certificado no backend (API Route/Edge Function), nunca no browser.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-title">📄 CONTEXT.md como Memória</div>
+      <p>Toda regra de negócio da SafeWork fica num <code>CONTEXT.md</code> na raiz. A IA lê isso a cada sessão de desenvolvimento.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  SafeWork SST — Medianeira, PR &nbsp;|&nbsp; Web ERP — Documento de Arquitetura e Infraestrutura &nbsp;|&nbsp; Gerado em Abril de 2026
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+    er: { useMaxWidth: true },
+    securityLevel: 'loose'
+  });
+</script>
+</body>
+</html>

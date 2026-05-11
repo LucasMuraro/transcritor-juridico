@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AntiGravity — Fluxograma do Sistema</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    :root {
+      --verde:      #0A6E3F;
+      --verde-c:    #12a05c;
+      --cinza-dk:   #1a1a2e;
+      --roxo:       #5B21B6;
+      --azul:       #1D4ED8;
+      --laranja:    #C2410C;
+      --vermelho:   #B91C1C;
+      --amarelo:    #D97706;
+      --bg:         #f4f6fb;
+      --borda:      #e2e8f0;
+      --txt:        #1a1a2e;
+      --txt-l:      #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--txt); line-height: 1.65; }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #0A6E3F 60%, #064e2e 100%);
+      color: white; padding: 2.5rem 2rem 2rem; text-align: center;
+    }
+    header .badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+    header h1 { font-size: 2.1rem; font-weight: 900; margin-bottom: 6px; }
+    header p  { font-size: 0.95rem; opacity: 0.85; }
+
+    nav { background: white; border-bottom: 2px solid var(--borda); position: sticky; top: 0; z-index: 100; padding: 0.6rem 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    nav a { font-size: 0.78rem; font-weight: 700; color: var(--verde); text-decoration: none; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--borda); transition: .2s; }
+    nav a:hover { background: var(--verde); color: white; }
+
+    .container { max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .section-title { font-size: 1.4rem; font-weight: 800; color: var(--verde); border-left: 5px solid var(--verde); padding-left: 14px; margin-bottom: 1.5rem; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; }
+
+    .flow-wrap { background: white; border-radius: 14px; border: 1px solid var(--borda); padding: 1.5rem 1.5rem 2rem; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow-x: auto; margin-bottom: 1.5rem; }
+    .flow-wrap .mermaid { min-width: 700px; }
+    .flow-wrap h3 { font-size: 1rem; font-weight: 700; color: var(--verde); margin-bottom: 1.2rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--bg); }
+
+    /* JORNADA DO USUÁRIO */
+    .journey { display: flex; gap: 0; margin-bottom: 2rem; overflow-x: auto; }
+    .step {
+      flex: 1; min-width: 180px;
+      background: white; border: 1px solid var(--borda);
+      border-right: none; padding: 1.2rem 1rem;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .step:last-child { border-right: 1px solid var(--borda); border-radius: 0 14px 14px 0; }
+    .step:first-child { border-radius: 14px 0 0 14px; }
+    .step::after {
+      content: '›';
+      position: absolute; right: -14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.8rem; font-weight: 900;
+      color: var(--verde-c); z-index: 2;
+    }
+    .step:last-child::after { display: none; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--verde); color: white; font-weight: 900; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; margin-bottom: 0.7rem; }
+    .step-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .step-title { font-size: 0.85rem; font-weight: 800; color: var(--txt); margin-bottom: 0.3rem; }
+    .step-desc  { font-size: 0.75rem; color: var(--txt-l); line-height: 1.4; }
+    .step.pay { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+    .step.ai  { background: linear-gradient(135deg, #f5f3ff, #ede9fe); }
+    .step.done{ background: linear-gradient(135deg, #f0fdf4, #dcfce7); }
+
+    /* PIPELINE TÉCNICO */
+    .pipeline { display: flex; flex-direction: column; gap: 0; margin-bottom: 2rem; }
+    .pipe-step { display: flex; align-items: stretch; gap: 0; }
+    .pipe-icon { width: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; background: white; border: 1px solid var(--borda); border-bottom: none; border-right: none; flex-shrink: 0; }
+    .pipe-icon.last-icon { border-bottom: 1px solid var(--borda); border-radius: 0 0 0 12px; }
+    .pipe-content { flex: 1; background: white; border: 1px solid var(--borda); border-bottom: none; border-left: none; padding: 1rem 1.2rem; }
+    .pipe-step:first-child .pipe-icon { border-radius: 12px 0 0 0; }
+    .pipe-step:first-child .pipe-content { border-radius: 0 12px 0 0; }
+    .pipe-step:last-child .pipe-content { border-bottom: 1px solid var(--borda); border-radius: 0 0 12px 0; }
+    .pipe-step:last-child .pipe-icon { border-bottom: 1px solid var(--borda); }
+    .pipe-content h4 { font-size: 0.9rem; font-weight: 800; color: var(--txt); margin-bottom: 0.3rem; }
+    .pipe-content p  { font-size: 0.82rem; color: var(--txt-l); margin-bottom: 0.3rem; }
+    .pipe-content code { background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 5px; padding: 2px 7px; font-size: 0.78rem; font-family: Courier, monospace; color: var(--roxo); }
+    .pipe-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.4rem; }
+    .tag { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+    .tag-verde   { background: #dcfce7; color: #14532d; }
+    .tag-azul    { background: #dbeafe; color: #1e3a8a; }
+    .tag-roxo    { background: #ede9fe; color: #4c1d95; }
+    .tag-laranja { background: #ffedd5; color: #7c2d12; }
+    .tag-cinza   { background: #f1f5f9; color: #475569; }
+
+    /* CARDS DE ESTADO */
+    .state-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .state-card { background: white; border-radius: 14px; border: 1px solid var(--borda); padding: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .state-card h4 { font-size: 0.9rem; font-weight: 800; color: var(--verde); margin-bottom: 0.7rem; }
+    .state-item { display: flex; align-items: flex-start; gap: 8px; padding: 4px 0; font-size: 0.83rem; border-bottom: 1px dashed var(--borda); }
+    .state-item:last-child { border-bottom: none; }
+    .state-item .bullet { width: 8px; height: 8px; border-radius: 50%; background: var(--verde); flex-shrink: 0; margin-top: 5px; }
+    .state-item .bullet.warn   { background: var(--laranja); }
+    .state-item .bullet.error  { background: var(--vermelho); }
+    .state-item .bullet.future { background: var(--roxo); }
+
+    /* COMPARATIVO */
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 2rem; }
+    .compare-table th { background: var(--verde); color: white; padding: 10px 14px; text-align: left; }
+    .compare-table td { padding: 9px 14px; border-bottom: 1px solid var(--borda); }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: #f8fffe; }
+    .ck  { color: #16a34a; font-weight: 800; }
+    .cx  { color: #dc2626; font-weight: 700; }
+    .cp  { color: #d97706; font-weight: 700; }
+
+    .alert { border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; font-size: 0.88rem; display: flex; gap: 10px; align-items: flex-start; }
+    .alert-verde { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
+    .alert-info  { background: #eff6ff; border: 1px solid #93c5fd; color: #1e3a8a; }
+    .alert-warn  { background: #fff7ed; border: 1px solid #fed7aa; color: #7c2d12; }
+    .alert .icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    footer { background: var(--cinza-dk); color: rgba(255,255,255,0.6); text-align: center; padding: 1.2rem; font-size: 0.8rem; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { curve: 'basis' }, securityLevel: 'loose' });</script>
+
+<header>
+  <div class="badge">🗺️ Arquitetura de Fluxo · AntiGravity</div>
+  <h1>AntiGravity — Fluxograma do Sistema</h1>
+  <p>Jornada do Usuário · Pipeline Técnico · Fluxo de Dados · Fluxo de Pagamento</p>
+</header>
+
+<nav>
+  <a href="#jornada">👤 Jornada</a>
+  <a href="#infra">🗺️ Infraestrutura</a>
+  <a href="#pipeline">⚙️ Pipeline</a>
+  <a href="#pagamento">💳 Pagamento</a>
+  <a href="#erros">⚠️ Erros</a>
+  <a href="#comparativo">📊 Local vs Cloud</a>
+</nav>
+
+<div class="container">
+
+  <!-- JORNADA DO USUÁRIO -->
+  <h2 class="section-title" id="jornada">👤 Jornada Completa do Usuário (5 Etapas)</h2>
+  <div class="journey">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-icon">📦</div>
+      <div class="step-title">Upload do .zip</div>
+      <div class="step-desc">Usuário acessa a URL e arrasta o .zip exportado do WhatsApp para a área de drop</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-icon">📅</div>
+      <div class="step-title">Filtro de Período</div>
+      <div class="step-desc">Sistema lê o .txt e mostra o range de datas. Usuário escolhe: Hoje / Semana / Personalizado</div>
+    </div>
+    <div class="step pay">
+      <div class="step-num">3</div>
+      <div class="step-icon">💳</div>
+      <div class="step-title">Pagamento PIX</div>
+      <div class="step-desc">Sistema conta os áudios no período e exibe o valor. QR Code PIX é gerado dinamicamente</div>
+    </div>
+    <div class="step ai">
+      <div class="step-num">4</div>
+      <div class="step-icon">🤖</div>
+      <div class="step-title">IA Processa</div>
+      <div class="step-desc">Após confirmar PIX: extrai, converte e transcreve cada áudio .opus com Whisper</div>
+    </div>
+    <div class="step done">
+      <div class="step-num">5</div>
+      <div class="step-icon">📄</div>
+      <div class="step-title">Download</div>
+      <div class="step-desc">Cronologia completa em .txt ou PDF, com remetente, data, hora e transcrição de cada áudio</div>
+    </div>
+  </div>
+
+  <!-- FLUXOGRAMA COMPLETO DE INFRAESTRUTURA -->
+  <h2 class="section-title" id="infra">🗺️ Fluxograma de Infraestrutura Completo</h2>
+  <div class="flow-wrap">
+    <div class="mermaid">
+flowchart TD
+  subgraph USUARIO["👤 USUÁRIO — Browser / Web"]
+    U1["🌐 Acessa antigravity.app"]
+    U2["📦 Upload do .zip do WhatsApp"]
+    U3["📅 Seleciona período da conversa"]
+    U4["💳 Escaneia QR Code PIX"]
+    U5["⏳ Aguarda processamento"]
+    U6["⬇️ Baixa relatório final"]
+  end
+
+  subgraph FRONTEND["🎨 FRONTEND — Flask/HTML ou Next.js"]
+    F1["Página de Upload\n(Drag & Drop Zone)"]
+    F2["Pré-leitura do .txt\n(range de datas)"]
+    F3["Selector de período\n(Hoje / Semana / Custom)"]
+    F4["Tela de pagamento\n(QR Code PIX + Valor)"]
+    F5["Loading screen\n(barra de progresso SSE)"]
+    F6["Tela de resultado\n(preview + download)"]
+  end
+
+  subgraph BACKEND["⚡ BACKEND — Python Flask"]
+    B1["Recebe .zip\n(POST /upload)"]
+    B2["Extrai .zip → /uploads/temp"]
+    B3["Parse do _chat.txt\n(filtra por data)"]
+    B4["Lista áudios do período\n(.opus files)"]
+    B5["Calcula valor\n(qtd_áudios × R$2,00)"]
+    B6["Cria cobrança PIX\n(API Gateway)"]
+    B7["Webhook: confirma pagamento"]
+    B8["Converte .opus → .wav\n(imageio-ffmpeg)"]
+    B9["Transcreve com Whisper\n(local ou API)"]
+    B10["Consolida cronologia\n(data + remetente + texto)"]
+    B11["Gera arquivo final\n(.txt ou .pdf)"]
+    B12["Devolve link p/ download\n(ou abre pasta local)"]
+    B13["🗑️ Deleta arquivos temp"]
+  end
+
+  subgraph AI["🤖 IA — Whisper Engine"]
+    AI1["Whisper Local\n(modelo small/medium)"]
+    AI2["Whisper API OpenAI\n($0.006/min — fallback)"]
+    AI3["Groq Whisper API\n(mais rápido e barato)"]
+  end
+
+  subgraph PAY["💳 GATEWAY DE PAGAMENTO"]
+    P1["Asaas / Mercado Pago"]
+    P2["PIX Dinâmico\n(QR Code + chave)"]
+    P3["Webhook: pix_paid\n(libera processamento)"]
+  end
+
+  subgraph STORAGE["📁 ARMAZENAMENTO"]
+    S1["Local: /casos/{nome}/"]
+    S2["Cloud: S3 / R2 (futuro)"]
+    S3["Supabase Storage (futuro)"]
+  end
+
+  U1 --> F1
+  U2 --> F1
+  F1 --> B1
+  B1 --> B2
+  B2 --> B3
+  B3 --> F2
+  F2 --> F3
+  U3 --> F3
+  F3 --> B4
+  B4 --> B5
+  B5 --> F4
+  F4 --> B6
+  B6 --> P1
+  P1 --> P2
+  U4 -.->|"paga PIX"| P1
+  P1 --> P3
+  P3 --> B7
+  B7 --> B8
+  B8 --> B9
+  B9 --> AI1
+  B9 -.->|"fallback"| AI2
+  B9 -.->|"recomendado"| AI3
+  AI1 --> B10
+  AI2 --> B10
+  AI3 --> B10
+  B10 --> B11
+  B11 --> S1
+  B11 -.-> S2
+  B11 --> B12
+  B12 --> F5
+  F5 --> F6
+  U5 --> F5
+  F6 --> U6
+  U6 --> B13
+
+  style USUARIO fill:#EEF2FF,stroke:#818CF8
+  style FRONTEND fill:#DBEAFE,stroke:#3B82F6
+  style BACKEND fill:#D1FAE5,stroke:#34D399
+  style AI fill:#EDE9FE,stroke:#8B5CF6
+  style PAY fill:#FEF3C7,stroke:#F59E0B
+  style STORAGE fill:#F1F5F9,stroke:#94A3B8
+    </div>
+  </div>
+
+  <!-- PIPELINE TÉCNICO DETALHADO -->
+  <h2 class="section-title" id="pipeline">⚙️ Pipeline Técnico Detalhado — Passo a Passo</h2>
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-icon">📦</div>
+      <div class="pipe-content">
+        <h4>Etapa 1 — Recepção do arquivo .zip</h4>
+        <p>O usuário faz upload do arquivo exportado pelo WhatsApp. O backend salva temporariamente em <code>/uploads/temp_{uuid}/</code>.</p>
+        <div class="pipe-tags">
+          <span class="tag tag-verde">Flask POST /upload</span>
+          <span class="tag tag-azul">multipart/form-data</span>
+          <span class="tag tag-cinza">zipfile.extractall()</span>
+        </div>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">📄</div>
+      <div class="pipe-content">
+        <h4>Etapa 2 — Parser do _chat.txt (filtro por data)</h4>
+        <p>Lê o arquivo de texto principal da conversa. Usa regex para identificar mensagens, remetentes e os nomes dos arquivos de áudio. Filtra apenas o período selecionado pelo usuário.</p>
+        <div class="pipe-tags">
+          <span class="tag tag-roxo">regex · datetime</span>
+          <span class="tag tag-cinza">whatsapp_local.py</span>
+          <span class="tag tag-verde">Padrão: [DD/MM/AAAA HH:MM] Nome: mensagem</span>
+        </div>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">🎵</div>
+      <div class="pipe-content">
+        <h4>Etapa 3 — Extração e conversão dos áudios .opus</h4>
+        <p>Identifica quais anexos de áudio (<code>.opus</code>) correspondem ao período filtrado. Converte cada arquivo de <code>.opus</code> para <code>.wav</code> usando <code>imageio-ffmpeg</code> embutido — sem depender do ffmpeg do sistema.</p>
+        <div class="pipe-tags">
+          <span class="tag tag-laranja">imageio-ffmpeg</span>
+          <span class="tag tag-cinza">.opus → .wav (16kHz mono)</span>
+          <span class="tag tag-verde">Sem instalação de ffmpeg no sistema</span>
+        </div>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">🤖</div>
+      <div class="pipe-content">
+        <h4>Etapa 4 — Transcrição com Whisper</h4>
+        <p>Cada arquivo <code>.wav</code> é enviado ao motor Whisper. O modelo retorna o texto transcrito em português (ou idioma detectado automaticamente). Roda localmente no Mac ou via API na versão cloud.</p>
+        <div class="pipe-tags">
+          <span class="tag tag-roxo">openai-whisper (local)</span>
+          <span class="tag tag-azul">Groq API (cloud)</span>
+          <span class="tag tag-cinza">modelo: small → 39x faster</span>
+          <span class="tag tag-verde">language: pt auto-detect</span>
+        </div>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">📋</div>
+      <div class="pipe-content">
+        <h4>Etapa 5 — Consolidação Cronológica</h4>
+        <p>O sistema cruza o <code>_chat.txt</code> original com as transcrições geradas, montando uma linha do tempo única: cada entrada tem data, hora, remetente, tipo (texto ou áudio) e conteúdo.</p>
+        <div class="pipe-tags">
+          <span class="tag tag-verde">Formato: [Data Hora] Remetente — Texto / 🎙️ Transcrição</span>
+          <span class="tag tag-cinza">Ordenação cronológica garantida</span>
+        </div>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">📤</div>
+      <div class="pipe-content">
+        <h4>Etapa 6 — Geração do Relatório Final</h4>
+        <p>Exporta o resultado em <code>.txt</code> formatado (atual) ou <code>.pdf</code> (futuro). Na versão local, abre automaticamente a pasta <code>05_consolidado/</code> no Finder. Na versão cloud, gera link de download temporário.</p>
+        <div class="pipe-tags">
+          <span class="tag tag-verde">Output: TRANSCRICAO_{caso}_{data}.txt</span>
+          <span class="tag tag-azul">Futuro: PDF com cabeçalho jurídico</span>
+          <span class="tag tag-laranja">Deleção automática após download (cloud)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLUXO DE PAGAMENTO -->
+  <h2 class="section-title" id="pagamento">💳 Fluxo de Pagamento PIX</h2>
+  <div class="flow-wrap">
+    <h3>💳 Sequência completa do pagamento — Pay-as-you-go</h3>
+    <div class="mermaid">
+sequenceDiagram
+  actor U as 👤 Usuário
+  participant FE as 🎨 Frontend
+  participant BE as ⚡ Backend
+  participant GW as 💳 Gateway PIX
+  participant WH as 🤖 Whisper IA
+
+  U->>FE: Faz upload do .zip
+  FE->>BE: POST /upload {arquivo, período}
+  BE->>BE: Conta áudios no período
+  BE->>GW: Cria cobrança PIX (R$ N × 2,00)
+  GW-->>BE: QR Code + txid
+  BE-->>FE: Retorna {qrcode, valor, txid}
+  FE-->>U: Exibe QR Code PIX na tela
+
+  U->>GW: Paga via app do banco
+
+  GW->>BE: Webhook POST /pix/callback {txid, status: paid}
+  BE->>BE: Valida txid + marca como pago
+  BE->>WH: Inicia pipeline de transcrição
+  BE-->>FE: SSE: "Processando áudio 1 de 5..."
+  FE-->>U: Barra de progresso em tempo real
+
+  WH-->>BE: Transcrições concluídas
+  BE->>BE: Consolida cronologia
+  BE-->>FE: SSE: "Concluído! Link disponível"
+  FE-->>U: Exibe botão de download
+
+  U->>BE: GET /download/{token}
+  BE-->>U: Arquivo .txt / .pdf
+  BE->>BE: 🗑️ Deleta arquivos temporários
+    </div>
+  </div>
+
+  <!-- FLUXO DE ERROS -->
+  <h2 class="section-title" id="erros">⚠️ Tratamento de Erros & Edge Cases</h2>
+  <div class="state-grid">
+    <div class="state-card">
+      <h4>📦 Erros no Upload</h4>
+      <div class="state-item"><div class="bullet error"></div><span>Arquivo não é um .zip → exibir erro</span></div>
+      <div class="state-item"><div class="bullet error"></div><span>.zip não contém _chat.txt → inválido</span></div>
+      <div class="state-item"><div class="bullet warn"></div><span>Arquivo muito grande (>500MB) → avisar e limitar</span></div>
+      <div class="state-item"><div class="bullet warn"></div><span>Sem áudios no período → "Nenhum áudio encontrado"</span></div>
+      <div class="state-item"><div class="bullet"></div><span>Timeout de upload → retry automático</span></div>
+    </div>
+    <div class="state-card">
+      <h4>🤖 Erros na Transcrição</h4>
+      <div class="state-item"><div class="bullet error"></div><span>ffmpeg não encontrado → usar imageio-ffmpeg embutido</span></div>
+      <div class="state-item"><div class="bullet error"></div><span>Áudio corrompido → marcar como ⚠️ ERRO no output</span></div>
+      <div class="state-item"><div class="bullet warn"></div><span>Modelo Whisper não carregado → baixar automaticamente</span></div>
+      <div class="state-item"><div class="bullet warn"></div><span>Memória insuficiente → usar modelo smaller</span></div>
+      <div class="state-item"><div class="bullet future"></div><span>API indisponível → fallback para Groq</span></div>
+    </div>
+    <div class="state-card">
+      <h4>💳 Erros no Pagamento</h4>
+      <div class="state-item"><div class="bullet warn"></div><span>PIX expirado (>30min) → regenerar QR Code</span></div>
+      <div class="state-item"><div class="bullet warn"></div><span>Webhook não recebido → polling periódico</span></div>
+      <div class="state-item"><div class="bullet error"></div><span>Pagamento cancelado → liberar arquivos temp</span></div>
+      <div class="state-item"><div class="bullet"></div><span>Duplo pagamento → detectar via txid único</span></div>
+      <div class="state-item"><div class="bullet future"></div><span>Chargeback → logs auditáveis</span></div>
+    </div>
+    <div class="state-card">
+      <h4>🔐 Erros de Segurança & LGPD</h4>
+      <div class="state-item"><div class="bullet error"></div><span>Download expirado → token de 1 uso apenas</span></div>
+      <div class="state-item"><div class="bullet error"></div><span>Acesso não autorizado → JWT/session validation</span></div>
+      <div class="state-item"><div class="bullet warn"></div><span>Arquivos não deletados → cron job de limpeza</span></div>
+      <div class="state-item"><div class="bullet warn"></div><span>Conteúdo sensível → nenhum log de transcrições</span></div>
+      <div class="state-item"><div class="bullet future"></div><span>Rate limiting → max 50 uploads/hora por IP</span></div>
+    </div>
+  </div>
+
+  <!-- COMPARATIVO LOCAL vs CLOUD -->
+  <h2 class="section-title" id="comparativo">📊 Comparativo: Local vs Cloud</h2>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Característica</th>
+        <th>🏠 Modo Local (Atual)</th>
+        <th>☁️ MVP Cloud (Próximo)</th>
+        <th>🌐 SaaS Escalado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Usuários simultâneos</strong></td><td>1 (você)</td><td class="cp">~10</td><td class="ck">Ilimitado</td></tr>
+      <tr><td><strong>Custo por áudio</strong></td><td class="ck">~R$0,01</td><td class="cp">~R$0,13</td><td class="ck">~R$0,05</td></tr>
+      <tr><td><strong>Velocidade de transcrição</strong></td><td class="cp">Dependente do Mac</td><td class="ck">Rápido (Groq)</td><td class="ck">Muito rápido</td></tr>
+      <tr><td><strong>Disponibilidade</strong></td><td class="cx">Só quando Mac está ligado</td><td class="ck">24/7</td><td class="ck">24/7 com SLA</td></tr>
+      <tr><td><strong>Pagamento integrado</strong></td><td class="cx">Não</td><td class="ck">Sim (PIX)</td><td class="ck">PIX + Cartão</td></tr>
+      <tr><td><strong>LGPD — dados fora do BR</strong></td><td class="ck">Zero (tudo local)</td><td class="cp">Apenas IA (EUA)</td><td class="cp">Gerenciável</td></tr>
+      <tr><td><strong>Escalabilidade</strong></td><td class="cx">Nenhuma</td><td class="cp">Baixa–média</td><td class="ck">Alta</td></tr>
+      <tr><td><strong>Complexidade de setup</strong></td><td class="ck">Baixa</td><td class="cp">Média</td><td class="cx">Alta</td></tr>
+      <tr><td><strong>Modelo de receita</strong></td><td class="cx">Uso próprio</td><td class="ck">Pay-as-you-go</td><td class="ck">PAyG + Assinaturas</td></tr>
+      <tr><td><strong>Estado atual</strong></td><td class="ck">✅ Funcionando</td><td class="cp">🔧 Próximo passo</td><td class="cx">📊 Futuro</td></tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-verde">
+    <div class="icon">💡</div>
+    <div><strong>Recomendação:</strong> O sistema local já está funcional e resolve o problema principal. O próximo passo natural é a <strong>Fase 1 (MVP Cloud)</strong> com integração de pagamento PIX — apenas 3 semanas de desenvolvimento para transformar em produto comercial.</div>
+  </div>
+
+</div>
+
+<footer>
+  AntiGravity · WhatsApp Transcription MVP · Fluxograma do Sistema · Atualizado em 02/04/2026
+</footer>
+
+</body>
+</html>

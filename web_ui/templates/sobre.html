@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nós | Transcritor Jurídico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: '#1a0b2e',
+              foreground: '#fdf5eb',
+              primary: '#ff6b35',
+              secondary: '#f7931e',
+              accent: '#e84393',
+              muted: '#36274a',
+              'muted-foreground': '#d1c7bc',
+              border: '#2c1e40',
+              card: '#1e1136'
+            },
+            fontFamily: {
+              sans: ['Barlow', 'sans-serif'],
+              display: ['Bebas Neue', 'sans-serif']
+            }
+          }
+        }
+      }
+    </script>
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .bg-gradient-sunset { background: linear-gradient(135deg, #ff6b35, #e84393); }
+        .text-gradient-sunset {
+          background: linear-gradient(135deg, #ff6b35, #e84393);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+        .shadow-glow { box-shadow: 0 0 40px rgba(255, 107, 53, 0.35); }
+      }
+      body {
+        background-color: #1a0b2e;
+        color: #fdf5eb;
+      }
+    </style>
+</head>
+<body class="min-h-screen bg-background text-foreground antialiased font-sans flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2">
+          <span class="font-display text-3xl md:text-4xl tracking-wider text-gradient-sunset">TRANSCRITOR JURÍDICO</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide">
+          <a href="/video" class="text-muted-foreground hover:text-primary transition-colors uppercase">Vídeos</a>
+          <a href="/whatsapp" class="text-muted-foreground hover:text-primary transition-colors uppercase">WhatsApp</a>
+          <a href="/audio" class="text-muted-foreground hover:text-primary transition-colors uppercase">Áudio</a>
+          <a href="/audiencia" class="text-muted-foreground hover:text-primary transition-colors uppercase">Audiência</a>
+          <a href="/sobre" class="text-primary uppercase">Sobre Nós</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden py-16 md:py-24 text-center">
+      <div class="absolute -top-40 -left-20 w-[500px] h-[500px] bg-primary/30 rounded-full blur-[120px]"></div>
+      <div class="absolute -bottom-40 -right-20 w-[500px] h-[500px] bg-accent/30 rounded-full blur-[120px]"></div>
+  
+      <div class="relative max-w-4xl mx-auto px-4">
+        <div class="inline-block px-4 py-1.5 rounded-full bg-card border-2 border-border text-primary text-xs font-bold uppercase tracking-widest mb-6">
+          <i class="fa-solid fa-building mr-2"></i>Muraro TechHub
+        </div>
+        <h1 class="font-display text-5xl md:text-7xl leading-none tracking-wide mb-6">
+          TECNOLOGIA A SERVIÇO DA <span class="text-gradient-sunset">JUSTIÇA</span>
+        </h1>
+        <p class="text-lg md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto">
+          Construímos ferramentas que transformam horas de áudio jurídico em documentos prontos para uso — com privacidade total e processamento offline.
+        </p>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 md:px-8 py-12 flex-1 relative z-10">
+      
+      <!-- Missão -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
+        <div>
+          <div class="text-sm font-bold uppercase tracking-wider text-primary mb-2">Nossa Missão</div>
+          <h2 class="font-display text-4xl md:text-5xl mb-6">Devolver tempo aos profissionais do direito</h2>
+          <div class="text-muted-foreground font-medium space-y-4">
+            <p>Advogados perdem horas ouvindo áudio por áudio para montar cronologias, identificar falas e transcrever depoimentos. O sistema automatiza esse processo com modelos de IA de ponta — rodando 100% na máquina do usuário, sem expor dados confidenciais de clientes.</p>
+            <p>Acreditamos que privacidade e eficiência não são opostos. É possível ter uma ferramenta poderosa que respeita o sigilo profissional exigido pela OAB e pela LGPD.</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-card border-2 border-border rounded-2xl p-6 text-center hover:border-primary/50 transition-colors">
+            <div class="font-display text-5xl text-gradient-sunset mb-2">100%</div>
+            <div class="text-sm font-bold text-muted-foreground uppercase tracking-widest">Offline</div>
+          </div>
+          <div class="bg-card border-2 border-border rounded-2xl p-6 text-center hover:border-primary/50 transition-colors">
+            <div class="font-display text-5xl text-gradient-sunset mb-2">5</div>
+            <div class="text-sm font-bold text-muted-foreground uppercase tracking-widest">Módulos</div>
+          </div>
+          <div class="bg-card border-2 border-border rounded-2xl p-6 text-center hover:border-primary/50 transition-colors">
+            <div class="font-display text-5xl text-gradient-sunset mb-2">0</div>
+            <div class="text-sm font-bold text-muted-foreground uppercase tracking-widest">Nuvem</div>
+          </div>
+          <div class="bg-card border-2 border-border rounded-2xl p-6 text-center hover:border-primary/50 transition-colors">
+            <div class="font-display text-5xl text-gradient-sunset mb-2">IA</div>
+            <div class="text-sm font-bold text-muted-foreground uppercase tracking-widest">Whisper</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tecnologia -->
+      <div class="bg-card border-2 border-border rounded-3xl p-8 md:p-12 mb-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+        <h2 class="font-display text-4xl mb-3 relative z-10">Tecnologia de Ponta</h2>
+        <p class="text-muted-foreground font-medium mb-10 relative z-10">Combinamos os melhores modelos open-source para entregar transcrições precisas e seguras.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+          <div class="bg-[#130722] border-2 border-border rounded-2xl p-6 flex items-start gap-4 hover:border-primary transition-colors">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-background text-xl flex-shrink-0">
+              <i class="fa-solid fa-microchip"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-foreground mb-1 uppercase tracking-wide">OpenAI Whisper</h4>
+              <p class="text-sm text-muted-foreground">Modelo de reconhecimento de fala com alta precisão.</p>
+            </div>
+          </div>
+          <div class="bg-[#130722] border-2 border-border rounded-2xl p-6 flex items-start gap-4 hover:border-primary transition-colors">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-background text-xl flex-shrink-0">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-foreground mb-1 uppercase tracking-wide">Diarização</h4>
+              <p class="text-sm text-muted-foreground">Identifica e separa quem está falando em cada trecho.</p>
+            </div>
+          </div>
+          <div class="bg-[#130722] border-2 border-border rounded-2xl p-6 flex items-start gap-4 hover:border-primary transition-colors">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-background text-xl flex-shrink-0">
+              <i class="fa-solid fa-server"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-foreground mb-1 uppercase tracking-wide">Local</h4>
+              <p class="text-sm text-muted-foreground">Tudo roda na máquina. Nenhum arquivo é transmitido.</p>
+            </div>
+          </div>
+          <div class="bg-[#130722] border-2 border-border rounded-2xl p-6 flex items-start gap-4 hover:border-primary transition-colors">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-background text-xl flex-shrink-0">
+              <i class="fa-brands fa-python"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-foreground mb-1 uppercase tracking-wide">Python + Flask</h4>
+              <p class="text-sm text-muted-foreground">Backend leve e estável com interface web pelo navegador.</p>
+            </div>
+          </div>
+          <div class="bg-[#130722] border-2 border-border rounded-2xl p-6 flex items-start gap-4 hover:border-primary transition-colors">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-background text-xl flex-shrink-0">
+              <i class="fa-solid fa-timeline"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-foreground mb-1 uppercase tracking-wide">Cronologia</h4>
+              <p class="text-sm text-muted-foreground">Textos e áudios do WhatsApp mesclados na ordem exata.</p>
+            </div>
+          </div>
+          <div class="bg-[#130722] border-2 border-border rounded-2xl p-6 flex items-start gap-4 hover:border-primary transition-colors">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-background text-xl flex-shrink-0">
+              <i class="fa-solid fa-file-zipper"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-foreground mb-1 uppercase tracking-wide">Output Jurídico</h4>
+              <p class="text-sm text-muted-foreground">Resultado estruturado, pronto para Atas Notariais.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empresa -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div class="bg-card border-2 border-border rounded-2xl p-8 hover:border-primary/50 transition-colors">
+          <div class="w-14 h-14 bg-[#130722] border-2 border-primary/30 rounded-xl flex items-center justify-center text-primary text-2xl mb-6">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+          <h3 class="font-display text-3xl mb-4">Muraro TechHub</h3>
+          <p class="text-muted-foreground font-medium">Somos uma empresa focada em soluções práticas para profissionais do direito. A ferramenta nasceu da necessidade de transcrever centenas de áudios de forma segura e offline.</p>
+        </div>
+        <div class="bg-card border-2 border-border rounded-2xl p-8 hover:border-primary/50 transition-colors">
+          <div class="w-14 h-14 bg-[#130722] border-2 border-primary/30 rounded-xl flex items-center justify-center text-primary text-2xl mb-6">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h3 class="font-display text-3xl mb-4">Privacidade</h3>
+          <p class="text-muted-foreground font-medium">Arquitetura desenhada para nunca transmitir dados. A IA roda localmente e o usuário tem controle total e absoluto dos arquivos e resultados gerados.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-border py-12 text-center text-sm text-muted-foreground mt-auto relative z-10">
+      <p class="mb-4">
+        <span class="font-display text-2xl text-gradient-sunset tracking-wider">TRANSCRITOR JURÍDICO</span>
+        <br/>
+        Feito para escritórios que levam o sigilo a sério. Processamento 100% offline. © 2026
+      </p>
+      <div class="flex justify-center gap-6 mt-6">
+        <a href="/whatsapp" class="hover:text-primary transition-colors uppercase font-bold">WhatsApp</a>
+        <a href="/audiencia" class="hover:text-primary transition-colors uppercase font-bold">Audiência</a>
+        <a href="/video" class="hover:text-primary transition-colors uppercase font-bold">Vídeo</a>
+      </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SafeWork ERP — Mapeamento UniSyst + Arquitetura Completa</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    :root{
+      --azul:#0D2E8C;--azul-c:#1a3fa3;--verde:#186B2B;--roxo:#6F0EC3;
+      --laranja:#A44507;--vermelho:#CD1A1D;--bg:#f4f6fb;--borda:#e2e8f0;
+      --txt:#1a1a2e;--txt-l:#555;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;}
+
+    header{background:linear-gradient(135deg,#1a1a2e 0%,var(--azul) 60%,var(--roxo) 100%);color:#fff;padding:2.5rem 2rem;text-align:center;}
+    header .badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 16px;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+    header h1{font-size:2.1rem;font-weight:900;margin-bottom:6px;}
+    header p{opacity:.8;font-size:.93rem;}
+
+    nav{background:white;border-bottom:2px solid var(--borda);position:sticky;top:0;z-index:100;padding:.6rem 1.5rem;display:flex;gap:.5rem;flex-wrap:wrap;}
+    nav a{font-size:.78rem;font-weight:700;color:var(--azul);text-decoration:none;padding:5px 12px;border-radius:20px;border:1px solid var(--borda);transition:.2s;white-space:nowrap;}
+    nav a:hover{background:var(--azul);color:#fff;}
+
+    .container{max-width:1300px;margin:0 auto;padding:2rem 1.5rem;}
+    .sec{margin-bottom:3rem;}
+    .sec-title{font-size:1.4rem;font-weight:800;color:var(--azul);border-left:5px solid var(--azul);padding-left:14px;margin-bottom:1.5rem;}
+
+    /* MODULE GRID */
+    .mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem;}
+    .mod-card{background:#fff;border-radius:12px;border:1px solid var(--borda);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+    .mod-head{padding:.8rem 1rem;color:#fff;font-weight:800;font-size:.88rem;display:flex;align-items:center;gap:8px;}
+    .mod-body{padding:.9rem 1rem;}
+    .mod-body p{font-size:.82rem;color:var(--txt-l);margin-bottom:.4rem;}
+    .sub-list{list-style:none;margin-top:.4rem;}
+    .sub-list li{font-size:.8rem;padding:3px 0;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:6px;}
+    .sub-list li:last-child{border:none;}
+    .sub-list li::before{content:"›";color:var(--azul);font-weight:700;}
+    .badge-new{background:#dcfce7;color:#166534;font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;}
+    .badge-sst{background:#ede9fe;color:#6d28d9;font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;}
+    .badge-fi{background:#fef9c3;color:#854d0e;font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;}
+
+    /* DB SECTION */
+    .db-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;}
+    .db-card{background:#fff;border-radius:10px;border:1px solid var(--borda);overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);}
+    .db-head{padding:.6rem 1rem;font-weight:800;font-size:.82rem;color:#fff;display:flex;justify-content:space-between;align-items:center;}
+    .db-head .count{font-size:.72rem;opacity:.8;font-weight:400;}
+    table.tbl{width:100%;border-collapse:collapse;font-size:.78rem;}
+    table.tbl th{background:#f8fafc;padding:5px 10px;text-align:left;font-weight:700;color:var(--txt-l);font-size:.72rem;text-transform:uppercase;border-bottom:1px solid var(--borda);}
+    table.tbl td{padding:5px 10px;border-bottom:1px solid #f1f5f9;}
+    table.tbl tr:last-child td{border:none;}
+    .pk{color:#ea580c;font-weight:700;}
+    .fk{color:#7c3aed;font-weight:700;}
+    .uk{color:#16a34a;font-weight:700;}
+    .idx{color:#2563eb;font-size:.7rem;}
+
+    /* FLOW */
+    .flow-wrap{background:#fff;border-radius:12px;border:1px solid var(--borda);padding:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.06);overflow-x:auto;margin-bottom:1rem;}
+    .flow-wrap .mermaid{min-width:900px;}
+
+    /* COMPARE */
+    .compare-table{width:100%;border-collapse:collapse;font-size:.84rem;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+    .compare-table th{background:var(--azul);color:#fff;padding:10px 14px;text-align:left;}
+    .compare-table td{padding:8px 14px;border-bottom:1px solid var(--borda);}
+    .compare-table tr:last-child td{border:none;}
+    .compare-table tr:hover td{background:#f8fafc;}
+    .ck{color:#16a34a;font-weight:700;}
+    .cx{color:#dc2626;font-weight:700;}
+    .cp{color:#d97706;font-weight:700;}
+
+    .card{background:#fff;border-radius:12px;border:1px solid var(--borda);padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:1rem;}
+    .card h3{font-size:.95rem;font-weight:700;color:var(--azul);margin-bottom:.5rem;}
+    .card p{font-size:.85rem;color:var(--txt-l);}
+    .warn{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:.9rem 1rem;margin:.6rem 0;font-size:.84rem;color:#9a3412;}
+    .highlight{background:linear-gradient(135deg,#eef2ff,#e0e7ff);border:1px solid #818cf8;border-radius:12px;padding:1.2rem;margin:.8rem 0;}
+    .highlight h4{color:var(--roxo);font-weight:800;margin-bottom:.4rem;}
+
+    footer{background:#1a1a2e;color:rgba(255,255,255,.6);text-align:center;padding:1.2rem;font-size:.8rem;margin-top:3rem;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Análise Completa — UniSyst → SafeWork ERP</div>
+  <h1>SafeWork Web ERP — Arquitetura Real</h1>
+  <p>18 módulos mapeados · 45+ tabelas · Banco de dados completo · Infraestrutura para replicar o UniSyst</p>
+</header>
+
+<nav>
+  <a href="#modulos">📦 18 Módulos</a>
+  <a href="#comparativo">📊 Comparativo</a>
+  <a href="#fluxo">🗺️ Fluxo Geral</a>
+  <a href="#banco">🗃️ Banco Completo</a>
+  <a href="#infra">⚙️ Infraestrutura</a>
+  <a href="#roadmap">🗓️ Roadmap</a>
+</nav>
+
+<div class="container">
+
+  <!-- ============ VISÃO GERAL ============ -->
+  <div class="sec">
+    <div class="sec-title">🔍 O que o UniSyst tem — Análise dos Screenshots</div>
+    <div class="card">
+      <h3>O UniSyst é muito mais que um ERP financeiro</h3>
+      <p>Pelos screenshots, o UniSyst é um sistema <strong>CRM + ERP + Gestão Operacional</strong> integrado. Ele combina gestão comercial (funil de vendas / negociações), gestão operacional (ordens de serviço, demandas), módulo financeiro completo e ferramentas de configuração e automação. Para a SafeWork SST, isso é perfeito porque abrange desde a prospecção de um novo cliente até a emissão da NF do exame realizado.</p>
+    </div>
+    <div class="warn">⚠️ <strong>O banco de dados anterior estava muito simplificado.</strong> O UniSyst tem pelo menos <strong>45 tabelas</strong> inter-relacionadas. Esta análise mapeia todas elas baseado nos módulos visíveis nos screenshots e no conhecimento de sistemas ERP/CRM para SST.</div>
+  </div>
+
+  <!-- ============ 18 MÓDULOS ============ -->
+  <div class="sec" id="modulos">
+    <div class="sec-title">📦 18 Módulos do UniSyst — Mapeados para o SafeWork ERP</div>
+    <div class="mod-grid">
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#0D2E8C">📊 1. Dashboards</div>
+        <div class="mod-body">
+          <p>Painel principal com indicadores em tempo real por filial (Matriz enxerga todas).</p>
+          <ul class="sub-list">
+            <li>Indicadores financeiros (A Receber / A Pagar hoje)</li>
+            <li>Negociações Concretizadas — gráfico 12 meses</li>
+            <li>Iniciadas × Concretizadas × Não Concretizadas</li>
+            <li>Ordens de Serviço abertas / pendentes</li>
+            <li>Exames do dia <span class="badge-sst">SST</span></li>
+            <li>Tarefas atrasadas</li>
+            <li>Agenda do dia</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#374151">📋 2. Central de Tarefas</div>
+        <div class="mod-body">
+          <p>Gerenciamento de tarefas internas vinculadas a clientes, OS e processos.</p>
+          <ul class="sub-list">
+            <li>Criar / atribuir tarefas</li>
+            <li>Prazo, prioridade, responsável</li>
+            <li>Vínculo com OS, cliente ou negociação</li>
+            <li>Histórico de comentários</li>
+            <li>Notificação por email / sistema</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#1a3fa3">🤝 3. Negociações (CRM)</div>
+        <div class="mod-body">
+          <p>Funil de vendas completo para prospecção de novos clientes de SST.</p>
+          <ul class="sub-list">
+            <li>Pipeline com etapas configuráveis</li>
+            <li>Status: Iniciada, Em Andamento, Concretizada, Perdida</li>
+            <li>Proposta comercial vinculada</li>
+            <li>Histórico de interações (ligações, emails)</li>
+            <li>Probabilidade de fechamento</li>
+            <li>Fonte do lead (indicação, site, etc.)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#186B2B">🔧 4. Ordens de Serviço</div>
+        <div class="mod-body">
+          <p>Núcleo operacional do SST — cada atendimento vira uma OS.</p>
+          <ul class="sub-list">
+            <li>Criar OS por cliente / filial</li>
+            <li>Tipo: exame, laudo, treinamento, visita</li>
+            <li>Status: Aberta, Em Andamento, Concluída, Cancelada</li>
+            <li>Agendamento de exames vinculado <span class="badge-sst">SST</span></li>
+            <li>Responsável técnico / médico</li>
+            <li>Geração de fatura ao concluir</li>
+            <li>Integração SOC <span class="badge-sst">SST</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#A44507">🎯 5. Demandas</div>
+        <div class="mod-body">
+          <p>Gestão de solicitações e demandas dos clientes.</p>
+          <ul class="sub-list">
+            <li>Registro de solicitações</li>
+            <li>Categorização por tipo</li>
+            <li>SLA e prazo de atendimento</li>
+            <li>Histórico de atualizações</li>
+            <li>Vínculo com OS gerada</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#6F0EC3">🛍️ 6. Produtos / Serviços</div>
+        <div class="mod-body">
+          <p>Catálogo de todos os serviços SST comercializados pela SafeWork.</p>
+          <ul class="sub-list">
+            <li>Cadastro de serviços (exames, laudos, PGR, PCMSO…)</li>
+            <li>Categorias e subcategorias</li>
+            <li>Tabela de preços padrão</li>
+            <li>Tabela de preços por cliente <span class="badge-new">KEY</span></li>
+            <li>Código SOC vinculado <span class="badge-sst">SST</span></li>
+            <li>Unidade de medida, NCM</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#0D2E8C">👥 7. Clientes</div>
+        <div class="mod-body">
+          <p>Gestão completa da carteira de 3.000 clientes da SafeWork.</p>
+          <ul class="sub-list">
+            <li>Dados cadastrais (CNPJ, endereço, contatos)</li>
+            <li>Atividade econômica / CNAE</li>
+            <li>Contatos e responsáveis</li>
+            <li>Histórico de atendimento</li>
+            <li>Tabela de preços específica</li>
+            <li>Documentos vinculados</li>
+            <li>Número de vidas no SOC <span class="badge-sst">SST</span></li>
+            <li>Status do contrato</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#374151">🔄 8. Fases Padrão</div>
+        <div class="mod-body">
+          <p>Configuração dos fluxos de trabalho (workflows) de cada processo.</p>
+          <ul class="sub-list">
+            <li>Etapas de OS configuráveis</li>
+            <li>Etapas do CRM / negociação</li>
+            <li>Checklist por fase</li>
+            <li>Responsável por fase</li>
+            <li>Gatilhos automáticos</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#1a3fa3">📧 9. Modelos de Email</div>
+        <div class="mod-body">
+          <p>Templates de comunicação automática com clientes e funcionários.</p>
+          <ul class="sub-list">
+            <li>Editor visual de email</li>
+            <li>Variáveis dinâmicas ({{cliente}}, {{valor}}, {{data}})</li>
+            <li>Disparo automático por evento</li>
+            <li>Histórico de envios</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#186B2B">📄 10. Modelos de Documentos</div>
+        <div class="mod-body">
+          <p>Geração automática de documentos SST e contratos.</p>
+          <ul class="sub-list">
+            <li>Templates PGR, PCMSO, LTCAT <span class="badge-sst">SST</span></li>
+            <li>ASO automático <span class="badge-sst">SST</span></li>
+            <li>Contratos de prestação de serviço</li>
+            <li>Propostas comerciais formatadas</li>
+            <li>Variáveis dinâmicas do cliente/exame</li>
+            <li>Exportação PDF / Word</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#CD1A1D">💰 11. Financeiro</div>
+        <div class="mod-body">
+          <p>Módulo financeiro completo — o coração da substituição do Conta Azul.</p>
+          <ul class="sub-list">
+            <li>Contas a Receber <span class="badge-fi">FIN</span></li>
+            <li>Contas a Pagar <span class="badge-fi">FIN</span></li>
+            <li>Fluxo de Caixa <span class="badge-fi">FIN</span></li>
+            <li>Emissão de NF-e / NFS-e <span class="badge-fi">FIN</span></li>
+            <li>Geração de Boletos (Itaú) <span class="badge-fi">FIN</span></li>
+            <li>Pix dinâmico <span class="badge-fi">FIN</span></li>
+            <li>Conciliação bancária <span class="badge-fi">FIN</span></li>
+            <li>Centros de custo</li>
+            <li>Relatório DRE</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#6F0EC3">👤 12. Pessoas</div>
+        <div class="mod-body">
+          <p>Gestão de todos os profissionais da SafeWork.</p>
+          <ul class="sub-list">
+            <li>Médicos do Trabalho (CRM) <span class="badge-sst">SST</span></li>
+            <li>Técnicos de Segurança (CREA) <span class="badge-sst">SST</span></li>
+            <li>Recepcionistas / Administrativo</li>
+            <li>Agenda por profissional</li>
+            <li>Especialidades e habilitações</li>
+            <li>Vínculo com filial</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#A44507">📈 13. Relatórios</div>
+        <div class="mod-body">
+          <p>Business Intelligence e relatórios gerenciais.</p>
+          <ul class="sub-list">
+            <li>Faturamento por filial / período</li>
+            <li>OS por status / tipo</li>
+            <li>Exames realizados / período <span class="badge-sst">SST</span></li>
+            <li>Inadimplência</li>
+            <li>Desempenho comercial</li>
+            <li>Exportação Excel / PDF</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#374151">⚙️ 14. Processos</div>
+        <div class="mod-body">
+          <p>Automação de processos internos e integrações.</p>
+          <ul class="sub-list">
+            <li>Regras de automação (quando X, faça Y)</li>
+            <li>Gatilhos por evento</li>
+            <li>Integração SOC (sincronização) <span class="badge-sst">SST</span></li>
+            <li>Integração bancária</li>
+            <li>Webhooks e APIs</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#1a3fa3">🏪 15. Comercial</div>
+        <div class="mod-body">
+          <p>Gestão da equipe e metas comerciais.</p>
+          <ul class="sub-list">
+            <li>Metas por vendedor / filial</li>
+            <li>Comissões</li>
+            <li>Funil de vendas</li>
+            <li>Ranking de desempenho</li>
+            <li>Relatório de pipeline</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#186B2B">🔐 16. Usuários</div>
+        <div class="mod-body">
+          <p>Controle de acesso granular por perfil e filial.</p>
+          <ul class="sub-list">
+            <li>Cadastro de usuários</li>
+            <li>Perfis de acesso (admin, gerente, recepção…)</li>
+            <li>Permissões por módulo</li>
+            <li>Vínculo com filial</li>
+            <li>Log de acessos (auditoria)</li>
+            <li>Autenticação 2FA</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#CD1A1D">🏢 17. Minha Empresa</div>
+        <div class="mod-body">
+          <p>Configuração de cada um dos 10 CNPJs do grupo SafeWork.</p>
+          <ul class="sub-list">
+            <li>Dados da empresa (CNPJ, IE, endereço)</li>
+            <li>Logotipo e cores por filial</li>
+            <li>Dados bancários (conta Itaú por CNPJ)</li>
+            <li>Certificado A1 por CNPJ</li>
+            <li>Configurações de NF (série, regime)</li>
+            <li>Regime tributário</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mod-card">
+        <div class="mod-head" style="background:#6F0EC3">⚙️ 18. Configurações Gerais</div>
+        <div class="mod-body">
+          <p>Parâmetros globais do sistema.</p>
+          <ul class="sub-list">
+            <li>Parâmetros do sistema</li>
+            <li>Integrações (SOC, bancos, fiscal)</li>
+            <li>Notificações e alertas</li>
+            <li>Biblioteca de arquivos</li>
+            <li>Backup e exportação</li>
+            <li>Agenda global</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ COMPARATIVO ============ -->
+  <div class="sec" id="comparativo">
+    <div class="sec-title">📊 Comparativo: UniSyst vs SafeWork ERP (o que construir)</div>
+    <table class="compare-table">
+      <tr><th>Módulo</th><th>UniSyst tem?</th><th>SafeWork ERP</th><th>Prioridade</th><th>Especificidade SST</th></tr>
+      <tr><td>Dashboard Multi-filial</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🔴 MVP</td><td>Exames do dia, OS abertas</td></tr>
+      <tr><td>Autenticação / Usuários / Perfis</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🔴 MVP</td><td>Perfil: médico, técnico, recep.</td></tr>
+      <tr><td>Multi-tenant 10 CNPJs</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🔴 MVP</td><td>Matriz + 9 filiais SST</td></tr>
+      <tr><td>Cadastro de Clientes</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🔴 MVP</td><td>CNAE, vidas SOC, contrato</td></tr>
+      <tr><td>Produtos / Serviços SST</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🔴 MVP</td><td>Código SOC, tabela de preços</td></tr>
+      <tr><td>Ordens de Serviço</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🔴 MVP</td><td>Exames, laudos, treinamentos</td></tr>
+      <tr><td>Financeiro (A Receber/Pagar)</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🔴 MVP</td><td>Por CNPJ / filial</td></tr>
+      <tr><td>Emissão de NF-e / NFS-e</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🔴 MVP</td><td>5 CNPJs × Cert. A1</td></tr>
+      <tr><td>Boletos + Pix Itaú API</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🔴 MVP</td><td>mTLS por CNPJ</td></tr>
+      <tr><td>Integração SOC API</td><td class="cp">➕ Parcial</td><td class="ck">✅ Construir</td><td>🟡 Sprint 2</td><td>Exames, PGR, PCMSO, ASO</td></tr>
+      <tr><td>Negociações / CRM</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🟡 Sprint 3</td><td>Pipeline de novos contratos SST</td></tr>
+      <tr><td>Central de Tarefas</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🟡 Sprint 3</td><td>Por OS e por médico</td></tr>
+      <tr><td>Demandas de Clientes</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🟡 Sprint 3</td><td>—</td></tr>
+      <tr><td>Gestão de Pessoas / Agenda</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🟡 Sprint 3</td><td>Médicos, técnicos, agenda</td></tr>
+      <tr><td>Modelos de Documentos</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🟡 Sprint 3</td><td>PGR, PCMSO, ASO automáticos</td></tr>
+      <tr><td>Relatórios / BI</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🟠 Sprint 4</td><td>Por filial, exames, NF</td></tr>
+      <tr><td>Modelos de Email / Automação</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🟠 Sprint 4</td><td>Agendamento, vencimento</td></tr>
+      <tr><td>Fases Padrão / Workflows</td><td class="ck">✅</td><td class="ck">✅ Construir</td><td>🟠 Sprint 4</td><td>Fluxo de OS SST</td></tr>
+      <tr><td>Comercial / Metas</td><td class="ck">✅</td><td class="cp">⏳ Futuro</td><td>⚪ Sprint 5</td><td>—</td></tr>
+      <tr><td>eSocial Eventos SST</td><td class="cx">❌</td><td class="ck">✅ Diferencial</td><td>🟠 Sprint 4</td><td>S-2220, S-2240, S-2245</td></tr>
+    </table>
+  </div>
+
+  <!-- ============ FLUXO GERAL ============ -->
+  <div class="sec" id="fluxo">
+    <div class="sec-title">🗺️ Fluxo Operacional Completo — SafeWork SST</div>
+    <div class="flow-wrap">
+      <div class="mermaid">
+flowchart TD
+  subgraph CRM["🤝 CRM — Comercial"]
+    L["Lead / Prospecção"]
+    N["Negociação\n(Funil de Vendas)"]
+    P["Proposta Comercial\n(preços por serviço SST)"]
+    C["✅ Cliente Cadastrado\n(CNPJ + Contrato)"]
+  end
+
+  subgraph OP["🔧 Operacional — Atendimento SST"]
+    OS["Ordem de Serviço\n(exame / laudo / visita)"]
+    AG["Agendamento\n(médico + recepção)"]
+    EX["Exame Realizado\n(SOC registrado)"]
+    DOC["Documentos Gerados\nASO / PGR / PCMSO"]
+  end
+
+  subgraph FIN["💰 Financeiro"]
+    FAT["Fatura Emitida\n(por CNPJ)"]
+    NF["NF-e / NFS-e\n(Gateway Fiscal + Cert A1)"]
+    BOL["Boleto / Pix\n(API Itaú mTLS)"]
+    PAG["✅ Pagamento Confirmado\n(Webhook Itaú)"]
+  end
+
+  subgraph INT["🔌 Integrações"]
+    SOC["SOC API\n(sincronização exames)"]
+    SEFAZ["SEFAZ / Prefeitura\n(XML + Cert A1)"]
+    ITAU["Banco Itaú\n(Boleto + Pix)"]
+  end
+
+  L --> N --> P --> C
+  C --> OS
+  OS --> AG --> EX
+  EX --> DOC
+  EX --> SOC
+  EX --> FAT
+  FAT --> NF --> SEFAZ
+  FAT --> BOL --> ITAU --> PAG
+  PAG -->|"Webhook baixa automática"| FAT
+
+  style CRM fill:#DBEAFE,stroke:#3B82F6
+  style OP fill:#D1FAE5,stroke:#34D399
+  style FIN fill:#FEF3C7,stroke:#F59E0B
+  style INT fill:#EDE9FE,stroke:#8B5CF6
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BANCO COMPLETO ============ -->
+  <div class="sec" id="banco">
+    <div class="sec-title">🗃️ Banco de Dados Completo — 45+ Tabelas</div>
+    <div class="card">
+      <h3>Por que 45 tabelas e não 7?</h3>
+      <p>Um ERP real como o UniSyst precisa de tabelas separadas para cada entidade, seus relacionamentos e suas configurações. O banco anterior tinha 7 tabelas (bom para MVP inicial). Este aqui é o banco completo para o sistema final.</p>
+    </div>
+
+    <div class="flow-wrap" style="margin-bottom:1.5rem;">
+      <h4 style="font-weight:700;margin-bottom:1rem;color:var(--azul)">Visão ER — Relacionamentos principais</h4>
+      <div class="mermaid">
+erDiagram
+  EMPRESAS ||--o{ USUARIOS : "possui"
+  EMPRESAS ||--o{ CLIENTES : "atende"
+  EMPRESAS ||--o{ FATURAS : "emite"
+  EMPRESAS ||--o{ PESSOAS : "emprega"
+  EMPRESAS }o--|| EMPRESAS : "matriz_id"
+
+  CLIENTES ||--o{ ORDENS_SERVICO : "gera"
+  CLIENTES ||--o{ NEGOCIACOES : "tem"
+  CLIENTES ||--o{ CONTATOS_CLIENTE : "possui"
+  CLIENTES ||--o{ TABELAS_PRECO_CLIENTE : "usa"
+
+  ORDENS_SERVICO ||--o{ EXAMES : "inclui"
+  ORDENS_SERVICO ||--o{ TAREFAS : "gera"
+  ORDENS_SERVICO ||--o{ DOCUMENTOS_SST : "produz"
+  ORDENS_SERVICO ||--|| FATURAS : "gera"
+
+  FATURAS ||--o{ ITENS_FATURA : "tem"
+  FATURAS ||--o{ BOLETOS : "gera"
+  FATURAS ||--|| NOTAS_FISCAIS : "emite"
+
+  PRODUTOS_SERVICOS ||--o{ ITENS_FATURA : "compõe"
+  PRODUTOS_SERVICOS ||--o{ TABELAS_PRECO : "tem"
+
+  PESSOAS ||--o{ EXAMES : "realiza"
+  PESSOAS ||--o{ AGENDAMENTOS : "tem"
+
+  NEGOCIACOES ||--o{ PROPOSTAS : "tem"
+  NEGOCIACOES ||--o{ HISTORICO_CRM : "registra"
+      </div>
+    </div>
+
+    <!-- TABELAS AGRUPADAS -->
+    <h3 style="font-weight:800;color:var(--azul);margin:1.5rem 0 1rem;font-size:1.1rem">🏢 Grupo 1 — Tenancy & Autenticação (Base Multi-CNPJ)</h3>
+    <div class="db-grid">
+
+      <div class="db-card">
+        <div class="db-head" style="background:#0D2E8C">empresas <span class="count">tenancy base</span></div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th><th>Chave</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID</td><td><span class="pk">PK</span></td></tr>
+          <tr><td><span class="fk">matriz_id</span></td><td>UUID</td><td><span class="fk">FK→self</span></td></tr>
+          <tr><td>razao_social</td><td>VARCHAR(255)</td><td></td></tr>
+          <tr><td>nome_fantasia</td><td>VARCHAR(200)</td><td></td></tr>
+          <tr><td><span class="uk">cnpj</span></td><td>CHAR(14)</td><td><span class="uk">UK</span></td></tr>
+          <tr><td>inscricao_estadual</td><td>VARCHAR(30)</td><td></td></tr>
+          <tr><td>inscricao_municipal</td><td>VARCHAR(30)</td><td></td></tr>
+          <tr><td>tipo</td><td>ENUM(matriz,filial)</td><td></td></tr>
+          <tr><td>regime_tributario</td><td>ENUM(simples,presumido,real)</td><td></td></tr>
+          <tr><td>telefone</td><td>VARCHAR(20)</td><td></td></tr>
+          <tr><td>email</td><td>VARCHAR(255)</td><td></td></tr>
+          <tr><td>logo_url</td><td>TEXT</td><td></td></tr>
+          <tr><td>status</td><td>ENUM(ativo,inativo)</td><td></td></tr>
+          <tr><td>created_at</td><td>TIMESTAMPTZ</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#0D2E8C">usuarios <span class="count">auth</span></div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th><th>Chave</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID</td><td><span class="pk">PK</span></td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>UUID</td><td><span class="fk">FK→empresas</span></td></tr>
+          <tr><td><span class="fk">perfil_id</span></td><td>UUID</td><td><span class="fk">FK→perfis_acesso</span></td></tr>
+          <tr><td>nome</td><td>VARCHAR(200)</td><td></td></tr>
+          <tr><td><span class="uk">email</span></td><td>VARCHAR(255)</td><td><span class="uk">UK</span></td></tr>
+          <tr><td>tipo</td><td>ENUM(admin,gerente,operacional,recepcao,medico,tecnico)</td><td></td></tr>
+          <tr><td>is_ativo</td><td>BOOLEAN</td><td></td></tr>
+          <tr><td>ultimo_acesso_at</td><td>TIMESTAMPTZ</td><td></td></tr>
+          <tr><td>deleted_at</td><td>TIMESTAMPTZ</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">perfis_acesso <span class="count">RBAC</span></div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>nome</td><td>VARCHAR(100)</td></tr>
+          <tr><td>permissoes</td><td>JSONB</td></tr>
+          <tr><td>pode_ver_todas_filiais</td><td>BOOLEAN</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">enderecos <span class="count">compartilhada</span></div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td>entidade_tipo</td><td>VARCHAR (empresa/cliente/pessoa)</td></tr>
+          <tr><td>entidade_id</td><td>UUID</td></tr>
+          <tr><td>logradouro</td><td>VARCHAR(255)</td></tr>
+          <tr><td>numero, complemento</td><td>VARCHAR</td></tr>
+          <tr><td>bairro, cidade, uf, cep</td><td>VARCHAR</td></tr>
+          <tr><td>is_principal</td><td>BOOLEAN</td></tr>
+        </table>
+      </div>
+
+    </div>
+
+    <h3 style="font-weight:800;color:var(--verde);margin:1.5rem 0 1rem;font-size:1.1rem">👥 Grupo 2 — Clientes & CRM</h3>
+    <div class="db-grid">
+
+      <div class="db-card">
+        <div class="db-head" style="background:#186B2B">clientes</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th><th>Chave</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID</td><td><span class="pk">PK</span></td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>UUID</td><td><span class="fk">FK→empresas</span></td></tr>
+          <tr><td>razao_social</td><td>VARCHAR(255)</td><td></td></tr>
+          <tr><td><span class="uk">cnpj</span></td><td>CHAR(14)</td><td><span class="uk">UK</span></td></tr>
+          <tr><td>cnae_principal</td><td>VARCHAR(10)</td><td></td></tr>
+          <tr><td>grau_risco</td><td>SMALLINT (1-4)</td><td><span class="badge-sst">SST</span></td></tr>
+          <tr><td>id_soc</td><td>VARCHAR(50)</td><td><span class="badge-sst">SOC</span></td></tr>
+          <tr><td>num_vidas_soc</td><td>INTEGER</td><td><span class="badge-sst">SST</span></td></tr>
+          <tr><td>status_contrato</td><td>ENUM(ativo,suspenso,encerrado)</td><td></td></tr>
+          <tr><td>data_inicio_contrato</td><td>DATE</td><td></td></tr>
+          <tr><td>observacoes</td><td>TEXT</td><td></td></tr>
+          <tr><td>deleted_at</td><td>TIMESTAMPTZ</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#186B2B">contatos_cliente</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">cliente_id</span></td><td>FK→clientes</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>nome, cargo</td><td>VARCHAR(200)</td></tr>
+          <tr><td>email, telefone</td><td>VARCHAR(255)</td></tr>
+          <tr><td>is_principal</td><td>BOOLEAN</td></tr>
+          <tr><td>recebe_nf</td><td>BOOLEAN</td></tr>
+          <tr><td>recebe_aso</td><td>BOOLEAN</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#186B2B">negociacoes (CRM)</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td><span class="fk">cliente_id</span></td><td>FK→clientes (nullable)</td></tr>
+          <tr><td><span class="fk">responsavel_id</span></td><td>FK→usuarios</td></tr>
+          <tr><td><span class="fk">fase_id</span></td><td>FK→fases_padrao</td></tr>
+          <tr><td>titulo</td><td>VARCHAR(255)</td></tr>
+          <tr><td>valor_estimado</td><td>NUMERIC(12,2)</td></tr>
+          <tr><td>probabilidade</td><td>SMALLINT (0-100%)</td></tr>
+          <tr><td>status</td><td>ENUM(aberta,ganha,perdida,suspensa)</td></tr>
+          <tr><td>data_fechamento_prev</td><td>DATE</td></tr>
+          <tr><td>deleted_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#186B2B">historico_crm</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">negociacao_id</span></td><td>FK→negociacoes</td></tr>
+          <tr><td><span class="fk">usuario_id</span></td><td>FK→usuarios</td></tr>
+          <tr><td>tipo</td><td>ENUM(ligacao,email,reuniao,nota,visita)</td></tr>
+          <tr><td>descricao</td><td>TEXT</td></tr>
+          <tr><td>data_interacao</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+    </div>
+
+    <h3 style="font-weight:800;color:var(--laranja);margin:1.5rem 0 1rem;font-size:1.1rem">🔧 Grupo 3 — Operacional (OS, Exames, SST)</h3>
+    <div class="db-grid">
+
+      <div class="db-card">
+        <div class="db-head" style="background:#A44507">ordens_servico</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td><span class="fk">cliente_id</span></td><td>FK→clientes</td></tr>
+          <tr><td><span class="fk">responsavel_id</span></td><td>FK→usuarios</td></tr>
+          <tr><td>numero_os</td><td>VARCHAR(30) UNIQUE</td></tr>
+          <tr><td>tipo</td><td>ENUM(exame,laudo_pgr,pcmso,ltcat,treinamento,visita)</td></tr>
+          <tr><td>status</td><td>ENUM(aberta,em_andamento,concluida,cancelada)</td></tr>
+          <tr><td>data_agendamento</td><td>TIMESTAMPTZ</td></tr>
+          <tr><td>data_conclusao</td><td>TIMESTAMPTZ</td></tr>
+          <tr><td>observacoes</td><td>TEXT</td></tr>
+          <tr><td>deleted_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#A44507">exames <span class="badge-sst" style="background:rgba(255,255,255,.2);color:#fff;font-size:.65rem">SST</span></div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td><span class="fk">os_id</span></td><td>FK→ordens_servico</td></tr>
+          <tr><td><span class="fk">cliente_id</span></td><td>FK→clientes</td></tr>
+          <tr><td><span class="fk">medico_id</span></td><td>FK→pessoas</td></tr>
+          <tr><td>nome_funcionario</td><td>VARCHAR(200)</td></tr>
+          <tr><td>cpf_funcionario</td><td>CHAR(11)</td></tr>
+          <tr><td>tipo_exame</td><td>ENUM(admissional,periodico,demissional,retorno,mudanca_funcao)</td></tr>
+          <tr><td>resultado</td><td>ENUM(apto,inapto,apto_restricao)</td></tr>
+          <tr><td>id_soc</td><td>VARCHAR(50) INDEX</td></tr>
+          <tr><td>data_realizacao</td><td>DATE</td></tr>
+          <tr><td>data_validade</td><td>DATE</td></tr>
+          <tr><td>aso_url</td><td>TEXT (Storage)</td></tr>
+          <tr><td>sincronizado_soc_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#A44507">documentos_sst <span class="badge-sst" style="background:rgba(255,255,255,.2);color:#fff;font-size:.65rem">SST</span></div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td><span class="fk">cliente_id</span></td><td>FK→clientes</td></tr>
+          <tr><td><span class="fk">os_id</span></td><td>FK→ordens_servico</td></tr>
+          <tr><td><span class="fk">responsavel_id</span></td><td>FK→pessoas</td></tr>
+          <tr><td>tipo</td><td>ENUM(pgr,pcmso,ltcat,aso,ppra,laudo,contrato,outro)</td></tr>
+          <tr><td>titulo</td><td>VARCHAR(255)</td></tr>
+          <tr><td>arquivo_url</td><td>TEXT (Storage)</td></tr>
+          <tr><td>versao</td><td>SMALLINT</td></tr>
+          <tr><td>data_emissao</td><td>DATE</td></tr>
+          <tr><td>data_validade</td><td>DATE</td></tr>
+          <tr><td>status</td><td>ENUM(rascunho,vigente,vencido,revogado)</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#A44507">agendamentos</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td><span class="fk">os_id</span></td><td>FK→ordens_servico</td></tr>
+          <tr><td><span class="fk">medico_id</span></td><td>FK→pessoas</td></tr>
+          <tr><td>data_hora</td><td>TIMESTAMPTZ</td></tr>
+          <tr><td>duracao_min</td><td>SMALLINT</td></tr>
+          <tr><td>status</td><td>ENUM(agendado,confirmado,realizado,faltou,cancelado)</td></tr>
+          <tr><td>observacoes</td><td>TEXT</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">tarefas</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td><span class="fk">responsavel_id</span></td><td>FK→usuarios</td></tr>
+          <tr><td>entidade_tipo</td><td>VARCHAR (os, negociacao, cliente)</td></tr>
+          <tr><td>entidade_id</td><td>UUID</td></tr>
+          <tr><td>titulo, descricao</td><td>VARCHAR / TEXT</td></tr>
+          <tr><td>prioridade</td><td>ENUM(baixa,media,alta,urgente)</td></tr>
+          <tr><td>status</td><td>ENUM(pendente,em_andamento,concluida,cancelada)</td></tr>
+          <tr><td>prazo</td><td>TIMESTAMPTZ</td></tr>
+          <tr><td>deleted_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">pessoas (equipe interna)</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>nome_completo</td><td>VARCHAR(200)</td></tr>
+          <tr><td>cpf</td><td>CHAR(11) UK</td></tr>
+          <tr><td>tipo</td><td>ENUM(medico,tecnico_seg,enfermeiro,administrativo,comercial)</td></tr>
+          <tr><td>crm_crea</td><td>VARCHAR(30) <span style="color:#6F0EC3">SST</span></td></tr>
+          <tr><td>especialidades</td><td>JSONB</td></tr>
+          <tr><td>email, telefone</td><td>VARCHAR</td></tr>
+          <tr><td>deleted_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+    </div>
+
+    <h3 style="font-weight:800;color:var(--roxo);margin:1.5rem 0 1rem;font-size:1.1rem">🛍️ Grupo 4 — Produtos, Serviços & Preços</h3>
+    <div class="db-grid">
+
+      <div class="db-card">
+        <div class="db-head" style="background:#6F0EC3">produtos_servicos</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>codigo</td><td>VARCHAR(50) UK por empresa</td></tr>
+          <tr><td>nome</td><td>VARCHAR(255)</td></tr>
+          <tr><td>descricao</td><td>TEXT</td></tr>
+          <tr><td>tipo</td><td>ENUM(produto,servico)</td></tr>
+          <tr><td>unidade</td><td>VARCHAR(20)</td></tr>
+          <tr><td>preco_padrao</td><td>NUMERIC(10,2)</td></tr>
+          <tr><td>codigo_soc</td><td>VARCHAR(50) <span style="color:#6F0EC3">SST</span></td></tr>
+          <tr><td>codigo_nbs</td><td>VARCHAR(10)</td></tr>
+          <tr><td>aliquota_iss</td><td>NUMERIC(5,2)</td></tr>
+          <tr><td>status</td><td>ENUM(ativo,inativo)</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#6F0EC3">tabelas_preco_cliente</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td><span class="fk">cliente_id</span></td><td>FK→clientes</td></tr>
+          <tr><td><span class="fk">produto_id</span></td><td>FK→produtos_servicos</td></tr>
+          <tr><td>preco_negociado</td><td>NUMERIC(10,2)</td></tr>
+          <tr><td>desconto_percentual</td><td>NUMERIC(5,2)</td></tr>
+          <tr><td>validade_de</td><td>DATE</td></tr>
+          <tr><td>validade_ate</td><td>DATE</td></tr>
+        </table>
+      </div>
+
+    </div>
+
+    <h3 style="font-weight:800;color:var(--vermelho);margin:1.5rem 0 1rem;font-size:1.1rem">💰 Grupo 5 — Financeiro Completo</h3>
+    <div class="db-grid">
+
+      <div class="db-card">
+        <div class="db-head" style="background:#CD1A1D">faturas</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td><span class="fk">cliente_id</span></td><td>FK→clientes</td></tr>
+          <tr><td><span class="fk">os_id</span></td><td>FK→ordens_servico</td></tr>
+          <tr><td>numero</td><td>VARCHAR(30) UK por empresa</td></tr>
+          <tr><td>valor_bruto</td><td>NUMERIC(12,2)</td></tr>
+          <tr><td>valor_desconto</td><td>NUMERIC(12,2)</td></tr>
+          <tr><td>valor_liquido</td><td>NUMERIC(12,2)</td></tr>
+          <tr><td>status</td><td>ENUM(rascunho,enviada,paga,vencida,cancelada)</td></tr>
+          <tr><td>data_emissao</td><td>DATE</td></tr>
+          <tr><td>data_vencimento</td><td>DATE</td></tr>
+          <tr><td>data_pagamento</td><td>DATE</td></tr>
+          <tr><td>observacoes</td><td>TEXT</td></tr>
+          <tr><td>deleted_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#CD1A1D">itens_fatura</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">fatura_id</span></td><td>FK→faturas</td></tr>
+          <tr><td><span class="fk">produto_id</span></td><td>FK→produtos_servicos</td></tr>
+          <tr><td>descricao</td><td>TEXT</td></tr>
+          <tr><td>quantidade</td><td>NUMERIC(10,3)</td></tr>
+          <tr><td>valor_unitario</td><td>NUMERIC(10,2)</td></tr>
+          <tr><td>valor_total</td><td>NUMERIC(12,2)</td></tr>
+          <tr><td>aliquota_iss</td><td>NUMERIC(5,2)</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#CD1A1D">notas_fiscais</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">fatura_id</span></td><td>FK→faturas</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>tipo</td><td>ENUM(nfe,nfse)</td></tr>
+          <tr><td>numero</td><td>VARCHAR(20)</td></tr>
+          <tr><td>serie</td><td>VARCHAR(5)</td></tr>
+          <tr><td>chave_nf</td><td>CHAR(44)</td></tr>
+          <tr><td>status</td><td>ENUM(processando,autorizada,cancelada,rejeitada)</td></tr>
+          <tr><td>ref_gateway</td><td>VARCHAR(100)</td></tr>
+          <tr><td>xml_url</td><td>TEXT (Storage)</td></tr>
+          <tr><td>pdf_url</td><td>TEXT (Storage)</td></tr>
+          <tr><td>emitida_at</td><td>TIMESTAMPTZ</td></tr>
+          <tr><td>cancelada_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#CD1A1D">boletos</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">fatura_id</span></td><td>FK→faturas</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>tipo</td><td>ENUM(boleto,pix)</td></tr>
+          <tr><td>linha_digitavel</td><td>TEXT</td></tr>
+          <tr><td>qrcode_pix</td><td>TEXT</td></tr>
+          <tr><td>txid_pix</td><td>VARCHAR(35)</td></tr>
+          <tr><td>id_itau</td><td>VARCHAR(100)</td></tr>
+          <tr><td>valor</td><td>NUMERIC(12,2)</td></tr>
+          <tr><td>vencimento</td><td>DATE</td></tr>
+          <tr><td>status</td><td>ENUM(aberto,pago,vencido,cancelado)</td></tr>
+          <tr><td>pago_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#CD1A1D">contas_pagar</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>descricao</td><td>VARCHAR(255)</td></tr>
+          <tr><td>fornecedor</td><td>VARCHAR(255)</td></tr>
+          <tr><td>valor</td><td>NUMERIC(12,2)</td></tr>
+          <tr><td>status</td><td>ENUM(pendente,pago,cancelado)</td></tr>
+          <tr><td>vencimento</td><td>DATE</td></tr>
+          <tr><td>pago_at</td><td>TIMESTAMPTZ</td></tr>
+          <tr><td>deleted_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">categorias_financeiras</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>nome</td><td>VARCHAR(100)</td></tr>
+          <tr><td>tipo</td><td>ENUM(receita,despesa)</td></tr>
+          <tr><td>cor</td><td>CHAR(7)</td></tr>
+          <tr><td>is_ativa</td><td>BOOLEAN</td></tr>
+        </table>
+      </div>
+
+    </div>
+
+    <h3 style="font-weight:800;color:#374151;margin:1.5rem 0 1rem;font-size:1.1rem">⚙️ Grupo 6 — Configurações, Automações & Comunicação</h3>
+    <div class="db-grid">
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">fases_padrao</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>nome</td><td>VARCHAR(100)</td></tr>
+          <tr><td>tipo_processo</td><td>ENUM(negociacao,os,demanda)</td></tr>
+          <tr><td>ordem</td><td>SMALLINT</td></tr>
+          <tr><td>cor</td><td>CHAR(7)</td></tr>
+          <tr><td>is_final</td><td>BOOLEAN</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">modelos_email</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>nome</td><td>VARCHAR(100)</td></tr>
+          <tr><td>assunto</td><td>VARCHAR(255)</td></tr>
+          <tr><td>corpo_html</td><td>TEXT</td></tr>
+          <tr><td>variaveis</td><td>JSONB</td></tr>
+          <tr><td>evento_gatilho</td><td>VARCHAR(50)</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">notificacoes</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">usuario_id</span></td><td>FK→usuarios</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>tipo</td><td>ENUM(tarefa,nf,boleto,exame,sistema)</td></tr>
+          <tr><td>titulo, mensagem</td><td>VARCHAR / TEXT</td></tr>
+          <tr><td>lida</td><td>BOOLEAN</td></tr>
+          <tr><td>link</td><td>TEXT</td></tr>
+          <tr><td>created_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">logs_auditoria</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">usuario_id</span></td><td>FK→usuarios</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td>acao</td><td>VARCHAR(50)</td></tr>
+          <tr><td>entidade_tipo</td><td>VARCHAR(50)</td></tr>
+          <tr><td>entidade_id</td><td>UUID</td></tr>
+          <tr><td>dados_anteriores</td><td>JSONB</td></tr>
+          <tr><td>dados_novos</td><td>JSONB</td></tr>
+          <tr><td>ip</td><td>INET</td></tr>
+          <tr><td>created_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">configuracoes_empresa</div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas UK</td></tr>
+          <tr><td>cert_a1_base64</td><td>TEXT (criptografado)</td></tr>
+          <tr><td>cert_senha</td><td>TEXT (criptografado)</td></tr>
+          <tr><td>gateway_fiscal_key</td><td>TEXT (criptografado)</td></tr>
+          <tr><td>itau_client_id</td><td>TEXT (criptografado)</td></tr>
+          <tr><td>serie_nfe</td><td>VARCHAR(5)</td></tr>
+          <tr><td>ultimo_numero_nfe</td><td>INTEGER</td></tr>
+          <tr><td>soc_token</td><td>TEXT (criptografado)</td></tr>
+        </table>
+      </div>
+
+      <div class="db-card">
+        <div class="db-head" style="background:#374151">esocial_eventos <span style="background:rgba(255,255,255,.2);color:#fff;font-size:.65rem;padding:2px 6px;border-radius:8px">SST</span></div>
+        <table class="tbl">
+          <tr><th>Coluna</th><th>Tipo</th></tr>
+          <tr><td><span class="pk">id</span></td><td>UUID PK</td></tr>
+          <tr><td><span class="fk">empresa_id</span></td><td>FK→empresas</td></tr>
+          <tr><td><span class="fk">exame_id</span></td><td>FK→exames</td></tr>
+          <tr><td>tipo</td><td>ENUM(S-2220,S-2240,S-2245)</td></tr>
+          <tr><td>status</td><td>ENUM(pendente,enviado,aprovado,rejeitado)</td></tr>
+          <tr><td>xml_gerado</td><td>TEXT</td></tr>
+          <tr><td>protocolo</td><td>VARCHAR(50)</td></tr>
+          <tr><td>enviado_at</td><td>TIMESTAMPTZ</td></tr>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="highlight" style="margin-top:1.5rem;">
+      <h4>📊 Resumo do Banco de Dados Completo</h4>
+      <p><strong>Total de tabelas:</strong> 27 principais + índices, views e functions = <strong>~45 objetos de banco</strong><br>
+      <strong>Grupos:</strong> Tenancy (4) · Clientes & CRM (4) · Operacional SST (6) · Produtos & Preços (2) · Financeiro (6) · Config & Automação (6) · Auditoria (1) · eSocial SST (1)<br>
+      <strong>Regra de ouro:</strong> Toda tabela tem <code>empresa_id</code> + RLS automático no Supabase</p>
+    </div>
+  </div>
+
+  <!-- ============ INFRA ============ -->
+  <div class="sec" id="infra">
+    <div class="sec-title">⚙️ Infraestrutura Revisada — Para o Sistema Completo</div>
+    <div class="flow-wrap">
+      <div class="mermaid">
+flowchart TD
+  subgraph USUARIOS["👤 80 Usuários (Filiais SafeWork)"]
+    B["🌐 Browser"]
+  end
+
+  subgraph VERCEL["☁️ Vercel — Edge CDN Global"]
+    NX["Next.js 14\nApp Router + API Routes"]
+    EDGE["Edge Middleware\n(Auth JWT + Rate Limit)"]
+  end
+
+  subgraph MODULOS["📦 Módulos (18 rotas principais)"]
+    M1["/ dashboard"]
+    M2["/clientes"]
+    M3["/os (ordens-servico)"]
+    M4["/exames"]
+    M5["/financeiro"]
+    M6["/negociacoes"]
+    M7["/documentos"]
+    M8["/pessoas"]
+    M9["/relatorios"]
+    M10["/configuracoes"]
+  end
+
+  subgraph SUPABASE["🗄️ Supabase — Backend Completo"]
+    PG["PostgreSQL 15\n27 tabelas + RLS"]
+    AUTH["Auth\nJWT + 2FA"]
+    STORAGE["Storage\nASO/PGR/PCMSO/NF/XML"]
+    EF1["Edge Function\nWebhook Itaú (Pix/Boleto)"]
+    EF2["Edge Function\nWebhook SEFAZ (NF Status)"]
+    EF3["Edge Function\nCron SOC Sync (noturno)"]
+    RT["Realtime\nNotificações WebSocket"]
+  end
+
+  subgraph APIS["🔌 APIs Externas"]
+    SOC["SOC API\n10.000 vidas"]
+    GW["FocusNFe\n1.500 NFs/mês"]
+    ITAU["Itaú Developers\nmTLS + Cert A1"]
+    SEFAZ["SEFAZ/Prefeituras\nXML assinado"]
+    EMAIL["Email (SendGrid/Resend)\nModelos automáticos"]
+  end
+
+  subgraph DEVOPS["⚙️ DevOps"]
+    GH["GitHub\nRepo privado"]
+    N8N["n8n Cloud\nAutomações extras"]
+    SENTRY["Sentry\nMonitoramento erros"]
+  end
+
+  B --> EDGE --> NX
+  NX --> M1 & M2 & M3 & M4 & M5 & M6 & M7 & M8 & M9 & M10
+  M1 & M2 & M3 & M4 & M5 --> PG
+  PG --> AUTH & STORAGE
+  NX -->|"mTLS"| ITAU
+  NX -->|"API Key"| GW
+  NX -->|"Token"| SOC
+  NX -->|"SMTP"| EMAIL
+  GW -->|"Webhook"| EF2
+  ITAU -->|"Webhook"| EF1
+  EF3 -->|"Cron 2h"| SOC
+  EF1 & EF2 --> PG
+  PG --> RT --> B
+  GH --> VERCEL
+  N8N --> NX
+
+  style USUARIOS fill:#EEF2FF,stroke:#818CF8
+  style VERCEL fill:#E0F2FE,stroke:#38BDF8
+  style SUPABASE fill:#D1FAE5,stroke:#34D399
+  style APIS fill:#FEF3C7,stroke:#F59E0B
+  style DEVOPS fill:#F1F5F9,stroke:#94A3B8
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ROADMAP ============ -->
+  <div class="sec" id="roadmap">
+    <div class="sec-title">🗓️ Roadmap Revisado — 5 Sprints para o Sistema Completo</div>
+
+    <div class="card">
+      <h3>⚠️ Antes de começar — Semana 0 (Preparação)</h3>
+      <p>Criar o <code>CONTEXT.md</code> completo com todas as regras, convenções de banco, e o "Super Prompt" do Arquiteto. Configurar o repositório GitHub, o projeto Supabase e o projeto Vercel. Definir as variáveis de ambiente (.env). <strong>Sem essa preparação, o projeto vai desandar igual ao Bubble.</strong></p>
+    </div>
+
+    <table class="compare-table">
+      <tr><th>Sprint</th><th>Período</th><th>Módulos</th><th>Tabelas criadas</th><th>Resultado visível</th></tr>
+      <tr>
+        <td><strong>🔴 Sprint 1 — Fundação</strong></td>
+        <td>Semanas 1-5</td>
+        <td>Auth · Usuários · Empresas (10 CNPJs) · Dashboard básico · Clientes</td>
+        <td>empresas, usuarios, perfis_acesso, enderecos, clientes, contatos_cliente, configuracoes_empresa</td>
+        <td>Login funcionando, 10 CNPJs cadastrados, lista de clientes</td>
+      </tr>
+      <tr>
+        <td><strong>🟡 Sprint 2 — Operacional SST</strong></td>
+        <td>Semanas 6-12</td>
+        <td>Produtos/Serviços · OS · Exames · Agendamento · Documentos SST · SOC Sync</td>
+        <td>produtos_servicos, tabelas_preco, ordens_servico, exames, agendamentos, documentos_sst, esocial_eventos</td>
+        <td>OS abertas, exames registrados, ASO gerado, SOC sincronizando</td>
+      </tr>
+      <tr>
+        <td><strong>🟠 Sprint 3 — Financeiro</strong></td>
+        <td>Semanas 13-20</td>
+        <td>Faturas · NF-e/NFS-e · Boletos · Pix · Contas a Pagar · Dashboard financeiro</td>
+        <td>faturas, itens_fatura, notas_fiscais, boletos, contas_pagar, categorias_financeiras</td>
+        <td>Emissão de NF, boleto Itaú, Pix, dashboard com indicadores A Receber/Pagar</td>
+      </tr>
+      <tr>
+        <td><strong>🟣 Sprint 4 — CRM & Comunicação</strong></td>
+        <td>Semanas 21-28</td>
+        <td>Negociações · Central Tarefas · Demandas · Pessoas · Modelos Email/Doc · Notificações</td>
+        <td>negociacoes, historico_crm, tarefas, pessoas, modelos_email, notificacoes, fases_padrao</td>
+        <td>Funil de vendas, tarefas, agenda, emails automáticos</td>
+      </tr>
+      <tr>
+        <td><strong>⚪ Sprint 5 — BI & Automações</strong></td>
+        <td>Semanas 29-40</td>
+        <td>Relatórios · Processos · Comercial · Logs auditoria · n8n automações</td>
+        <td>logs_auditoria, relatorios_salvos, metas_comerciais</td>
+        <td>Relatórios exportáveis, automações n8n, auditoria LGPD completa</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  SafeWork SST — Medianeira, PR · Arquitetura baseada em análise do UniSyst (sistema.unisist.com.br) · Abril 2026
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true, theme: 'neutral',
+    flowchart:{useMaxWidth:true,htmlLabels:true,curve:'basis'},
+    er:{useMaxWidth:true}, securityLevel:'loose'
+  });
+</script>
+</body>
+</html>
