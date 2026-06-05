@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: auditoria
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn web_ui.app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: MP_ACCESS_TOKEN
+        sync: false
+      - key: MP_PUBLIC_KEY
+        sync: false
+      - key: MP_MODE
+        value: production
+      - key: BASE_URL
+        sync: false
+      - key: MODAL_URL
+        value: https://lucas-muraro-pk--transcritor-juridico-fastapi-app.modal.run/

@@ -1,168 +1,347 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="dark">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AntiGravity | Transcrição Jurídica</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              background: '#1a0b2e',
-              foreground: '#fdf5eb',
-              primary: '#ff6b35',
-              secondary: '#f7931e',
-              accent: '#e84393',
-              muted: '#36274a',
-              'muted-foreground': '#d1c7bc',
-              border: '#2c1e40',
-              card: '#1e1136'
-            },
-            fontFamily: {
-              sans: ['Barlow', 'sans-serif'],
-              display: ['Bebas Neue', 'sans-serif']
-            }
-          }
-        }
-      }
-    </script>
-    <style type="text/tailwindcss">
-      @layer utilities {
-        .bg-gradient-sunset { background: linear-gradient(135deg, #ff6b35, #e84393); }
-        .bg-gradient-fire { background: linear-gradient(135deg, #f7931e, #ff6b35); }
-        .text-gradient-sunset {
-          background: linear-gradient(135deg, #ff6b35, #e84393);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
-        .shadow-glow { box-shadow: 0 0 40px rgba(255, 107, 53, 0.35); }
-      }
-      body {
-        background-color: #1a0b2e;
-        color: #fdf5eb;
-      }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuditorIA — Transcrição jurídica feita para a velocidade do escritório</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='brex.css') }}">
 </head>
-<body class="min-h-screen bg-background text-foreground antialiased font-sans">
-    
-    <!-- Navbar -->
-    <nav class="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between relative">
-        <a href="/" class="flex items-center gap-2 z-10">
-          <span class="font-display text-3xl md:text-4xl tracking-wider text-gradient-sunset">TRANSCRITOR JURÍDICO</span>
-        </a>
-        <div class="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max">
-          <a href="/video" class="text-muted-foreground hover:text-primary transition-colors uppercase">Vídeos</a>
-          <a href="/whatsapp" class="text-muted-foreground hover:text-primary transition-colors uppercase">WhatsApp</a>
-          <a href="/audio" class="text-muted-foreground hover:text-primary transition-colors uppercase">Áudio WhatsApp</a>
-          <a href="/audiencia" class="text-muted-foreground hover:text-primary transition-colors uppercase">Audiência</a>
-        </div>
-        <div class="hidden md:block z-10">
-          <a href="/whatsapp" class="px-6 py-2.5 rounded-full bg-gradient-sunset text-foreground shadow-glow hover:scale-105 transition-transform uppercase tracking-widest">
-            Começar
-          </a>
+<body>
+
+<div class="topbar">Pague 1 transcrição — apenas <strong>R$ 1,99</strong> via PIX. <a href="/whatsapp">Comece agora →</a></div>
+
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="/" class="nav-logo"><span class="nav-logo-mark"></span>AuditorIA</a>
+    <div class="nav-links">
+      <a href="#tools">Produtos <i class="fa-solid fa-chevron-down"></i></a>
+      <a href="#solucoes">Soluções <i class="fa-solid fa-chevron-down"></i></a>
+      <a href="/sobre">Recursos <i class="fa-solid fa-chevron-down"></i></a>
+      <a href="/sobre">Sobre</a>
+      <a href="#precos">Preços</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-secondary">
+      <a href="#">Entrar</a>
+      <a href="#demo">Ver demonstração</a>
+    </div>
+    <a href="/whatsapp" class="btn-orange">Começar</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-left">
+    <h1>Transcrição jurídica feita para a velocidade do escritório.</h1>
+    <p>Áudios do WhatsApp, audiências e gravações — convertidos em ata pronta para protocolar. Pague apenas pelo que usar, a partir de R$ 1,99.</p>
+    <form class="hero-form" onsubmit="event.preventDefault(); window.location='/whatsapp';">
+      <input type="email" placeholder="Seu e-mail profissional (opcional)">
+      <button type="submit" class="btn-orange">Começar</button>
+    </form>
+    <a href="/whatsapp" class="hero-secondary">Sem cadastro · sem cartão · só PIX →</a>
+  </div>
+  <div class="hero-mock">
+    <div class="mock-floating f-top">
+      <div class="mock-icon" style="background: var(--green);"><i class="fa-solid fa-check"></i></div>
+      <div><div style="font-size: 0.72rem; color: var(--gray-600);">Status</div><strong>Pago via PIX</strong></div>
+    </div>
+    <div class="mock-card">
+      <div class="mock-card-header">
+        <div class="mock-avatar">AH</div>
+        <div class="mock-card-title"><strong>Audiência Henry</strong><span>00:42:15 · 3 oradores</span></div>
+        <span class="mock-badge">Pronto</span>
+      </div>
+      <div class="mock-line"><span class="speaker"><span class="dot" style="background: var(--blue);"></span>Juiz</span><span class="time">00:01:12</span></div>
+      <div class="mock-quote">"Dou início à audiência de instrução referente ao processo 0001478-84.2024."</div>
+      <div class="mock-line"><span class="speaker"><span class="dot" style="background: var(--purple);"></span>Advogado</span><span class="time">00:02:38</span></div>
+      <div class="mock-quote">"Excelência, requeremos a oitiva da primeira testemunha."</div>
+    </div>
+    <div class="mock-floating f-bottom">
+      <div class="mock-icon" style="background: var(--orange);"><i class="fa-solid fa-microphone"></i></div>
+      <div><div style="font-size: 0.72rem; color: var(--gray-600);">3 oradores detectados</div><strong>WhisperX + pyannote</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="trust">
+  <div class="trust-headline">Em uso por escritórios e bancas em todo o Brasil</div>
+  <div class="trust-logos">
+    <span class="trust-logo"><i class="fa-solid fa-scale-balanced"></i>MURARO</span>
+    <span class="trust-logo"><i class="fa-solid fa-gavel"></i>ALVES &amp; PIRES</span>
+    <span class="trust-logo"><i class="fa-solid fa-landmark"></i>LEX BRASIL</span>
+    <span class="trust-logo"><i class="fa-solid fa-book"></i>OAB SP</span>
+    <span class="trust-logo"><i class="fa-solid fa-building-columns"></i>FÓRUM CENTRAL</span>
+  </div>
+</section>
+
+<section class="section" id="tools">
+  <div class="section-head">
+    <h2>A ferramenta é só o começo.</h2>
+    <p>Tudo o que seu escritório precisa para transcrever, identificar e protocolar — sem perder o sigilo dos seus casos.</p>
+  </div>
+  <div class="tools-grid">
+    <a href="/whatsapp" class="tool-card">
+      <div class="tool-mock"><span class="mock-wpp">✓ Ata gerada</span></div>
+      <h3>WhatsApp</h3>
+      <p>Áudio e texto em ordem cronológica, prontos para anexar.</p>
+      <span class="tool-arrow">Saiba mais →</span>
+    </a>
+    <a href="/audiencia" class="tool-card">
+      <div class="tool-mock">
+        <div class="mock-audiencia">
+          <div class="row"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#2563EB;"></span><strong>Juiz</strong><span style="color:#A8A6A2">— 00:01</span></div>
+          <div class="row"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#8B5CF6;"></span><strong>Advogado</strong><span style="color:#A8A6A2">— 00:02</span></div>
+          <div class="row"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#22C55E;"></span><strong>Testemunha</strong><span style="color:#A8A6A2">— 00:04</span></div>
         </div>
       </div>
-    </nav>
-
-    <!-- Hero -->
-    <section class="relative overflow-hidden">
-      <!-- Glow blobs -->
-      <div class="absolute -top-40 -left-20 w-[500px] h-[500px] bg-primary/30 rounded-full blur-[120px]"></div>
-      <div class="absolute -bottom-40 -right-20 w-[500px] h-[500px] bg-accent/30 rounded-full blur-[120px]"></div>
-  
-      <div class="relative max-w-7xl mx-auto px-4 md:px-8 pt-16 md:pt-28 pb-12">
-        <h1 class="font-display text-5xl md:text-7xl lg:text-8xl leading-none tracking-wide mb-6">
-          TRANSCRIÇÃO JURÍDICA<br/>
-          <span class="text-gradient-sunset">RÁPIDA E SEGURA NA NUVEM</span>
-        </h1>
-        <p class="text-lg md:text-2xl text-muted-foreground max-w-2xl mb-10 font-medium">
-          Ferramenta para escritórios que processa backups de WhatsApp e vídeos com IA. Arquivos são excluídos imediatamente após a transcrição.
-        </p>
-  
-        <!-- "City picker" but for Tools -->
-        <div class="flex items-center gap-3 mb-4">
-          <i class="fa-solid fa-gavel text-primary text-xl"></i>
-          <span class="text-sm uppercase tracking-widest text-muted-foreground font-bold">
-            Escolha a ferramenta
-          </span>
-        </div>
-        <div class="flex flex-wrap gap-3">
-          <a href="/whatsapp" class="px-6 py-3 rounded-full font-bold text-base md:text-lg transition-all border-2 bg-gradient-sunset text-foreground border-transparent shadow-glow scale-105 inline-block">
-            <span class="mr-2"><i class="fa-brands fa-whatsapp"></i></span> WhatsApp
-          </a>
-          <a href="/audiencia" class="px-6 py-3 rounded-full font-bold text-base md:text-lg transition-all border-2 bg-card border-border text-foreground hover:border-primary/50 inline-block">
-            <span class="mr-2"><i class="fa-solid fa-users"></i></span> Audiência Judicial
-          </a>
-          <a href="/video" class="px-6 py-3 rounded-full font-bold text-base md:text-lg transition-all border-2 bg-card border-border text-foreground hover:border-primary/50 inline-block">
-            <span class="mr-2"><i class="fa-solid fa-video"></i></span> Vídeos
-          </a>
-          <a href="/audio" class="px-6 py-3 rounded-full font-bold text-base md:text-lg transition-all border-2 bg-card border-border text-foreground hover:border-primary/50 inline-block">
-            <span class="mr-2"><i class="fa-solid fa-microphone-lines"></i></span> Áudio Solo
-          </a>
+      <h3>Audiência</h3>
+      <p>Diarização completa, separando cada orador automaticamente.</p>
+      <span class="tool-arrow">Saiba mais →</span>
+    </a>
+    <a href="/video" class="tool-card">
+      <div class="tool-mock"><div class="mock-video"><i class="fa-solid fa-play"></i></div></div>
+      <h3>Vídeo</h3>
+      <p>MP4, MOV, WEBM, RAR. Recorte de trecho por horário.</p>
+      <span class="tool-arrow">Saiba mais →</span>
+    </a>
+    <a href="/audio" class="tool-card">
+      <div class="tool-mock">
+        <div class="mock-audio">
+          <span style="height:30%"></span><span style="height:60%"></span><span style="height:80%"></span><span style="height:100%"></span><span style="height:70%"></span><span style="height:50%"></span><span style="height:90%"></span><span style="height:40%"></span><span style="height:75%"></span><span style="height:55%"></span>
         </div>
       </div>
-    </section>
-
-    <!-- FlyerGrid style for Features -->
-    <section class="max-w-7xl mx-auto px-4 md:px-8 py-16 relative z-10">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        <!-- Card 1 -->
-        <a href="/whatsapp" class="group relative aspect-[4/5] overflow-hidden rounded-xl bg-card border-2 border-border hover:border-primary/50 transition-all flex flex-col justify-end p-6 hover:-translate-y-1">
-          <img src="{{ url_for('static', filename='images/whatsapp_bg.png') }}" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-70 transition-opacity z-0" alt="WhatsApp Background">
-          <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent z-10"></div>
-          <div class="absolute top-4 right-4 z-20">
-            <span class="px-3 py-1 bg-gradient-sunset text-foreground text-xs font-bold uppercase tracking-wider rounded-full">Mais usado</span>
-          </div>
-          <div class="relative z-20 mt-auto">
-            <h3 class="font-display text-4xl mb-2 text-gradient-sunset">Transcrição WhatsApp</h3>
-            <p class="text-sm text-muted-foreground font-medium">Processa ZIP do WhatsApp. Combina texto e áudio na ordem cronológica pronta para atas.</p>
-          </div>
-        </a>
-
-        <!-- Card 2 -->
-        <a href="/audiencia" class="group relative aspect-[4/5] overflow-hidden rounded-xl bg-card border-2 border-border hover:border-primary/50 transition-all flex flex-col justify-end p-6 hover:-translate-y-1">
-          <img src="{{ url_for('static', filename='images/audiencia_bg.png') }}" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-70 transition-opacity z-0" alt="Audiência Background">
-          <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent z-10"></div>
-          <div class="relative z-20 mt-auto">
-            <h3 class="font-display text-4xl mb-2 text-foreground group-hover:text-primary transition-colors">Audiência Judicial</h3>
-            <p class="text-sm text-muted-foreground font-medium">Diarização completa por IA. Identifica cada orador separadamente, agrupa falas e detecta nomes automaticamente.</p>
-          </div>
-        </a>
-
-        <!-- Card 3 -->
-        <a href="/video" class="group relative aspect-[4/5] overflow-hidden rounded-xl bg-card border-2 border-border hover:border-primary/50 transition-all flex flex-col justify-end p-6 hover:-translate-y-1">
-          <img src="{{ url_for('static', filename='images/files_bg.png') }}" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-70 transition-opacity z-0" alt="Files Background">
-          <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent z-10"></div>
-          <div class="relative z-20 mt-auto">
-            <h3 class="font-display text-4xl mb-2 text-foreground group-hover:text-primary transition-colors">Outros Arquivos</h3>
-            <p class="text-sm text-muted-foreground font-medium">Aceita vídeos MP4, MOV, WEBM, ou arquivos de áudio isolados de gravadores e depoimentos externos.</p>
-          </div>
-        </a>
-
+      <h3>Áudio Solo</h3>
+      <p>Gravações avulsas, depoimentos, mensagens fora do WhatsApp.</p>
+      <span class="tool-arrow">Saiba mais →</span>
+    </a>
+    <a href="/extractor" class="tool-card">
+      <div class="tool-mock">
+        <div class="mock-extractor"><div></div><div></div><div></div><div></div><div></div><div></div></div>
       </div>
-    </section>
+      <h3>Extrator</h3>
+      <p>Imagens, PDFs, documentos e mídias separados do backup.</p>
+      <span class="tool-arrow">Saiba mais →</span>
+    </a>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="border-t border-border py-12 text-center text-sm text-muted-foreground relative z-10">
-      <p class="mb-4">
-        <span class="font-display text-2xl text-gradient-sunset tracking-wider">TRANSCRITOR JURÍDICO</span>
-        <br/>
-        Feito para escritórios que levam o sigilo a sério. Arquivos não são armazenados. © 2026
-      </p>
-      <div class="flex justify-center gap-6 mt-6">
-        <a href="/whatsapp" class="hover:text-primary transition-colors uppercase font-bold">WhatsApp</a>
-        <a href="/audiencia" class="hover:text-primary transition-colors uppercase font-bold">Audiência</a>
-        <a href="/video" class="hover:text-primary transition-colors uppercase font-bold">Vídeo</a>
+<section class="section" id="solucoes" style="padding-top: 48px;">
+  <div class="section-head"><h2>Soluções para cada etapa do escritório.</h2></div>
+  <div class="photo-grid">
+    <div class="photo-card">
+      <div class="photo-fake photo-1"><div class="photo-fake-title">Autônomos</div></div>
+      <div class="photo-content">
+        <h3>Advogados autônomos</h3>
+        <p>Pague por transcrição via PIX. Sem mensalidade, sem cadastro.</p>
+        <a href="/whatsapp" class="photo-arrow">Saiba mais →</a>
       </div>
-    </footer>
+    </div>
+    <div class="photo-card">
+      <div class="photo-fake photo-2"><div class="photo-fake-title">Escritórios</div></div>
+      <div class="photo-content">
+        <h3>Escritórios boutique</h3>
+        <p>Equipe pequena, alto volume de áudio. Plano por crédito.</p>
+        <a href="#precos" class="photo-arrow">Saiba mais →</a>
+      </div>
+    </div>
+    <div class="photo-card">
+      <div class="photo-fake photo-3"><div class="photo-fake-title">Bancas</div></div>
+      <div class="photo-content">
+        <h3>Grandes bancas</h3>
+        <p>Múltiplos casos, exigências de compliance e LGPD.</p>
+        <a href="/sobre" class="photo-arrow">Saiba mais →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="feature-row">
+  <div class="feature-text">
+    <h3>Transcreva audiências em minutos.</h3>
+    <p>WhisperX em modelo large + alinhamento por palavra. Para 40 minutos de audiência, você recebe a ata completa em até 15 minutos — com timestamp em cada fala.</p>
+    <a href="/audiencia">Explorar transcrição de audiência →</a>
+  </div>
+  <div class="feature-mock">
+    <div class="fm-transcript">
+      <div class="fm-transcript-header">Trecho · Audiência #135014</div>
+      <div class="fm-transcript-line"><span class="fm-speaker-tag s1">JUIZ</span><div class="fm-text">"Dou início à audiência de instrução."<span class="fm-time">00:01:12</span></div></div>
+      <div class="fm-transcript-line"><span class="fm-speaker-tag s2">ADV.</span><div class="fm-text">"Excelência, requeremos a oitiva da testemunha arrolada às fls. 42."<span class="fm-time">00:02:38</span></div></div>
+      <div class="fm-transcript-line"><span class="fm-speaker-tag s3">TEST.</span><div class="fm-text">"Estive presente no dia dos fatos, juro dizer a verdade."<span class="fm-time">00:04:51</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="feature-row reverse">
+  <div class="feature-text">
+    <h3>Pague apenas pelo que usar.</h3>
+    <p>Sem cadastro. Sem mensalidade. PIX direto, transcrição liberada em 3 segundos após pagamento. As primeiras 2 transcrições por dispositivo são grátis.</p>
+    <a href="#precos">Ver preços →</a>
+  </div>
+  <div class="feature-mock">
+    <div class="fm-lock">
+      <div class="fm-lock-icon" style="color: var(--orange);"><i class="fa-solid fa-qrcode"></i></div>
+      <h4>Pagamento PIX</h4>
+      <p>R$ 1,99 por áudio curto · R$ 7,99 por audiência</p>
+      <div class="fm-lock-row"><span>Cadastro</span><span class="check" style="color: var(--green);">✓ Não exige</span></div>
+      <div class="fm-lock-row"><span>Cartão</span><span class="check" style="color: var(--green);">✓ Não exige</span></div>
+      <div class="fm-lock-row"><span>Liberação</span><span class="check" style="color: var(--green);">~3 seg</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="feature-row">
+  <div class="feature-text">
+    <h3>Identifique cada orador automaticamente.</h3>
+    <p>Diarização por pyannote 3.1 identifica até 10 vozes distintas em uma única audiência. O modelo detecta quem fala em cada trecho — sem você precisar marcar manualmente.</p>
+    <a href="/audiencia">Ver diarização em ação →</a>
+  </div>
+  <div class="feature-mock">
+    <div class="fm-wave">
+      <div class="fm-wave-title">Linha do tempo · 40 min</div>
+      <div class="fm-wave-track">
+        <span class="fm-wave-label" style="color: var(--blue);">JUIZ</span>
+        <div class="fm-wave-bars">
+          <span class="hi" style="background:var(--blue);"></span><span class="md" style="background:var(--blue);"></span><span class="empty"></span><span class="empty"></span><span class="empty"></span><span class="lo" style="background:var(--blue);"></span><span class="empty"></span><span class="empty"></span><span class="md" style="background:var(--blue);"></span><span class="empty"></span>
+        </div>
+      </div>
+      <div class="fm-wave-track">
+        <span class="fm-wave-label" style="color: var(--purple);">ADV.</span>
+        <div class="fm-wave-bars">
+          <span class="empty"></span><span class="lo" style="background:var(--purple);"></span><span class="hi" style="background:var(--purple);"></span><span class="md" style="background:var(--purple);"></span><span class="empty"></span><span class="empty"></span><span class="md" style="background:var(--purple);"></span><span class="empty"></span><span class="empty"></span><span class="lo" style="background:var(--purple);"></span>
+        </div>
+      </div>
+      <div class="fm-wave-track">
+        <span class="fm-wave-label" style="color: var(--green);">TEST.</span>
+        <div class="fm-wave-bars">
+          <span class="empty"></span><span class="empty"></span><span class="empty"></span><span class="empty"></span><span class="hi" style="background:var(--green);"></span><span class="md" style="background:var(--green);"></span><span class="empty"></span><span class="lo" style="background:var(--green);"></span><span class="empty"></span><span class="empty"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="feature-row reverse">
+  <div class="feature-text">
+    <h3>Receba sua ata pronta para protocolar.</h3>
+    <p>Download em ZIP com transcrição formatada, arquivo de timestamps, separação por orador e documento DOCX pronto para anexar ao processo eletrônico.</p>
+    <a href="/whatsapp">Ver formato de saída →</a>
+  </div>
+  <div class="feature-mock">
+    <div class="fm-zip">
+      <div class="fm-zip-head">
+        <div class="fm-zip-icon"><i class="fa-solid fa-file-zipper"></i></div>
+        <div><strong style="font-size:0.92rem;">Audiencia_Henry.zip</strong><div style="font-size:0.74rem;color:var(--gray-600);">3,2 MB · 5 arquivos</div></div>
+      </div>
+      <div class="fm-zip-files">
+        <div class="fm-zip-file"><i class="fa-solid fa-file-lines"></i> ata_completa.docx <span class="size">1.4 MB</span></div>
+        <div class="fm-zip-file"><i class="fa-solid fa-file-csv"></i> timestamps.csv <span class="size">128 KB</span></div>
+        <div class="fm-zip-file"><i class="fa-solid fa-file-pdf"></i> ata_assinada.pdf <span class="size">1.6 MB</span></div>
+      </div>
+      <div class="fm-zip-btn"><i class="fa-solid fa-arrow-down"></i> Baixar transcrição</div>
+    </div>
+  </div>
+</div>
+
+<section class="pricing-strip" id="precos">
+  <div class="pricing-inner">
+    <div class="section-head" style="margin-bottom: 16px;">
+      <h2>Pague apenas pelo que usar.</h2>
+      <p>Sem mensalidade, sem cartão. Pague via PIX e libere a transcrição em segundos.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <span class="pc-tag">Áudio curto</span>
+        <div class="pc-price">R$ 1,99<small> / uso</small></div>
+        <div class="pc-name">Até 10 min</div>
+        <p class="pc-desc">Mensagens de voz, recados, depoimentos curtos.</p>
+      </div>
+      <div class="price-card">
+        <span class="pc-tag">Áudio médio</span>
+        <div class="pc-price">R$ 3,99<small> / uso</small></div>
+        <div class="pc-name">10 a 30 min</div>
+        <p class="pc-desc">Conversas, oitivas externas, gravações de reunião.</p>
+      </div>
+      <div class="price-card">
+        <span class="pc-tag">WhatsApp</span>
+        <div class="pc-price">R$ 4,99<small> / uso</small></div>
+        <div class="pc-name">Backup ZIP completo</div>
+        <p class="pc-desc">Conversas inteiras com áudios em cronologia.</p>
+      </div>
+      <div class="price-card featured">
+        <span class="pc-tag">Audiência</span>
+        <div class="pc-price">R$ 7,99<small> / uso</small></div>
+        <div class="pc-name">30 a 90 min com oradores</div>
+        <p class="pc-desc">Vídeo de audiência com diarização completa.</p>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top: 28px; font-size: 0.88rem; color: var(--gray-600);">
+      <i class="fa-solid fa-gift" style="color: var(--orange); margin-right: 6px;"></i>
+      As primeiras <strong>2 transcrições</strong> são grátis por dispositivo. Depois é PIX direto.
+    </p>
+  </div>
+</section>
+
+<div class="dark-cta">
+  <div class="dark-cta-text">
+    <h2>Veja o AuditorIA em ação.</h2>
+    <p>Faça um teste agora com um áudio do seu próximo caso. Sem cadastro. As 2 primeiras são grátis.</p>
+    <a href="/whatsapp" class="btn-orange">Testar grátis →</a>
+  </div>
+  <div class="dark-cta-image">
+    <div class="phone-mock">
+      <div class="phone-screen">
+        <div class="phone-row short"></div>
+        <div class="phone-row tall"></div>
+        <div class="phone-row"></div>
+        <div class="phone-row short"></div>
+        <div class="phone-row orange tall"></div>
+        <div class="phone-row"></div>
+        <div class="phone-row short"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="section-head" style="text-align:left; margin-bottom: 24px;">
+      <h2 style="font-size: 2.4rem;">Funcionalidades</h2>
+    </div>
+    <a href="/whatsapp" style="text-decoration:none;color:inherit;"><div class="faq-row"><div class="faq-row-left"><i class="faq-icon fa-brands fa-whatsapp"></i><h4>Backup completo do WhatsApp</h4></div><i class="fa-solid fa-arrow-right chevron"></i></div></a>
+    <a href="/audiencia" style="text-decoration:none;color:inherit;"><div class="faq-row"><div class="faq-row-left"><i class="faq-icon fa-solid fa-gavel"></i><h4>Audiência judicial com oradores</h4></div><i class="fa-solid fa-arrow-right chevron"></i></div></a>
+    <a href="/video" style="text-decoration:none;color:inherit;"><div class="faq-row"><div class="faq-row-left"><i class="faq-icon fa-solid fa-video"></i><h4>Transcrição de vídeo (MP4, MOV, WEBM)</h4></div><i class="fa-solid fa-arrow-right chevron"></i></div></a>
+    <a href="/sobre" style="text-decoration:none;color:inherit;"><div class="faq-row"><div class="faq-row-left"><i class="faq-icon fa-solid fa-shield-halved"></i><h4>Processamento seguro e auditável</h4></div><i class="fa-solid fa-arrow-right chevron"></i></div></a>
+    <a href="/extractor" style="text-decoration:none;color:inherit;"><div class="faq-row"><div class="faq-row-left"><i class="faq-icon fa-solid fa-file-export"></i><h4>Exportação em DOCX, PDF, CSV e TXT</h4></div><i class="fa-solid fa-arrow-right chevron"></i></div></a>
+    <a href="#" style="text-decoration:none;color:inherit;"><div class="faq-row"><div class="faq-row-left"><i class="faq-icon fa-solid fa-clock"></i><h4>Timestamps precisos por palavra</h4></div><i class="fa-solid fa-arrow-right chevron"></i></div></a>
+  </div>
+</section>
+
+<section class="final-cta">
+  <h2>Acelere o trabalho<br>do seu escritório.</h2>
+  <p>Comece em minutos. Sem cartão de crédito. Pague apenas pelo que usar.</p>
+  <a href="/whatsapp" class="btn-orange">Começar agora →</a>
+</section>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-logo"><span class="nav-logo-mark"></span> AuditorIA</div>
+      <p>Transcrição jurídica feita para a velocidade do escritório. Pague apenas pelo que usar.</p>
+    </div>
+    <div class="footer-col"><h5>Produtos</h5><ul><li><a href="/whatsapp">WhatsApp</a></li><li><a href="/audiencia">Audiência</a></li><li><a href="/video">Vídeo</a></li><li><a href="/audio">Áudio Solo</a></li><li><a href="/extractor">Extrator</a></li></ul></div>
+    <div class="footer-col"><h5>Soluções</h5><ul><li><a href="#solucoes">Autônomos</a></li><li><a href="#solucoes">Escritórios</a></li><li><a href="#solucoes">Bancas</a></li><li><a href="#">Defensorias</a></li></ul></div>
+    <div class="footer-col"><h5>Recursos</h5><ul><li><a href="/sobre">Sobre nós</a></li><li><a href="#precos">Preços</a></li><li><a href="#">Documentação</a></li><li><a href="#">Suporte</a></li></ul></div>
+    <div class="footer-col"><h5>Empresa</h5><ul><li><a href="/sobre">Muraro TechHub</a></li><li><a href="mailto:lucas.muraro.pk@gmail.com">Contato</a></li><li><a href="#">Privacidade</a></li><li><a href="#">Termos</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Muraro TechHub · AuditorIA</span>
+    <div class="footer-bottom-links"><a href="#">Privacidade</a><a href="#">Termos</a><a href="#">LGPD</a><a href="#">Cookies</a></div>
+  </div>
+</footer>
+
+<div class="chat-fab"><i class="fa-solid fa-comment"></i></div>
 
 </body>
 </html>

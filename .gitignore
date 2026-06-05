@@ -30,3 +30,7 @@ WhatsApp Chat*/
 *.zip
 
 CONTEXT.md
+
+# Protótipos e rascunhos locais
+ideias/
+web_ui/templates/home_preview*.html
