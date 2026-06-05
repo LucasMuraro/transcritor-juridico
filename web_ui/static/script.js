@@ -4,7 +4,7 @@
 // ───────────────────────────────────────────────────────────
 
 const MODAL_URL    = "https://lucas-muraro-pk--transcritor-juridico-fastapi-app.modal.run/";
-const FREE_LIMIT   = 2;
+const FREE_LIMIT   = 1;
 const STORAGE_KEY  = "auditoria_usage_v1";
 
 // ──────────────────────────────────────────────────────────
@@ -440,6 +440,118 @@ async function checkPixStatus() {
         console.warn('Erro ao verificar status PIX:', e);
     }
 }
+
+// ─────────── CARTÃO DE CRÉDITO ───────────
+
+let _mp = null;
+function getMP() {
+    if (!_mp && window.MP_PUBLIC_KEY) {
+        _mp = new MercadoPago(window.MP_PUBLIC_KEY, { locale: 'pt-BR' });
+    }
+    return _mp;
+}
+
+window.toggleCardForm = function () {
+    const wrap = document.getElementById('card-form-wrap');
+    const btn  = document.getElementById('card-toggle-btn');
+    if (!wrap) return;
+    const open = wrap.style.display !== 'none';
+    wrap.style.display = open ? 'none' : 'block';
+    btn.classList.toggle('active', !open);
+};
+
+window.fmtCardNumber = function (el) {
+    let v = el.value.replace(/\D/g, '').slice(0, 16);
+    el.value = v.replace(/(.{4})/g, '$1 ').trim();
+};
+window.fmtExpiry = function (el) {
+    let v = el.value.replace(/\D/g, '').slice(0, 4);
+    if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+    el.value = v;
+};
+window.fmtCPF = function (el) {
+    let v = el.value.replace(/\D/g, '').slice(0, 11);
+    v = v.replace(/(\d{3})(\d)/, '$1.$2')
+         .replace(/(\d{3})(\d)/, '$1.$2')
+         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    el.value = v;
+};
+
+window.pagarCartao = async function () {
+    const mp = getMP();
+    if (!mp) {
+        alert('Erro: chave pública MP não carregada.');
+        return;
+    }
+
+    const btn       = document.getElementById('card-pay-btn');
+    const statusDiv = document.getElementById('card-status');
+    const cardNum   = document.getElementById('cc-number').value.replace(/\s/g, '');
+    const expParts  = document.getElementById('cc-expiry').value.split('/');
+    const cvv       = document.getElementById('cc-cvv').value.trim();
+    const name      = document.getElementById('cc-name').value.trim().toUpperCase();
+    const cpf       = document.getElementById('cc-cpf').value.replace(/\D/g, '');
+    const email     = document.getElementById('cc-email').value.trim();
+
+    if (!cardNum || !expParts[1] || !cvv || !name || cpf.length < 11 || !email) {
+        statusDiv.style.display = 'block';
+        statusDiv.className = 'pix-sb-status error';
+        statusDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>Preencha todos os campos do cartão.';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i> Processando...';
+    statusDiv.style.display = 'none';
+
+    try {
+        const token = await mp.createCardToken({
+            cardNumber:           cardNum,
+            cardholderName:       name,
+            cardExpirationMonth:  expParts[0],
+            cardExpirationYear:   '20' + expParts[1],
+            securityCode:         cvv,
+            identificationType:   'CPF',
+            identificationNumber: cpf,
+        });
+
+        const resp = await fetch('/create-card', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                token:             token.id,
+                payment_method_id: token.payment_method_id,
+                job_type:          window.CURRENT_JOB || 'audio',
+                fingerprint:       getFingerprint(),
+                duration_seconds:  _currentDuration || null,
+                file_size:         _currentFile ? _currentFile.size : null,
+                payer_email:       email,
+                cpf,
+                installments:      1,
+            })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Falha no pagamento');
+
+        if (data.status === 'approved') {
+            _pixUnlockToken = data.unlock_token;
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'pix-sb-status approved';
+            statusDiv.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i><strong>Pagamento aprovado!</strong> Pode iniciar a transcrição agora.';
+            btn.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Aprovado';
+            btn.style.background = 'var(--green)';
+        } else {
+            throw new Error(`Pagamento ${data.status}. ${data.status_detail || ''}`);
+        }
+    } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-lock" style="margin-right:6px;"></i> Tentar novamente';
+        statusDiv.style.display = 'block';
+        statusDiv.className = 'pix-sb-status error';
+        statusDiv.innerHTML = `<i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>${String(e.message || e).slice(0, 200)}`;
+    }
+};
 
 // ─────────── Setup do dropzone ───────────
 document.addEventListener("DOMContentLoaded", () => {

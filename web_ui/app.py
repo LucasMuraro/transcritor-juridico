@@ -19,6 +19,10 @@ import io
 import zipfile
 
 app = Flask(__name__)
+
+@app.context_processor
+def inject_mp_key():
+    return {'mp_public_key': os.environ.get('MP_PUBLIC_KEY', '')}
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'web_ui', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -421,6 +425,74 @@ def check_pix(payment_id):
     return jsonify({
         'status': status,
         'detail': mp.get('status_detail', ''),
+    })
+
+
+@app.route('/create-card', methods=['POST'])
+def create_card():
+    """Cria pagamento com cartão de crédito (token MP) com preço dinâmico."""
+    data = request.get_json(silent=True) or {}
+    job_type          = data.get('job_type', 'audio')
+    token             = data.get('token')
+    payment_method_id = data.get('payment_method_id')
+    fingerprint       = data.get('fingerprint', 'anon')
+    duration          = data.get('duration_seconds')
+    file_size         = data.get('file_size')
+    payer_email       = data.get('payer_email', '').strip()
+    cpf               = data.get('cpf', '').replace('.', '').replace('-', '').replace(' ', '')
+    installments      = int(data.get('installments', 1))
+
+    if not token or not payment_method_id:
+        return jsonify({'error': 'Token ou método de pagamento inválido'}), 400
+    if job_type not in PRICING:
+        return jsonify({'error': 'Tipo de transcrição inválido'}), 400
+
+    price = calculate_price(job_type, duration, file_size)
+    cfg   = PRICING[job_type]
+
+    desc_extra = ''
+    if cfg['type'] == 'duration' and duration:
+        desc_extra = f" ({round(duration / 60, 1)} min)"
+    elif cfg['type'] == 'size' and file_size:
+        desc_extra = f" ({round(file_size / 1024 / 1024, 1)} MB)"
+
+    body = {
+        'transaction_amount': price,
+        'token':              token,
+        'description':        f"AuditorIA — {cfg['name']}{desc_extra}",
+        'installments':       installments,
+        'payment_method_id':  payment_method_id,
+        'external_reference': f"auditoria_{fingerprint[:12]}_{int(_time.time())}",
+        'payer': {
+            'email': payer_email or f'cliente_{fingerprint[:8]}@iauditoria.adv.br',
+        },
+    }
+    if cpf and len(cpf) == 11:
+        body['payer']['identification'] = {'type': 'CPF', 'number': cpf}
+
+    try:
+        result = _mp_request('POST', '/v1/payments', body)
+    except Exception as e:
+        return jsonify({'error': f'Falha ao processar cartão: {str(e)[:300]}'}), 500
+
+    status     = result.get('status')
+    payment_id = str(result.get('id', ''))
+
+    if status == 'approved':
+        unlock = _secrets.token_urlsafe(24)
+        _unlock_tokens[unlock] = {
+            'payment_id': payment_id,
+            'job_type':   job_type,
+            'expires_at': _time.time() + 3600,
+            'used':       False,
+        }
+        _payment_index[payment_id] = unlock
+        return jsonify({'status': 'approved', 'payment_id': payment_id, 'unlock_token': unlock})
+
+    return jsonify({
+        'status':        status,
+        'status_detail': result.get('status_detail', ''),
+        'payment_id':    payment_id,
     })
 
 

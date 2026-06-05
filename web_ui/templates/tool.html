@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='brex.css') }}">
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 <body>
 
@@ -98,9 +99,31 @@
 
         <div class="pix-sb-status" id="pix-status"></div>
 
+        <!-- ── CARTÃO DE CRÉDITO ── -->
+        <div class="pix-or-divider"><span>ou pague com cartão</span></div>
+
+        <button class="pix-sb-card-toggle" id="card-toggle-btn" onclick="window.toggleCardForm()">
+          <i class="fa-solid fa-credit-card" style="margin-right:6px;"></i> Cartão de Crédito
+        </button>
+
+        <div id="card-form-wrap" style="display:none;">
+          <input class="card-input" id="cc-number" placeholder="Número do cartão" maxlength="19" oninput="window.fmtCardNumber(this)">
+          <div style="display:flex;gap:8px;margin-top:0;">
+            <input class="card-input" id="cc-expiry" placeholder="MM/AA" maxlength="5" oninput="window.fmtExpiry(this)" style="flex:1;margin-top:8px;">
+            <input class="card-input" id="cc-cvv" placeholder="CVV" maxlength="4" style="flex:1;margin-top:8px;">
+          </div>
+          <input class="card-input" id="cc-name" placeholder="Nome no cartão" style="text-transform:uppercase;">
+          <input class="card-input" id="cc-cpf" placeholder="CPF do titular" maxlength="14" oninput="window.fmtCPF(this)">
+          <input class="card-input" id="cc-email" placeholder="Seu e-mail" type="email">
+          <button class="pix-sb-btn" id="card-pay-btn" onclick="window.pagarCartao()" style="margin-top:10px;">
+            <i class="fa-solid fa-lock" style="margin-right:6px;"></i> Pagar com Cartão
+          </button>
+          <div class="pix-sb-status" id="card-status" style="display:none;"></div>
+        </div>
+
         <div class="pix-sb-foot">
           <p><i class="fa-solid fa-clock"></i>Liberação em ~3 seg após pagamento</p>
-          <p style="margin-top:6px;"><i class="fa-solid fa-shield-halved"></i>Sem cadastro, sem cartão</p>
+          <p style="margin-top:6px;"><i class="fa-solid fa-shield-halved"></i>Sem cadastro obrigatório</p>
         </div>
       </aside>
 
@@ -261,7 +284,10 @@
   </div>
 </div>
 
-<script> window.CURRENT_JOB = "{{ tool_type }}"; </script>
+<script>
+  window.CURRENT_JOB    = "{{ tool_type }}";
+  window.MP_PUBLIC_KEY  = "{{ mp_public_key }}";
+</script>
 <script src="{{ url_for('static', filename='script.js') }}?v={{ range(1, 10000) | random }}"></script>
 
 <footer class="footer">
