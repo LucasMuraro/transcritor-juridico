@@ -13,7 +13,7 @@ try:
     import patoolib
 except ImportError:
     patoolib = None
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, Response
 from werkzeug.utils import secure_filename
 import io
 import zipfile
@@ -75,9 +75,41 @@ def run_pipeline(script_name, file_path, case_name, model, extra_args=None):
 
 # ── ROTAS DAS PÁGINAS ─────────────────────────────────────────────────────────
 
+@app.route('/sitemap.xml')
+def sitemap():
+    base = 'https://www.iauditoria.adv.br'
+    pages = [
+        ('/',           '1.0', 'weekly'),
+        ('/whatsapp',   '0.9', 'weekly'),
+        ('/audiencia',  '0.9', 'weekly'),
+        ('/video',      '0.9', 'weekly'),
+        ('/audio',      '0.9', 'weekly'),
+        ('/sobre',      '0.7', 'monthly'),
+        ('/contato',    '0.6', 'monthly'),
+    ]
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for path, priority, freq in pages:
+        xml += f'  <url><loc>{base}{path}</loc><changefreq>{freq}</changefreq><priority>{priority}</priority></url>\n'
+    xml += '</urlset>'
+    return Response(xml, mimetype='application/xml')
+
+@app.route('/robots.txt')
+def robots_txt():
+    txt = 'User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: https://www.iauditoria.adv.br/sitemap.xml\n'
+    return Response(txt, mimetype='text/plain')
+
 @app.route('/')
 def home():
     return render_template('home.html')
+
+@app.route('/transcrever-audiencia-judicial')
+def lp_audiencia():
+    return render_template('lp_audiencia.html')
+
+@app.route('/transcrever-backup-whatsapp')
+def lp_whatsapp():
+    return render_template('lp_audiencia.html')  # placeholder — cria template específico depois
 
 @app.route('/sobre')
 def sobre():
@@ -125,23 +157,48 @@ def whatsapp_v2():
 
 @app.route('/video')
 def tool_video():
-    return render_template('tool.html', tool_type='video', title='Vídeos da Audiência', icon='fa-video', color='#ef4444')
+    return render_template('tool.html',
+        tool_type='video', title='Vídeos da Audiência', icon='fa-video', color='#ef4444',
+        meta_title='Transcrever Vídeo para Texto Online | AuditorIA',
+        meta_desc='Transcreva vídeos MP4, WEBM ou RAR para texto em minutos. Alta precisão em português jurídico, sem instalação. Pague por uso a partir de R$ 2,99.',
+        canonical='https://www.iauditoria.adv.br/video',
+    )
 
 @app.route('/whatsapp')
 def tool_wpp():
-    return render_template('tool.html', tool_type='wpp', title='Transcritor de Áudios do WhatsApp', icon='fa-brands fa-whatsapp', color='#25D366')
+    return render_template('tool.html',
+        tool_type='wpp', title='Transcritor de Áudios do WhatsApp', icon='fa-brands fa-whatsapp', color='#25D366',
+        meta_title='Transcrever Backup do WhatsApp Online | AuditorIA',
+        meta_desc='Transcreva todos os áudios do backup ZIP do WhatsApp de uma vez, com timestamps e nome do remetente. Ideal para advogados e escritórios. A partir de R$ 2,99.',
+        canonical='https://www.iauditoria.adv.br/whatsapp',
+    )
 
 @app.route('/extractor')
 def tool_extractor():
-    return render_template('tool.html', tool_type='extractor', title='Extrator de Provas', icon='fa-folder-open', color='#334155')
+    return render_template('tool.html',
+        tool_type='extractor', title='Extrator de Provas', icon='fa-folder-open', color='#334155',
+        meta_title='Extrator de Mídias do WhatsApp | AuditorIA',
+        meta_desc='Extraia imagens, vídeos e documentos do backup do WhatsApp. Organize provas digitais de forma rápida.',
+        canonical='https://www.iauditoria.adv.br/extractor',
+    )
 
 @app.route('/audio')
 def tool_audio():
-    return render_template('tool.html', tool_type='audio', title='Áudio Individual', icon='fa-microphone-lines', color='#8b5cf6')
+    return render_template('tool.html',
+        tool_type='audio', title='Áudio Individual', icon='fa-microphone-lines', color='#8b5cf6',
+        meta_title='Transcrever Áudio MP3 para Texto Online | AuditorIA',
+        meta_desc='Transcreva arquivos de áudio MP3, M4A, WAV ou OPUS para texto. Ideal para depoimentos, reuniões e notas jurídicas. A partir de R$ 1,99.',
+        canonical='https://www.iauditoria.adv.br/audio',
+    )
 
 @app.route('/audiencia')
 def tool_audiencia():
-    return render_template('tool.html', tool_type='audiencia', title='Audiência Judicial (Oradores)', icon='fa-users', color='#0ea5e9')
+    return render_template('tool.html',
+        tool_type='audiencia', title='Audiência Judicial (Oradores)', icon='fa-users', color='#0ea5e9',
+        meta_title='Transcrição de Audiência Judicial Online | AuditorIA',
+        meta_desc='Transcreva audiências judiciais com identificação automática de oradores: juiz, advogados e testemunhas. Suporta MP4, WEBM e RAR. A partir de R$ 4,99.',
+        canonical='https://www.iauditoria.adv.br/audiencia',
+    )
 
 
 # ── API DE UPLOAD ─────────────────────────────────────────────────────────────

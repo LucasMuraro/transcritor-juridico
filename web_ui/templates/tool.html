@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title }} — AuditorIA</title>
+  <title>{% if meta_title %}{{ meta_title }}{% else %}{{ title }} | AuditorIA{% endif %}</title>
+  <meta name="description" content="{{ meta_desc | default('Ferramenta de transcrição jurídica online com IA. Sem instalação, sem cadastro, pague por uso. A partir de R$ 1,99.') }}">
+  <link rel="canonical" href="{{ canonical | default('https://www.iauditoria.adv.br') }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AuditorIA">
+  <meta property="og:title" content="{% if meta_title %}{{ meta_title }}{% else %}{{ title }} | AuditorIA{% endif %}">
+  <meta property="og:description" content="{{ meta_desc | default('Ferramenta de transcrição jurídica online com IA. Sem instalação, sem cadastro, pague por uso. A partir de R$ 1,99.') }}">
+  <meta property="og:url" content="{{ canonical | default('https://www.iauditoria.adv.br') }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{% if meta_title %}{{ meta_title }}{% else %}{{ title }} | AuditorIA{% endif %}">
+  <meta name="twitter:description" content="{{ meta_desc | default('Ferramenta de transcrição jurídica online com IA. A partir de R$ 1,99.') }}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='brex.css') }}">
