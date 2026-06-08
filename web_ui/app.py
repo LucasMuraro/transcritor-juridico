@@ -13,7 +13,7 @@ try:
     import patoolib
 except ImportError:
     patoolib = None
-from flask import Flask, render_template, request, jsonify, send_file, Response
+from flask import Flask, render_template, request, jsonify, send_file, Response, redirect
 from werkzeug.utils import secure_filename
 import io
 import zipfile
@@ -21,8 +21,11 @@ import zipfile
 app = Flask(__name__)
 
 @app.context_processor
-def inject_mp_key():
-    return {'mp_public_key': os.environ.get('MP_PUBLIC_KEY', '')}
+def inject_globals():
+    return {
+        'mp_public_key': os.environ.get('MP_PUBLIC_KEY', ''),
+        'ga4_id': os.environ.get('GA4_ID', ''),
+    }
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'web_ui', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -114,6 +117,18 @@ def lp_whatsapp():
 @app.route('/sobre')
 def sobre():
     return render_template('sobre.html')
+
+@app.route('/privacidade')
+def privacidade():
+    return render_template('privacidade.html')
+
+@app.route('/termos')
+def termos():
+    return render_template('termos.html')
+
+@app.route('/lgpd')
+def lgpd():
+    return redirect('/privacidade')
 
 @app.route('/contato')
 def contato():

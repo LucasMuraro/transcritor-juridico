@@ -11,6 +11,9 @@
   <meta property="og:title" content="Sobre o AuditorIA — Transcrição Jurídica com IA">
   <meta property="og:description" content="Ferramenta de transcrição jurídica com IA criada por e para advogados brasileiros. Sem cadastro, sem assinatura.">
   <meta property="og:url" content="https://www.iauditoria.adv.br/sobre">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  {% if ga4_id %}<script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4_id }}"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','{{ ga4_id }}');</script>{% endif %}
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='brex.css') }}">
@@ -206,11 +209,11 @@
     <div class="footer-col"><h5>Produtos</h5><ul><li><a href="/whatsapp">WhatsApp</a></li><li><a href="/audiencia">Audiência</a></li><li><a href="/video">Vídeo</a></li><li><a href="/audio">Áudio Solo</a></li><li><a href="/extractor">Extrator</a></li></ul></div>
     <div class="footer-col"><h5>Soluções</h5><ul><li><a href="/#solucoes">Autônomos</a></li><li><a href="/#solucoes">Escritórios</a></li><li><a href="/#solucoes">Bancas</a></li></ul></div>
     <div class="footer-col"><h5>Recursos</h5><ul><li><a href="/sobre">Sobre nós</a></li><li><a href="/#precos">Preços</a></li><li><a href="#">Documentação</a></li></ul></div>
-    <div class="footer-col"><h5>Empresa</h5><ul><li><a href="/sobre">Muraro TechHub</a></li><li><a href="mailto:lucas.muraro.pk@gmail.com">Contato</a></li><li><a href="#">Privacidade</a></li><li><a href="#">Termos</a></li></ul></div>
+    <div class="footer-col"><h5>Empresa</h5><ul><li><a href="/sobre">Muraro TechHub</a></li><li><a href="mailto:lucas.muraro.pk@gmail.com">Contato</a></li><li><a href="/privacidade">Privacidade</a></li><li><a href="/termos">Termos</a></li></ul></div>
   </div>
   <div class="footer-bottom">
     <span>© 2026 Muraro TechHub · AuditorIA</span>
-    <div class="footer-bottom-links"><a href="#">Privacidade</a><a href="#">Termos</a><a href="#">LGPD</a></div>
+    <div class="footer-bottom-links"><a href="/privacidade">Privacidade</a><a href="/termos">Termos</a><a href="/privacidade">LGPD</a></div>
   </div>
 </footer>
 
