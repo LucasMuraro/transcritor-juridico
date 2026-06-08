@@ -181,7 +181,7 @@ a { text-decoration: none; color: inherit; }
 .section-head p { font-size: 1.1rem; color: var(--gray-600); max-width: 580px; margin: 0 auto; }
 
 /* ── 5-CARD GRID ── */
-.tools-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.tools-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .tool-card { background: var(--bg-card); border-radius: 14px; padding: 24px 22px; display: flex; flex-direction: column; gap: 14px; transition: transform .2s, background .2s; min-height: 240px; cursor: pointer; }
 .tool-card:hover { transform: translateY(-3px); background: #E8E5DE; }
 .tool-card .tool-mock { background: var(--bg-white); border-radius: 8px; height: 100px; padding: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,.05); position: relative; overflow: hidden; }
