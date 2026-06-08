@@ -422,10 +422,14 @@ async function checkPixStatus() {
             _pixPollInterval = null;
             _pixUnlockToken = data.unlock_token;
             statusBox.className = 'pix-sb-status approved';
-            statusBox.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i><strong>Pagamento confirmado!</strong> Pode iniciar a transcrição agora.';
+            statusBox.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i><strong>Pagamento confirmado!</strong> Iniciando transcrição...';
             btn.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Liberado';
             btn.disabled = true;
             btn.style.background = 'var(--green)';
+            const _fi = document.getElementById('file_tool');
+            if (_fi && _fi.files && _fi.files.length > 0) {
+                setTimeout(() => window.iniciarTranscricao(), 800);
+            }
         } else if (data.status === 'rejected' || data.status === 'cancelled') {
             clearInterval(_pixPollInterval);
             _pixPollInterval = null;
@@ -536,9 +540,14 @@ window.pagarCartao = async function () {
             _pixUnlockToken = data.unlock_token;
             statusDiv.style.display = 'block';
             statusDiv.className = 'pix-sb-status approved';
-            statusDiv.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i><strong>Pagamento aprovado!</strong> Pode iniciar a transcrição agora.';
+            statusDiv.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i><strong>Pagamento aprovado!</strong> Iniciando transcrição...';
             btn.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Aprovado';
             btn.style.background = 'var(--green)';
+            btn.disabled = true;
+            const _fi = document.getElementById('file_tool');
+            if (_fi && _fi.files && _fi.files.length > 0) {
+                setTimeout(() => window.iniciarTranscricao(), 800);
+            }
         } else {
             throw new Error(`Pagamento ${data.status}. ${data.status_detail || ''}`);
         }
@@ -770,15 +779,7 @@ window.iniciarTranscricao = async function () {
                     updateCreditsBadge();
                 }
 
-                // Codifica explicitamente como UTF-8 com BOM (TextEncoder é UTF-8 garantido)
-                // Resolve mojibake em Safari/TextEdit que ignoram charset do Blob
-                const encoder = new TextEncoder();
-                const bomBytes = new Uint8Array([0xEF, 0xBB, 0xBF]);
-                const textBytes = encoder.encode(result.text);
-                const fullBytes = new Uint8Array(bomBytes.length + textBytes.length);
-                fullBytes.set(bomBytes, 0);
-                fullBytes.set(textBytes, bomBytes.length);
-                const blob = new Blob([fullBytes], { type: 'text/plain;charset=utf-8' });
+                const blob = new Blob(['﻿', result.text], { type: 'text/plain;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
                 const filename = `transcricao_${jobType}_${Date.now()}.txt`;
 
