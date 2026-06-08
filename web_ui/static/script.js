@@ -223,10 +223,8 @@ async function refreshPricingUI(file) {
     if (!cfg) return;
 
     if (!file) {
-        // Sem arquivo: preço default do tipo
-        const def = PRICE_DEFAULT[jobType] || 1.99;
-        priceEl.innerHTML = fmtMoney(def) + '<small> / uso</small>';
-        _currentPrice = def;
+        priceEl.innerHTML = 'R$ 0,00<small> / uso</small>';
+        _currentPrice = null;
         return;
     }
 
