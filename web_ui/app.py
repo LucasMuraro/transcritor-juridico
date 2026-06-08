@@ -117,7 +117,7 @@ def tool_video():
 
 @app.route('/whatsapp')
 def tool_wpp():
-    return render_template('tool.html', tool_type='wpp', title='Backup do WhatsApp', icon='fa-brands fa-whatsapp', color='#25D366')
+    return render_template('tool.html', tool_type='wpp', title='Transcritor de Áudios do WhatsApp', icon='fa-brands fa-whatsapp', color='#25D366')
 
 @app.route('/extractor')
 def tool_extractor():
