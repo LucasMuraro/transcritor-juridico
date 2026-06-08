@@ -83,6 +83,18 @@ def home():
 def sobre():
     return render_template('sobre.html')
 
+@app.route('/contato')
+def contato():
+    return render_template('contato.html')
+
+@app.route('/admin')
+def admin():
+    key = request.args.get('key', '')
+    admin_key = os.environ.get('ADMIN_KEY', 'auditoria2026')
+    if key != admin_key:
+        return 'Acesso negado.', 403
+    return render_template('admin.html')
+
 @app.route('/preview')
 def preview():
     return render_template('home_preview.html')
@@ -299,9 +311,13 @@ def calculate_price(job_type, duration_seconds=None, file_size_bytes=None):
 PIX_PRICES = {k: {'price': PRICE_DEFAULT[k], 'name': v['name']} for k, v in PRICING.items()}
 
 # Cache em memória dos tokens de uso único liberados após pagamento
-# Estrutura: { unlock_token: {"payment_id": ..., "job_type": ..., "expires_at": ts} }
 _unlock_tokens = {}
-_payment_index = {}  # payment_id → unlock_token (para evitar duplicação)
+_payment_index = {}  # payment_id → unlock_token
+
+# Analytics em memória (reseta ao reiniciar — suficiente para monitoramento)
+_payments_log = []   # lista de dicts: {ts, job_type, method, amount, payment_id, used}
+_contacts_log = []   # lista de dicts: {ts, nome, email, assunto, mensagem}
+_free_credits_used = 0
 
 
 def _mp_request(method, path, body=None):
@@ -414,12 +430,19 @@ def check_pix(payment_id):
             unlock = _payment_index[payment_id_str]
         else:
             unlock = _secrets.token_urlsafe(24)
+            amount = float(mp.get('transaction_amount', 0))
+            job_type_mp = mp.get('external_reference', '').split('_')[0] or 'unknown'
             _unlock_tokens[unlock] = {
                 'payment_id': payment_id_str,
                 'expires_at': _time.time() + 1800,
                 'used': False,
             }
             _payment_index[payment_id_str] = unlock
+            _payments_log.append({
+                'ts': _time.time(), 'job_type': job_type_mp,
+                'method': 'pix', 'amount': amount,
+                'payment_id': payment_id_str, 'used': False,
+            })
         return jsonify({'status': 'approved', 'unlock_token': unlock})
 
     return jsonify({
@@ -487,6 +510,11 @@ def create_card():
             'used':       False,
         }
         _payment_index[payment_id] = unlock
+        _payments_log.append({
+            'ts': _time.time(), 'job_type': job_type,
+            'method': 'card', 'amount': price,
+            'payment_id': payment_id, 'used': False,
+        })
         return jsonify({'status': 'approved', 'payment_id': payment_id, 'unlock_token': unlock})
 
     return jsonify({
@@ -526,6 +554,35 @@ def payment_failure():
     <a href="javascript:window.close()">Fechar janela</a></body></html>'''
 
 
+@app.route('/api/contact', methods=['POST'])
+def api_contact():
+    data = request.get_json(silent=True) or {}
+    nome     = (data.get('nome', '') or '').strip()
+    email    = (data.get('email', '') or '').strip()
+    assunto  = (data.get('assunto', '') or '').strip()
+    mensagem = (data.get('mensagem', '') or '').strip()
+    if not nome or not email or not mensagem:
+        return jsonify({'error': 'Campos obrigatórios faltando'}), 400
+    _contacts_log.append({'ts': _time.time(), 'nome': nome, 'email': email, 'assunto': assunto, 'mensagem': mensagem})
+    return jsonify({'ok': True})
+
+
+@app.route('/api/admin-stats')
+def api_admin_stats():
+    key = request.args.get('key', '')
+    if key != os.environ.get('ADMIN_KEY', 'auditoria2026'):
+        return jsonify({'error': 'Forbidden'}), 403
+    revenue = sum(p['amount'] for p in _payments_log)
+    modal_spent_usd = len([p for p in _payments_log if p.get('used')]) * 0.27
+    return jsonify({
+        'revenue_total':    round(revenue, 2),
+        'payments':         _payments_log,
+        'contacts':         _contacts_log,
+        'free_credits_used': _free_credits_used,
+        'modal_spent_usd':  round(modal_spent_usd, 2),
+    })
+
+
 @app.route('/consume-unlock', methods=['POST'])
 def consume_unlock():
     """Marca um unlock_token como usado (chamado após Modal terminar)."""
@@ -539,6 +596,12 @@ def consume_unlock():
     if entry['expires_at'] < _time.time():
         return jsonify({'valid': False, 'reason': 'expirado'}), 410
     entry['used'] = True
+    # marca no log de pagamentos
+    pid = entry.get('payment_id')
+    for p in _payments_log:
+        if p.get('payment_id') == pid:
+            p['used'] = True
+            break
     return jsonify({'valid': True})
 
 

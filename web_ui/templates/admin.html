@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitor — AuditorIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='brex.css') }}">
+  <style>
+    body { background: #0A0A0A; color: #E5E2DC; }
+    .adm-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+    .adm-title { font-size: 1.6rem; font-weight: 800; color: white; margin-bottom: 6px; }
+    .adm-sub { color: #A8A6A2; font-size: 0.9rem; margin-bottom: 32px; }
+    .adm-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .adm-card { background: #1A1A1A; border: 1px solid #2A2A2A; border-radius: 12px; padding: 20px; }
+    .adm-card-label { font-size: 0.75rem; font-weight: 600; color: #A8A6A2; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+    .adm-card-value { font-size: 2rem; font-weight: 800; color: white; line-height: 1; }
+    .adm-card-sub { font-size: 0.78rem; color: #A8A6A2; margin-top: 6px; }
+    .adm-card.green .adm-card-value { color: #22C55E; }
+    .adm-card.orange .adm-card-value { color: #FF5C00; }
+    .adm-card.yellow .adm-card-value { color: #F59E0B; }
+    .adm-section { background: #1A1A1A; border: 1px solid #2A2A2A; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .adm-section-title { font-size: 0.9rem; font-weight: 700; color: white; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    th { text-align: left; color: #A8A6A2; font-weight: 600; padding: 8px 12px; border-bottom: 1px solid #2A2A2A; }
+    td { padding: 10px 12px; border-bottom: 1px solid #1E1E1E; color: #E5E2DC; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; }
+    .badge-green { background: rgba(34,197,94,.15); color: #22C55E; }
+    .badge-orange { background: rgba(255,92,0,.15); color: #FF5C00; }
+    .badge-gray { background: rgba(168,166,162,.15); color: #A8A6A2; }
+    .adm-refresh { font-size: 0.8rem; color: #A8A6A2; display: flex; align-items: center; gap: 6px; }
+    .modal-bar { background: #111; border: 1px solid #2A2A2A; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .modal-bar-info { font-size: 0.85rem; color: #A8A6A2; }
+    .modal-bar-info strong { color: white; }
+    .modal-bar a { font-size: 0.82rem; color: #FF5C00; font-weight: 600; text-decoration: none; }
+    @media(max-width:700px) { .adm-grid { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:480px) { .adm-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="adm-wrap">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+    <div>
+      <div class="adm-title"><span style="color:#FF5C00;">AuditorIA</span> · Monitor</div>
+      <div class="adm-sub">Painel interno — atualiza a cada 30s · <span id="last-update">carregando...</span></div>
+    </div>
+    <a href="/" style="color:#A8A6A2;font-size:0.82rem;text-decoration:none;"><i class="fa-solid fa-arrow-left" style="margin-right:4px;"></i>Voltar ao site</a>
+  </div>
+
+  <div class="modal-bar">
+    <div class="modal-bar-info">
+      <i class="fa-solid fa-microchip" style="color:#FF5C00;margin-right:6px;"></i>
+      Modal GPU — <strong id="modal-credit">verificar abaixo</strong>
+      <span style="margin-left:8px;font-size:0.78rem;">· Transcrições estimadas restantes: <strong id="modal-est">—</strong></span>
+    </div>
+    <a href="https://modal.com/lucas-muraro-pk/main/apps/transcritor-juridico" target="_blank">
+      <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Abrir Modal →
+    </a>
+  </div>
+
+  <div class="adm-grid" id="stat-cards">
+    <div class="adm-card green">
+      <div class="adm-card-label">Receita total</div>
+      <div class="adm-card-value" id="s-receita">R$ 0</div>
+      <div class="adm-card-sub" id="s-receita-sub">0 transações</div>
+    </div>
+    <div class="adm-card orange">
+      <div class="adm-card-label">Transcrições pagas</div>
+      <div class="adm-card-value" id="s-pagas">0</div>
+      <div class="adm-card-sub" id="s-pagas-sub">0 PIX · 0 cartão</div>
+    </div>
+    <div class="adm-card">
+      <div class="adm-card-label">Créditos grátis dados</div>
+      <div class="adm-card-value" id="s-gratis">0</div>
+      <div class="adm-card-sub">usados desde o início</div>
+    </div>
+    <div class="adm-card yellow">
+      <div class="adm-card-label">Contatos recebidos</div>
+      <div class="adm-card-value" id="s-contatos">0</div>
+      <div class="adm-card-sub" id="s-contatos-sub">0 sem resposta</div>
+    </div>
+  </div>
+
+  <div class="adm-section">
+    <div class="adm-section-title">
+      <i class="fa-solid fa-receipt" style="color:#FF5C00;"></i> Pagamentos recentes
+    </div>
+    <table>
+      <thead>
+        <tr><th>Data/Hora</th><th>Tipo</th><th>Método</th><th>Valor</th><th>Status</th></tr>
+      </thead>
+      <tbody id="payments-table">
+        <tr><td colspan="5" style="color:#A8A6A2;text-align:center;padding:24px;">Nenhum pagamento ainda</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="adm-section">
+    <div class="adm-section-title">
+      <i class="fa-solid fa-envelope" style="color:#FF5C00;"></i> Mensagens de contato
+    </div>
+    <table>
+      <thead>
+        <tr><th>Data/Hora</th><th>Nome</th><th>E-mail</th><th>Assunto</th><th>Mensagem</th></tr>
+      </thead>
+      <tbody id="contacts-table">
+        <tr><td colspan="5" style="color:#A8A6A2;text-align:center;padding:24px;">Nenhuma mensagem ainda</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const KEY = new URLSearchParams(location.search).get('key') || '';
+
+function fmtDate(ts) {
+  return new Date(ts * 1000).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+}
+function fmtMoney(v) {
+  return 'R$ ' + Number(v).toFixed(2).replace('.', ',');
+}
+
+async function loadStats() {
+  try {
+    const r = await fetch('/api/admin-stats?key=' + KEY);
+    if (r.status === 403) { document.body.innerHTML = '<div style="color:red;text-align:center;padding:80px;font-family:monospace;">403 — Chave inválida</div>'; return; }
+    const d = await r.json();
+
+    document.getElementById('last-update').textContent = 'última atualização: ' + new Date().toLocaleTimeString('pt-BR');
+
+    // Stat cards
+    document.getElementById('s-receita').textContent = fmtMoney(d.revenue_total);
+    document.getElementById('s-receita-sub').textContent = d.payments.length + ' transação(ões)';
+    const pix_count = d.payments.filter(p => p.method === 'pix').length;
+    const card_count = d.payments.filter(p => p.method === 'card').length;
+    document.getElementById('s-pagas').textContent = d.payments.filter(p => p.used).length;
+    document.getElementById('s-pagas-sub').textContent = pix_count + ' PIX · ' + card_count + ' cartão';
+    document.getElementById('s-gratis').textContent = d.free_credits_used;
+    document.getElementById('s-contatos').textContent = d.contacts.length;
+    document.getElementById('s-contatos-sub').textContent = d.contacts.length + ' recebida(s)';
+
+    // Modal estimate (R$ 1,50 avg por transcrição = ~$0.27 USD)
+    document.getElementById('modal-credit').textContent = 'US$ ' + (d.modal_spent_usd || 0).toFixed(2) + ' estimado';
+    const remainingUSD = 28.96 - (d.modal_spent_usd || 0);
+    document.getElementById('modal-est').textContent = Math.max(0, Math.floor(remainingUSD / 0.30)) + ' audiências';
+
+    // Payments table
+    const tbody = document.getElementById('payments-table');
+    if (d.payments.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#A8A6A2;text-align:center;padding:24px;">Nenhum pagamento ainda</td></tr>';
+    } else {
+      tbody.innerHTML = d.payments.slice().reverse().slice(0, 50).map(p => `
+        <tr>
+          <td style="font-family:monospace;font-size:0.78rem;">${fmtDate(p.ts)}</td>
+          <td><span class="badge badge-gray">${p.job_type}</span></td>
+          <td><span class="badge ${p.method === 'pix' ? 'badge-orange' : 'badge-green'}">${p.method === 'pix' ? 'PIX' : 'Cartão'}</span></td>
+          <td style="font-weight:700;color:#22C55E;">${fmtMoney(p.amount)}</td>
+          <td><span class="badge ${p.used ? 'badge-green' : 'badge-orange'}">${p.used ? 'Transcrito' : 'Pago'}</span></td>
+        </tr>`).join('');
+    }
+
+    // Contacts table
+    const ctbody = document.getElementById('contacts-table');
+    if (d.contacts.length === 0) {
+      ctbody.innerHTML = '<tr><td colspan="5" style="color:#A8A6A2;text-align:center;padding:24px;">Nenhuma mensagem ainda</td></tr>';
+    } else {
+      ctbody.innerHTML = d.contacts.slice().reverse().slice(0, 50).map(c => `
+        <tr>
+          <td style="font-family:monospace;font-size:0.78rem;">${fmtDate(c.ts)}</td>
+          <td style="font-weight:600;">${c.nome}</td>
+          <td style="color:#FF5C00;"><a href="mailto:${c.email}" style="color:#FF5C00;">${c.email}</a></td>
+          <td><span class="badge badge-gray">${c.assunto}</span></td>
+          <td style="max-width:300px;color:#A8A6A2;">${c.mensagem.slice(0, 120)}${c.mensagem.length > 120 ? '…' : ''}</td>
+        </tr>`).join('');
+    }
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+loadStats();
+setInterval(loadStats, 30000);
+</script>
+</body>
+</html>

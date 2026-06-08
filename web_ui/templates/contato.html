@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contato — AuditorIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='brex.css') }}">
+</head>
+<body>
+
+<div class="topbar">Pague apenas pelo que usar — a partir de <strong>R$ 1,99</strong> via PIX. <a href="/#precos">Ver preços →</a></div>
+
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="/" class="nav-logo"><span class="nav-logo-mark"></span>AuditorIA</a>
+    <div class="nav-links">
+      <a href="/whatsapp">WhatsApp</a>
+      <a href="/audiencia">Audiência</a>
+      <a href="/video">Vídeo</a>
+      <a href="/audio">Áudio Solo</a>
+      <a href="/sobre">Sobre</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-secondary"><a href="/#precos">Preços</a></div>
+    <a href="/" class="btn-orange">Início</a>
+  </div>
+</nav>
+
+<div class="tool-page-bg">
+  <div class="tool-page-inner" style="max-width: 680px;">
+
+    <div class="tool-breadcrumb">
+      <a href="/">Início</a>
+      <i class="fa-solid fa-chevron-right" style="font-size:0.65rem;opacity:.5;"></i>
+      <span style="color:var(--black);font-weight:600;">Contato</span>
+    </div>
+
+    <h1 class="tool-page-title">Fale conosco</h1>
+    <p class="tool-page-sub">Pagou e não recebeu a transcrição? Teve algum problema? Nos conta — resolvemos rápido.</p>
+
+    <div class="card" style="margin-top: 24px;">
+      <div class="card-header">
+        <i class="fa-solid fa-envelope" style="color:var(--orange);"></i>
+        <h2>Enviar mensagem</h2>
+      </div>
+
+      <div id="form-wrap">
+        <div class="input-row">
+          <div class="field-group">
+            <label>Seu nome</label>
+            <input type="text" id="c-nome" placeholder="João Silva">
+          </div>
+          <div class="field-group">
+            <label>Seu e-mail</label>
+            <input type="email" id="c-email" placeholder="joao@escritorio.com.br">
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-top:12px;">
+          <label>Assunto</label>
+          <select id="c-assunto">
+            <option value="pagamento">Paguei mas não recebi a transcrição</option>
+            <option value="erro">Erro durante a transcrição</option>
+            <option value="qualidade">Qualidade da transcrição</option>
+            <option value="duvida">Dúvida sobre preços ou funcionamento</option>
+            <option value="outro">Outro assunto</option>
+          </select>
+        </div>
+
+        <div class="field-group" style="margin-top:12px;">
+          <label>Conte o que aconteceu</label>
+          <textarea id="c-mensagem" placeholder="Descreva com detalhes: qual ferramenta usou, qual arquivo, o que esperava e o que aconteceu..." style="width:100%;min-height:140px;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.9rem;resize:vertical;box-sizing:border-box;background:var(--bg-white);color:var(--black);"></textarea>
+        </div>
+
+        <div id="contact-status" style="display:none;margin-top:12px;padding:14px;border-radius:8px;font-size:0.88rem;font-weight:600;"></div>
+
+        <button class="btn" id="contact-btn" onclick="enviarContato()" style="margin-top:16px;">
+          <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i> Enviar mensagem
+        </button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px;"><i class="fa-solid fa-clock" style="color:var(--orange);margin-right:6px;"></i>Tempo de resposta</div>
+          <div style="font-size:0.88rem;color:var(--gray-600);">Respondemos em até <strong>24 horas úteis</strong>. Casos de pagamento têm prioridade.</div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px;"><i class="fa-solid fa-envelope" style="color:var(--orange);margin-right:6px;"></i>E-mail direto</div>
+          <div style="font-size:0.88rem;color:var(--gray-600);"><a href="mailto:lucas.muraro.pk@gmail.com" style="color:var(--orange);font-weight:600;">lucas.muraro.pk@gmail.com</a></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-logo"><span class="nav-logo-mark"></span> AuditorIA</div>
+      <p>Transcrição jurídica feita para a velocidade do escritório.</p>
+    </div>
+    <div class="footer-col"><h5>Produtos</h5><ul><li><a href="/whatsapp">WhatsApp</a></li><li><a href="/audiencia">Audiência</a></li><li><a href="/video">Vídeo</a></li><li><a href="/audio">Áudio Solo</a></li></ul></div>
+    <div class="footer-col"><h5>Empresa</h5><ul><li><a href="/sobre">Sobre nós</a></li><li><a href="/contato">Contato</a></li><li><a href="#">Privacidade</a></li><li><a href="#">Termos</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Muraro TechHub · AuditorIA</span>
+    <div class="footer-bottom-links"><a href="#">Privacidade</a><a href="#">Termos</a><a href="#">LGPD</a></div>
+  </div>
+</footer>
+
+<script>
+async function enviarContato() {
+  const btn = document.getElementById('contact-btn');
+  const status = document.getElementById('contact-status');
+  const nome = document.getElementById('c-nome').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  const assunto = document.getElementById('c-assunto').value;
+  const mensagem = document.getElementById('c-mensagem').value.trim();
+
+  if (!nome || !email || !mensagem) {
+    status.style.display = 'block';
+    status.style.background = 'rgba(239,68,68,.08)';
+    status.style.color = '#b91c1c';
+    status.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>Preencha nome, e-mail e mensagem.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i> Enviando...';
+  status.style.display = 'none';
+
+  try {
+    const resp = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, email, assunto, mensagem })
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Erro ao enviar');
+    status.style.display = 'block';
+    status.style.background = 'rgba(34,197,94,.08)';
+    status.style.color = '#166534';
+    status.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i><strong>Mensagem enviada!</strong> Respondemos em até 24h no e-mail informado.';
+    document.getElementById('c-nome').value = '';
+    document.getElementById('c-email').value = '';
+    document.getElementById('c-mensagem').value = '';
+    btn.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Enviado';
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i> Tentar novamente';
+    status.style.display = 'block';
+    status.style.background = 'rgba(239,68,68,.08)';
+    status.style.color = '#b91c1c';
+    status.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>' + e.message;
+  }
+}
+</script>
+
+</body>
+</html>
