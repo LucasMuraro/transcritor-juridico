@@ -201,15 +201,19 @@ a { text-decoration: none; color: inherit; }
 .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .photo-card { background: var(--bg-card); border-radius: 14px; overflow: hidden; transition: transform .2s; cursor: pointer; }
 .photo-card:hover { transform: translateY(-3px); }
-.photo-card .photo-fake { height: 200px; position: relative; display: flex; align-items: end; padding: 24px; }
+.photo-card .photo-fake { height: 220px; position: relative; display: flex; align-items: flex-end; padding: 24px; background-size: cover; background-position: center; }
+.photo-card .photo-fake::before { content: ''; position: absolute; inset: 0; border-radius: 0; z-index: 0; }
+.photo-card .photo-fake .photo-fake-title { position: relative; z-index: 1; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.025em; color: white; text-shadow: 0 1px 4px rgba(0,0,0,.4); }
 .photo-card .photo-content { padding: 24px; }
 .photo-card h3 { font-size: 1.18rem; font-weight: 700; margin-bottom: 8px; color: var(--black); }
 .photo-card p { font-size: 0.9rem; color: var(--gray-600); line-height: 1.5; margin-bottom: 14px; }
 .photo-card .photo-arrow { font-size: 0.88rem; font-weight: 600; color: var(--orange); display: inline-flex; align-items: center; gap: 4px; }
-.photo-1 { background: linear-gradient(135deg, #1F1F1F 0%, #4A3025 100%); color: white; }
-.photo-2 { background: linear-gradient(135deg, #FF8A50 0%, #FF5C00 100%); color: white; }
-.photo-3 { background: linear-gradient(135deg, #2D3748 0%, #1A202C 100%); color: white; }
-.photo-fake .photo-fake-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.025em; }
+.photo-1 { background-color: #2D1F1A; }
+.photo-1::before { background: linear-gradient(to top, rgba(30,15,10,.85) 0%, rgba(60,30,20,.4) 100%); }
+.photo-2 { background-color: #2a1a0a; }
+.photo-2::before { background: linear-gradient(to top, rgba(20,10,5,.75) 0%, rgba(0,0,0,.3) 100%); }
+.photo-3 { background-color: #1A202C; }
+.photo-3::before { background: linear-gradient(to top, rgba(10,15,25,.85) 0%, rgba(20,30,50,.35) 100%); }
 
 /* ── FEATURE ROWS ── */
 .feature-row { max-width: 1280px; margin: 0 auto; padding: 80px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
