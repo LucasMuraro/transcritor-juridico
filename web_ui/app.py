@@ -13,7 +13,7 @@ try:
     import patoolib
 except ImportError:
     patoolib = None
-from flask import Flask, render_template, request, jsonify, send_file, Response, redirect
+from flask import Flask, render_template, request, jsonify, send_file, Response, redirect, make_response
 from werkzeug.utils import secure_filename
 import io
 import zipfile
@@ -25,7 +25,18 @@ def inject_globals():
     return {
         'mp_public_key': os.environ.get('MP_PUBLIC_KEY', ''),
         'ga4_id': os.environ.get('GA4_ID', ''),
+        'is_vip': request.cookies.get('vip') == '1' if request else False,
     }
+
+def _parse_vip_users():
+    raw = os.environ.get('VIP_USERS', 'admin@iauditoria.adv.br:admin2026')
+    users = {}
+    for pair in raw.split(','):
+        pair = pair.strip()
+        if ':' in pair:
+            e, p = pair.split(':', 1)
+            users[e.strip().lower()] = p.strip()
+    return users
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'web_ui', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -129,6 +140,29 @@ def termos():
 @app.route('/lgpd')
 def lgpd():
     return redirect('/privacidade')
+
+@app.route('/ops/admin', methods=['GET', 'POST'])
+def ops_admin():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '').strip()
+        users = _parse_vip_users()
+        if email in users and users[email] == password:
+            resp = make_response(redirect('/'))
+            resp.set_cookie('vip', '1', max_age=60*60*24*365*2, samesite='Lax', httponly=False)
+            resp.set_cookie('vip_email', email, max_age=60*60*24*365*2, samesite='Lax', httponly=False)
+            return resp
+        return render_template('ops_admin.html', error='E-mail ou senha incorretos.')
+    if request.cookies.get('vip') == '1':
+        return render_template('ops_admin.html', already_in=True, email=request.cookies.get('vip_email', ''))
+    return render_template('ops_admin.html')
+
+@app.route('/ops/logout')
+def ops_logout():
+    resp = make_response(redirect('/ops/admin'))
+    resp.set_cookie('vip', '', expires=0)
+    resp.set_cookie('vip_email', '', expires=0)
+    return resp
 
 @app.route('/contato')
 def contato():

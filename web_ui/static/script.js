@@ -4,7 +4,9 @@
 // ───────────────────────────────────────────────────────────
 
 const MODAL_URL    = "https://lucas-muraro-pk--transcritor-juridico-fastapi-app.modal.run/";
-const FREE_LIMIT   = 1;
+const IS_LOCAL     = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const IS_VIP       = document.cookie.split(';').some(c => c.trim().startsWith('vip=1'));
+const FREE_LIMIT   = (IS_LOCAL || IS_VIP) ? 9999 : 1;
 const STORAGE_KEY  = "auditoria_usage_v1";
 
 // ──────────────────────────────────────────────────────────
@@ -317,12 +319,21 @@ function updateCreditsBadge() {
     const remaining = getRemainingCredits();
     const el = document.getElementById('free-credits');
     if (el) {
-        el.innerText = remaining;
-        if (remaining === 0) {
-            el.style.color = 'var(--red)';
+        if (IS_VIP) {
             const parent = el.closest('.credits-badge');
             if (parent) {
-                parent.innerHTML = '<i class="fa-solid fa-credit-card" style="color: var(--orange);"></i> Créditos grátis esgotados · próxima transcrição via <strong>PIX</strong>';
+                parent.innerHTML = '<i class="fa-solid fa-shield-halved" style="color: var(--orange);"></i> Conta de cortesia · transcrições <strong>ilimitadas</strong>';
+            } else {
+                el.innerText = '∞';
+            }
+        } else {
+            el.innerText = remaining;
+            if (remaining === 0) {
+                el.style.color = 'var(--red)';
+                const parent = el.closest('.credits-badge');
+                if (parent) {
+                    parent.innerHTML = '<i class="fa-solid fa-credit-card" style="color: var(--orange);"></i> Créditos grátis esgotados · próxima transcrição via <strong>PIX</strong>';
+                }
             }
         }
     }
@@ -330,12 +341,18 @@ function updateCreditsBadge() {
     const sbNum = document.getElementById('pix-credits-num');
     const sbBox = document.getElementById('pix-credits');
     if (sbNum && sbBox) {
-        sbNum.innerText = remaining;
-        if (remaining === 0) {
-            sbBox.style.background = 'rgba(239,68,68,.08)';
-            sbBox.style.borderColor = 'rgba(239,68,68,.2)';
-            sbBox.style.color = '#991B1B';
-            sbBox.innerHTML = '<strong style="color:#EF4444;">0</strong> grátis · pague abaixo para liberar';
+        if (IS_VIP) {
+            sbBox.style.background = 'rgba(255,92,0,.08)';
+            sbBox.style.borderColor = 'rgba(255,92,0,.25)';
+            sbBox.innerHTML = '<i class="fa-solid fa-shield-halved" style="margin-right:6px;color:var(--orange);"></i><strong>Acesso ilimitado</strong> · cortesia';
+        } else {
+            sbNum.innerText = remaining;
+            if (remaining === 0) {
+                sbBox.style.background = 'rgba(239,68,68,.08)';
+                sbBox.style.borderColor = 'rgba(239,68,68,.2)';
+                sbBox.style.color = '#991B1B';
+                sbBox.innerHTML = '<strong style="color:#EF4444;">0</strong> grátis · pague abaixo para liberar';
+            }
         }
     }
 }

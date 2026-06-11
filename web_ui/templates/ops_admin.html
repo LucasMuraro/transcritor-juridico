@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso Restrito | AuditorIA</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0A0A0A;
+      color: #E5E2DC;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .ops-card {
+      background: #141414;
+      border: 1px solid #2A2A2A;
+      border-radius: 14px;
+      padding: 40px;
+      max-width: 420px;
+      width: 100%;
+    }
+    .ops-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .ops-logo-mark {
+      width: 28px;
+      height: 28px;
+      background: #FF5C00;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 900;
+      font-family: Arial Black, sans-serif;
+    }
+    .ops-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+    .ops-sub { font-size: 0.85rem; color: #A8A6A2; margin-bottom: 28px; }
+    .ops-tag { display: inline-block; font-size: 0.68rem; font-weight: 700; color: #FF5C00; text-transform: uppercase; letter-spacing: .12em; padding: 4px 10px; background: rgba(255,92,0,.1); border-radius: 4px; margin-bottom: 14px; }
+    .ops-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .ops-field label { font-size: 0.78rem; font-weight: 600; color: #A8A6A2; text-transform: uppercase; letter-spacing: .05em; }
+    .ops-field input {
+      background: #0A0A0A;
+      border: 1px solid #2A2A2A;
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: white;
+      font-family: inherit;
+      font-size: 0.92rem;
+      transition: border 0.15s;
+    }
+    .ops-field input:focus { outline: none; border-color: #FF5C00; }
+    .ops-btn {
+      width: 100%;
+      background: #FF5C00;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s;
+    }
+    .ops-btn:hover { background: #E04D00; }
+    .ops-err {
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.3);
+      color: #FCA5A5;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+    .ops-success {
+      background: rgba(34,197,94,.08);
+      border: 1px solid rgba(34,197,94,.25);
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .ops-success .check { color: #22C55E; font-size: 1.4rem; margin-bottom: 8px; }
+    .ops-success strong { color: white; }
+    .ops-footer { text-align: center; margin-top: 24px; font-size: 0.78rem; color: #6B6A66; }
+    .ops-footer a { color: #A8A6A2; text-decoration: none; }
+    .ops-footer a:hover { color: #FF5C00; }
+  </style>
+</head>
+<body>
+
+<div class="ops-card">
+  <div class="ops-logo">
+    <span class="ops-logo-mark">A</span>
+    <span>AuditorIA</span>
+  </div>
+
+  {% if already_in %}
+    <div class="ops-tag"><i class="fa-solid fa-shield-halved"></i> Acesso ativo</div>
+    <div class="ops-title">Você já está logado</div>
+    <div class="ops-sub">Conta: <strong style="color:white;">{{ email }}</strong> · créditos ilimitados ativos.</div>
+
+    <div class="ops-success">
+      <div class="check"><i class="fa-solid fa-circle-check"></i></div>
+      <strong>Tudo certo.</strong> Você pode usar o site normalmente sem cobrança.
+    </div>
+
+    <a href="/" class="ops-btn" style="display:block;text-align:center;text-decoration:none;">
+      <i class="fa-solid fa-arrow-right" style="margin-right:6px;"></i> Ir para o site
+    </a>
+    <div class="ops-footer">
+      <a href="/ops/logout"><i class="fa-solid fa-right-from-bracket" style="margin-right:4px;"></i> Sair desta conta</a>
+    </div>
+  {% else %}
+    <div class="ops-tag"><i class="fa-solid fa-lock"></i> Acesso restrito</div>
+    <div class="ops-title">Conta de cortesia</div>
+    <div class="ops-sub">Login para parceiros e testadores. Concede créditos ilimitados neste navegador.</div>
+
+    {% if error %}<div class="ops-err"><i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>{{ error }}</div>{% endif %}
+
+    <form method="POST" action="/ops/admin">
+      <div class="ops-field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" required autocomplete="email" placeholder="seu@email.com">
+      </div>
+      <div class="ops-field">
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button type="submit" class="ops-btn">
+        <i class="fa-solid fa-arrow-right-to-bracket" style="margin-right:6px;"></i> Entrar
+      </button>
+    </form>
+
+    <div class="ops-footer">
+      <a href="/"><i class="fa-solid fa-arrow-left" style="margin-right:4px;"></i> Voltar ao site</a>
+    </div>
+  {% endif %}
+</div>
+
+</body>
+</html>
