@@ -1,15 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy-50:  #F1F5FB;
-  --color-navy-100: #DDE5F0;
-  --color-navy-200: #B6C5DC;
-  --color-navy-300: #8FA5C5;
-  --color-navy-500: #4F6FA0;
-  --color-navy-700: #1E3A5F;
-  --color-navy-800: #15294A;
-  --color-navy-900: #0A2540;
-  --color-navy-950: #051628;
+  /* Brand accent — único laranja Brex */
+  --color-brand:       #FF5C00;
+  --color-brand-hover: #E94E00;
+
+  /* Tipografia + UI escura */
+  --color-ink-900: #0A0A0A;
+  --color-ink-700: #2A2A2A;
+  --color-ink-500: #6B6B6B;
+  --color-ink-400: #A8A6A2;
+  --color-ink-200: #D9D5CE;
+
+  /* Tons de papel — fundos quentes característicos do Brex */
+  --color-paper-50:  #F8F6F1;
+  --color-paper-100: #F2F0EB;
+  --color-paper-200: #ECEAE6;
+  --color-paper-300: #E5E2DC;
 
   --font-sans: var(--font-jakarta), -apple-system, "Segoe UI", system-ui, sans-serif;
 }
@@ -22,11 +29,11 @@
   }
 
   body {
-    @apply bg-white text-slate-900;
+    @apply bg-white text-ink-900;
   }
 
   ::selection {
-    @apply bg-emerald-500/20 text-navy-900;
+    @apply bg-brand/20 text-ink-900;
   }
 }
 

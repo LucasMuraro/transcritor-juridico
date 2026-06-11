@@ -20,19 +20,19 @@ const legal = [
 
 export function Footer() {
   return (
-    <footer className="bg-white border-t border-slate-200">
+    <footer className="bg-white border-t border-paper-300">
       <div className="mx-auto max-w-7xl px-5 lg:px-8 py-14">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy-900 text-white">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-ink-900 text-white">
                 <Scale className="h-[18px] w-[18px]" strokeWidth={2.4} />
               </span>
-              <span className="text-[1.02rem] font-bold tracking-tight text-navy-900">
-                Degravar<span className="text-emerald-500">.adv.br</span>
+              <span className="text-[1.02rem] font-bold tracking-tight text-ink-900">
+                Degravar<span className="text-brand">.adv.br</span>
               </span>
             </Link>
-            <p className="text-[0.88rem] text-slate-500 leading-relaxed max-w-xs">
+            <p className="text-[0.88rem] text-ink-500 leading-relaxed max-w-xs">
               Degravação jurídica feita para a velocidade do escritório.
             </p>
           </div>
@@ -42,7 +42,7 @@ export function Footer() {
           <FooterCol title="Legal"       items={legal}    />
         </div>
 
-        <div className="mt-12 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-[0.82rem] text-slate-500">
+        <div className="mt-12 pt-6 border-t border-paper-300/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[0.82rem] text-ink-500">
           <span>© 2026 Muraro TechHub · Degravar.adv.br</span>
           <span>Feito por e para advogados.</span>
         </div>
@@ -54,7 +54,7 @@ export function Footer() {
 function FooterCol({ title, items }: { title: string; items: { href: string; label: string }[] }) {
   return (
     <div>
-      <h5 className="text-[0.74rem] font-bold tracking-[0.14em] text-slate-900 uppercase mb-3.5">
+      <h5 className="text-[0.74rem] font-bold tracking-[0.14em] text-ink-900 uppercase mb-3.5">
         {title}
       </h5>
       <ul className="space-y-2.5 text-[0.9rem]">
@@ -62,7 +62,7 @@ function FooterCol({ title, items }: { title: string; items: { href: string; lab
           <li key={item.label}>
             <Link
               href={item.href}
-              className="text-slate-600 hover:text-navy-900 transition-colors"
+              className="text-ink-500 hover:text-ink-900 transition-colors"
             >
               {item.label}
             </Link>
