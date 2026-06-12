@@ -63,7 +63,7 @@ export const TOOLS: Record<"whatsapp" | "audiencia" | "audio", ToolConfig> = {
     iconColorClass: "text-emerald-600",
     borderHoverClass: "hover:border-emerald-300",
     accentDotClass: "bg-emerald-500",
-    formats: ["ZIP", "OGG", "MP3", "OPUS"],
+    formats: ["ZIP", "RAR", "OGG", "MP3", "OPUS"],
     maxSize: "1 GB",
     startPrice: "R$ 2,99",
     pricingHeading: "Preço por tamanho do backup",
