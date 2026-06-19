@@ -34,11 +34,13 @@ export function ToolPage({ tool }: { tool: ToolConfig }) {
             <div className="mt-10 lg:mt-12 grid gap-8 lg:grid-cols-12 lg:gap-10">
               <div className="lg:col-span-8">
                 <Dropzone
+                  slug={tool.slug}
                   formats={tool.formats}
                   maxSize={tool.maxSize}
                   iconBgClass={tool.iconBgClass}
                   iconColorClass={tool.iconColorClass}
                   borderHoverClass={tool.borderHoverClass}
+                  sampleContent={tool.sampleContent}
                 />
               </div>
               <div className="lg:col-span-4">

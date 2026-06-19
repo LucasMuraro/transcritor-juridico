@@ -1,4 +1,5 @@
 import { MessageCircle, Gavel, Mic, type LucideIcon } from "lucide-react";
+import { WHATSAPP_SAMPLE, AUDIENCIA_SAMPLE, AUDIO_SAMPLE } from "./sample-transcriptions";
 
 export interface PriceTier {
   label: string;
@@ -45,6 +46,9 @@ export interface ToolConfig {
 
   // FAQ
   faq: ToolFaqItem[];
+
+  // Demo content (used as the TXT downloaded in pré-visualização)
+  sampleContent: string;
 
   // SEO
   metaTitle: string;
@@ -109,6 +113,7 @@ export const TOOLS: Record<"whatsapp" | "audiencia" | "audio", ToolConfig> = {
         a: "Use a ferramenta Gravação Avulsa — mais barata para áudios isolados.",
       },
     ],
+    sampleContent: WHATSAPP_SAMPLE,
     metaTitle: "Transcrever Backup do WhatsApp Online | Degravar.adv.br",
     metaDescription:
       "Transcreva todos os áudios do backup ZIP do WhatsApp de uma vez. Com data, hora e remetente. Ideal para advogados e atas notariais. A partir de R$ 2,99.",
@@ -172,6 +177,7 @@ export const TOOLS: Record<"whatsapp" | "audiencia" | "audio", ToolConfig> = {
         a: "Processa normalmente, mas a precisão cai com áudio muito ruidoso. Recomenda-se editar o áudio antes (Audacity ou similar) para realçar a voz.",
       },
     ],
+    sampleContent: AUDIENCIA_SAMPLE,
     metaTitle: "Transcrição de Audiência Judicial Online | Degravar.adv.br",
     metaDescription:
       "Degrave audiências judiciais com identificação automática de oradores: juiz, advogados e testemunhas. Saída em DOCX formatada. A partir de R$ 4,99.",
@@ -236,6 +242,7 @@ export const TOOLS: Record<"whatsapp" | "audiencia" | "audio", ToolConfig> = {
         a: "Áudios curtos (5-15 min) ficam prontos em cerca de 30 segundos. Áudios longos (1h+) em 2-4 minutos.",
       },
     ],
+    sampleContent: AUDIO_SAMPLE,
     metaTitle: "Transcrever Áudio MP3 para Texto Online | Degravar.adv.br",
     metaDescription:
       "Transcreva áudios MP3, M4A, WAV ou OPUS para texto. Ideal para depoimentos, sustentações orais, oitivas e reuniões. A partir de R$ 1,99.",

@@ -25,21 +25,25 @@ function nowTs() {
 }
 
 interface DropzoneProps {
+  slug: "whatsapp" | "audiencia" | "audio";
   formats: string[];
   maxSize: string;
   iconBgClass: string;
   iconColorClass: string;
   borderHoverClass: string;
+  sampleContent: string;
 }
 
 type Phase = "idle" | "selected" | "running" | "done";
 
 export function Dropzone({
+  slug,
   formats,
   maxSize,
   iconBgClass,
   iconColorClass,
   borderHoverClass,
+  sampleContent,
 }: DropzoneProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [dragOver, setDragOver] = useState(false);
@@ -89,6 +93,27 @@ export function Dropzone({
     setFile(null);
     setLogs([]);
     setPhase("idle");
+  }
+
+  function downloadTxt() {
+    if (!file) return;
+    const now = new Date().toLocaleString("pt-BR");
+    const content = sampleContent
+      .replace("{{FILENAME}}", file.name)
+      .replace("{{DATE}}", now);
+    // BOM + UTF-8 garante acentos corretos em Windows/Word/TextEdit
+    const blob = new Blob(["﻿", content], {
+      type: "text/plain;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const baseName = file.name.replace(/\.[^.]+$/, "").slice(0, 40);
+    a.href = url;
+    a.download = `transcricao_${slug}_${baseName}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   function startTranscription() {
@@ -255,7 +280,7 @@ export function Dropzone({
       {isDone && (
         <div className="flex flex-col sm:flex-row gap-3">
           <button
-            onClick={() => alert("Pré-visualização — sem download real ainda. Quando o backend estiver conectado, este botão baixa o TXT.")}
+            onClick={downloadTxt}
             className="flex-1 bg-brand text-white py-3.5 rounded-xl font-semibold hover:bg-brand-hover transition-colors inline-flex items-center justify-center gap-2 text-[0.95rem]"
           >
             <ArrowDown className="h-5 w-5" strokeWidth={2.4} />
